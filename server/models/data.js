@@ -6,7 +6,10 @@ module.exports = (sequelize, DataTypes, Model) => {
     data:{
       type: DataTypes.STRING,
     }
-  },{sequelize});
+  },{
+    sequelize,
+    modelName: 'data'
+  });
 
   return Data;;
 }

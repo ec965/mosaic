@@ -6,6 +6,8 @@ const DataModel = require('./data');
 const User = UserModel(sequelize,DataTypes, Model);
 const Data = DataModel(sequelize,DataTypes, Model);
 User.hasMany(Data);
-Data.belongsTo(User);
+Data.belongsTo(User, {
+  foreignKey: "userId"
+});
 
 module.exports={User, Data};

@@ -9,9 +9,10 @@ const passport = require('passport');
 const PORT = process.env.PORT || 5000;
 const IPADDRESS = process.env.IPADDRESS || 'localhost';
 
-require('./auth/auth');
+// passport strategies
+require('./auth/auth'); 
 
-sequelize.sync({force:true})
+sequelize.sync({force:false})
 .catch((e) => console.error("Failed to sync database: ", e))
 
 const app = express();
@@ -20,13 +21,14 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
-app.use('/login', routes.auth);
-app.use('/secure', passport.authenticate('jwt', {session: false}), routes.secure);
+app.use('/auth', routes.auth);
+app.use('/app', passport.authenticate('jwt', {session: false}), routes.app);
 
+// Error handler
 app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({error: err});
+  console.error(err.stack);
+  res.status(500).json({message: "An error occured."});
 })
-
 app.get('/', (req, res) => {
   res.send("Hello World");
 })
