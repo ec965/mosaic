@@ -4,12 +4,14 @@ import {APIURL, REGISTER} from '../config/api';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {FormError, FormButton} from './components';
 import {useAuth} from './functions'
+import {Redirect} from 'react-router-dom';
 
 const RegisterForm= () => {
   const [nameErr, setNameErr] = useState(false);
   const [serverErr, setServerErr] = useState(false);
+  const [registered, setRegistered] = useState(false);
   
-  const alreadyLogged = useAuth();
+  const alreadyLogged = useAuth('/profile');
   
   const register = async (username,password) => {
     const res = await axios.post(APIURL + REGISTER, {
@@ -40,7 +42,9 @@ const RegisterForm= () => {
           register(values.username, values.password)
           .then((data) => {
             setSubmitting(false);
+            setRegistered(true);
             // redirect to login page
+            
           })
           .catch((error) => {
             if(error.response.status === 401){
@@ -76,6 +80,7 @@ const RegisterForm= () => {
       {nameErr && <FormError>Error: That username is already taken, please choose a different username.</FormError>}
       {serverErr && <FormError>A server error has occured, please try again later.</FormError>}
       {alreadyLogged}
+      {registered && <Redirect to='/login'/>}
     </>
   );
 }

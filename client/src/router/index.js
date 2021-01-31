@@ -15,15 +15,15 @@ const App = () =>{
     {/* // components */}
 
       <Switch>
+        <PrivateRoute path="/profile">
+          <UserProfile/>
+        </PrivateRoute>
         <Route path="/login">
           <Login/>
         </Route>
         <Route path="/register">
           <Register/>
         </Route>
-        <PrivateRoute path="/profile">
-          <UserProfile/>
-        </PrivateRoute>
         <Route path="/">
           <LandingPage/>
         </Route>

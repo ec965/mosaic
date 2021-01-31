@@ -8,14 +8,15 @@ import {Row, Column} from '../components/layout';
 // sort length
 // sort direction
 // sort based on hue, saturation, or lightness
+// pixel dims
 
 // props.pixel = Pixel();
 const PixelDiv = (props) => {
   const style = {
     backgroundColor: `rgb(${props.pixel.r}, ${props.pixel.g}, ${props.pixel.b}`,
     // backgroundColor: props.pixel.hex,
-    height:'15px',
-    width:'15px',
+    height:`${props.dimension}`,
+    width:`${props.dimension}`,
     borderRadius: '25%',
   }
   
@@ -29,7 +30,7 @@ const PixelApp = () => {
   
   useEffect(() => {
     let minmax = new RGBMinMax(0,255,0,255,0,255)
-    let data = new RandomPixelSquare(50, minmax);
+    let data = new RandomPixelSquare(60, minmax);
     data.sortHueVertical();
     setPixelMap(data.data)
   },[])
@@ -37,7 +38,7 @@ const PixelApp = () => {
   const render = pixelMap.map((inner,i) => {
     return(
       <Row key={i}>
-        {inner.map((p,i) => <PixelDiv pixel={p} />)}
+        {inner.map((p,i) => <PixelDiv pixel={p} dimension='12px'/>)}
       </Row>
     );
   });

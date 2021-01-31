@@ -9,7 +9,7 @@ const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
   const [authErr, setAuthErr] = useState("");
 
-  const alreadyLogged = useAuth();
+  const alreadyLogged = useAuth("/profile");
 
 
   const login = async (username, password) => {

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Redirect} from 'react-router-dom';
+
 export const logout = () => {
   localStorage.removeItem('user');
 }
@@ -18,15 +19,15 @@ export const checkAuth = () =>{
 }
 
 // checks auth and returns a redirect component to profile is alreayd logged in
-export const useAuth = () =>{
+export const useAuth = (path) =>{
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect (()=> {
     setLoggedIn(checkAuth());
-  }, [])
+  })
   return(
     <>
-      {loggedIn && <Redirect to="/profile"/>}
+      {loggedIn && <Redirect to={path}/>}
     </>
   );
 }

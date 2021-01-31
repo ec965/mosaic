@@ -3,21 +3,6 @@ const db = require('../models/index');
 const {Op} = require('sequelize');
 const router = express.Router();
 
-// validate that the data string is an array of 256 integers of range(0,255)
-const validateDataString = (str) =>{
-  const arr = str.split(',');
-  console.log(arr);
-  if (arr.length === 256){
-    for(a of arr){
-      if(parseInt(a) === NaN){
-        return false;
-      }
-    }
-    return true;
-  }
-  return false;
-}
-
 // READ
 router.get('/', async (req, res, next) => {
   try{
@@ -48,11 +33,6 @@ router.post('/', async (req, res, next) => {
       // have to query the DB to verify if the user exists.
       // We also have direct access to the userId without have to look up the ID
 
-      // if(!validateDataString(req.body.data)){
-      //   res.status(400).json({message: "Not a valid data string"});
-      //   return;
-      // }
-
       await db.Data.create({
         userId: req.user.userId,
         data: req.body.data,
@@ -69,11 +49,6 @@ router.post('/', async (req, res, next) => {
 router.put('/', async(req, res, next) => {
   try{
     if(req.body.data && req.body.id){
-
-      // if(!validateDataString(req.body.data)){
-      //   res.status(400).json({message:"Note a valid data string"});
-      //   return;
-      // }
 
       await db.Data.update({data:req.body.data},{
         where: {
