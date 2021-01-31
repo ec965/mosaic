@@ -2,11 +2,15 @@ import React, {useState} from 'react';
 import axios from "axios";
 import {APIURL, REGISTER} from '../config/api';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
-import {FormError} from './components';
+import {FormError, FormButton} from './components';
+import {useAuth} from './functions'
 
 const RegisterForm= () => {
   const [nameErr, setNameErr] = useState(false);
   const [serverErr, setServerErr] = useState(false);
+  
+  const alreadyLogged = useAuth();
+  
   const register = async (username,password) => {
     const res = await axios.post(APIURL + REGISTER, {
       username: username,
@@ -53,26 +57,25 @@ const RegisterForm= () => {
         }}
       >
         {({isSubmitting}) => (
-          <Form>
-            <label>Username</label>
-            <Field type="username" name="username"/>
-            <ErrorMessage name="username" component="div"/>
+          <Form className="register">
+            <Field className="form-field register" type="username" name="username" placeholder="Username"/>
+            <ErrorMessage className="form-error" name="username" component="div"/>
 
-            <label>Password</label>
-            <Field type="password" name="password"/>
-            <ErrorMessage name="password" component="div"/>
-            <label>Re-type Password</label>
-            <Field type="password" name="repassword"/>
-            <ErrorMessage name="repassword" component="div"/>
+            <Field className="form-field register" type="password" name="password" placeholder="Password"/>
+            <ErrorMessage className="form-error" name="password" component="div"/>
 
-            <button type="submit" disabled={isSubmitting}>
+            <Field className="form-field register" type="password" name="repassword" placeholder="Confirm Password"/>
+            <ErrorMessage className="form-error" name="repassword" component="div"/>
+
+            <FormButton classname="form-button" type="submit" disabled={isSubmitting}>
               Submit
-            </button>
+            </FormButton>
           </Form>
         )}
       </Formik>
       {nameErr && <FormError>Error: That username is already taken, please choose a different username.</FormError>}
       {serverErr && <FormError>A server error has occured, please try again later.</FormError>}
+      {alreadyLogged}
     </>
   );
 }

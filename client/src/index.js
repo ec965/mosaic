@@ -1,13 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Register, Login} from './auth';
+import App from './router/index';
+import './css/stylesheet.css';
 
-const App = () => {
-  return(
-    <div>
-      <Register/>
-      <Login/>
-    </div>
-  );
-}
 ReactDOM.render(<App/>, document.getElementById('root'));

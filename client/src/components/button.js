@@ -2,7 +2,7 @@ import React from 'react';
 
 export const Button = (props) => {
   return(
-    <button type="button" className={props.className} onClick={props.onClick}>
+    <button type="button" className={props.className} onClick={props.onClick} onSubmit={props.onSubmit}>
       {props.children}
     </button>
   );
@@ -12,7 +12,7 @@ export const ButtonLink = (props) => {
     window.open(props.link);
   }
   return(
-    <button type="button" className={props.className} onClick={props.onClick || handleClick}>
+    <button type="button" className={props.className} onClick={props.link ? handleClick : props.onClick}>
       {props.children}
     </button>
   );

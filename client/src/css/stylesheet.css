@@ -24,7 +24,7 @@
   --base0D: #6fc2ef;
   --base0E: #e1a3ee;
   --base0F: #deaf8f;
-  --lr-padding: 12vw;
+  --lr-padding: 12px;
 }
 
 .courier{
@@ -74,7 +74,7 @@ p{
 }
 
 body{
-  background-color: var(--base03);
+  background-color: var(--base07);
 }
 
 a {
@@ -104,7 +104,7 @@ button {
   border-radius: 12px;
   height:32px;
   width:80px;
-  background-color: var(--base02);
+  background-color: var(--base0D);
   color: var(--base1);
   letter-spacing: .05ch;
   font-size:1em;
@@ -114,7 +114,7 @@ button {
 }
 
 button:hover{
-  background-color: var(--base03);
+  background-color:var(--base0C);
   cursor: pointer;
 }
 
@@ -137,7 +137,6 @@ button:hover{
 .page {
   padding-left: var(--lr-padding);
   padding-right: var(--lr-padding);
-  animation: fadeIn 2s;
 }
 
 .matrix{
@@ -222,4 +221,34 @@ img.footer-logo:hover{
   background-color: white;
   height:100vh;
   width: 100%;
+}
+
+/*-----FORM-----*/
+.form-card{
+  margin-top:calc(12vh);
+  width: 360px;
+  box-shadow: 1px 1px 1px 2px rgba(0, 0, 0, 0.4);
+  padding: 16px;
+}
+
+form{
+  display:flex;
+  flex-direction:column;
+}
+
+.form-field{
+  font-size:1em;
+  padding:10px;
+  flex:33.333333%;
+  margin:3px 0 3px 0;
+}
+.form-error{
+  color:var(--base08);
+}
+.form-button{
+  margin-top:3px;
+  margin-bottom:3px;
+}
+.form-title{
+  margin-bottom:3px;
 }

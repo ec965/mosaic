@@ -2,19 +2,28 @@ import React from 'react';
 import RegisterForm from './register';
 import LoginForm from './login';
 import {FormCard} from './components';
+import {Page, Row} from '../components/layout';
 
 export const Login = () => {
   return(
-    <FormCard title="Login">
-      <LoginForm/>
-    </FormCard>
+    <Page>
+      <Row>
+        <FormCard title="Login">
+          <LoginForm/>
+        </FormCard>
+      </Row>
+    </Page>
   )
 }
 export const Register = () => {
   return(
-    <FormCard title="Register">
-      <RegisterForm/>
-    </FormCard>
+    <Page>
+      <Row>
+        <FormCard title="Register">
+          <RegisterForm/>
+        </FormCard>
+      </Row>
+    </Page>
   )
 }
 

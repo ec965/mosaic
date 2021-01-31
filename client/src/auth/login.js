@@ -1,19 +1,24 @@
 import React, {useState} from 'react';
-import {Formik, Form, Field} from 'formik';
+import {Formik, Form, Field, ErrorMessage} from 'formik';
 import axios from "axios";
 import {APIURL, LOGIN} from '../config/api';
-import {FormError} from './components';
+import {FormError, FormButton} from './components';
+import {useAuth} from './functions';
 
 const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
+  const [authErr, setAuthErr] = useState("");
+
+  const alreadyLogged = useAuth();
+
 
   const login = async (username, password) => {
     const res = await axios.post(APIURL + LOGIN, {
       username: username,
       password: password
     })
-    if(res.data.accessToken) {
-      localStorage.setItem('user', JSON.stringify(res.data))
+    if(res.data.token) {
+      localStorage.setItem('user', JSON.stringify(res.data));
     }
 
     return res.data;
@@ -23,21 +28,21 @@ const LoginForm = () => {
     <>
       <Formik
         initialValues={{username: '', password: ''}}
-        // validate={values=> {
-        //   const errors = {};
-        //   if (!values.username){
-        //     errors.username = 'Required';
-        //   }
-        //   if (!values.password){
-        //     errors.password = 'Required';
-        //   }
-        //   return errors;
-        // }}
+        validate={values=> {
+          const errors = {};
+          if (!values.username){
+            errors.username = 'Please enter your username.';
+          }
+          if (!values.password){
+            errors.password = 'Please enter your password.';
+          }
+          return errors;
+        }}
         onSubmit={(values, {setSubmitting}) => {
           login(values.username, values.password)
           .then((data) => {
+            setAuthErr(data.message);
             setSubmitting(false);
-            // redirect to user-land
           })
           .catch((error) => {
             setServerErr(true);
@@ -48,21 +53,21 @@ const LoginForm = () => {
       >
         {({isSubmitting}) => (
           <Form>
-            <label>Username</label>
-            <Field type="username" name="username"/>
-            {/* <ErrorMessage name="username" component="div"/> */}
+            <Field className="form-field" type="username" name="username" placeholder="Username"/>
+            <ErrorMessage className="form-error" name="username" component="div"/>
 
-            <label>Password</label>
-            <Field type="password" name="password"/>
-            {/* <ErrorMessage name="password" component="div"/> */}
+            <Field className="form-field" type="password" name="password" placeholder="Password"/>
+            <ErrorMessage className="form-error" name="password" component="div"/>
 
-            <button type="submit" disabled={isSubmitting}>
+            <FormButton type="submit" disabled={isSubmitting}>
               Submit
-            </button>
+            </FormButton>
           </Form>
         )}
       </Formik>
       {serverErr && <FormError>"A server error has occured, please try again later.</FormError>}
+      {authErr && <FormError>{authErr}</FormError>}
+      {alreadyLogged}
     </>
   );
 }
