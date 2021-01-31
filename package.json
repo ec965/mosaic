@@ -4,7 +4,12 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "npm start --prefix server",
+    "client": "npm start --prefix client",
+    "start": "concurrently --kill-others \"npm run server\" \"npm run client\"",
+    "init": "npm install --prefix client && npm install --prefix server && npm install"
+
   },
   "repository": {
     "type": "git",
@@ -15,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/ec965/user-land/issues"
   },
-  "homepage": "https://github.com/ec965/user-land#readme"
+  "homepage": "https://github.com/ec965/user-land#readme",
+  "dependencies": {
+    "concurrently": "^5.3.0"
+  }
 }

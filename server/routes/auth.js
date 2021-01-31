@@ -24,10 +24,13 @@ router.post("/login",
     passport.authenticate('login',
     async(err, user, info) => {
       try{
-        if (err || !user) {
+        if (err) {
           const error = new Error("An error occured while logging in.");
-          res.status(400).json(info);
           return next(error);
+        }
+        if(!user){
+          res.json(info);
+          return;
         }
 
         req.login( user,{session:false}, async(error) => {

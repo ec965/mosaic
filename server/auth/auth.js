@@ -20,7 +20,7 @@ passport.use(
       });
 
       if(user){
-        done(null, false, {message:"user already exists"});
+        done(null, false, {message:"User already exists"});
       }
       else {
         const hashedPassword = await db.User.hashPassword(password);
@@ -29,7 +29,7 @@ passport.use(
           password: hashedPassword
         });
 
-        return done(null, user);
+        return done(null, user, {message: "Registration successful"});
       }
     }
     catch(error){
@@ -53,16 +53,16 @@ passport.use(
       });
 
       if(!user){
-        return done(null, false, {message: 'User not found'});
+        return done(null, false, {message: 'Your username doesn\'t exist.'});
       }
 
       const validate = await user.checkPassword(password);
 
       if (!validate){
-        return done(null, false, {message: "Invalid password"});
+        return done(null, false, {message: "Your password is invalid."});
       }
 
-      return done(null, user, {message: "Logged in successfully"});
+      return done(null, user, {message: "Logged in successfully."});
     } 
     catch(error){
       return done(error);
