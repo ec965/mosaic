@@ -1,83 +1,75 @@
 const express = require('express');
-const db = require('../models/index');
-const {Op} = require('sequelize');
 const router = express.Router();
+const Data = require("../models/data");
 
 // READ
-router.get('/', async (req, res, next) => {
-  try{
-    const data = await db.User.findOne({
-      attributes: ['id','username'],
-      where:{
-        username: req.user.username,
-      },
-      include: {
-        model: db.Data,
-        attributes: ["id", "data"],
-      }
+// get all a user's data
+router.get('/', (req, res, next) => {
+  Data.
+    find().
+    where('username').equals(req.user.username).
+    exec(function(err, data){
+      if(err) return next(err);
+
+      res.json({username:req.user.username, data: data});
+
     });
-    res.json({
-      user: req.user,
-      data: data.data,
-    });
-  } catch(error){
-    return next(error);
-  }
 })
 
 // CREATE
-router.post('/', async (req, res, next) => {
-  try{
-    if(req.body.data){
-      // Since we store the userId in the JWT, we shouldn't
-      // have to query the DB to verify if the user exists.
-      // We also have direct access to the userId without have to look up the ID
+// insert a new data model into the db
+router.post('/', (req, res, next) => {
 
-      await db.Data.create({
-        userId: req.user.userId,
-        data: req.body.data,
-      });
+  if(req.user.username && req.body.data){
+    Data.create({
+      username: req.user.username,
+      data: req.body.data,
+    }, function(err, data){
+      if(err) return next(err);
+
       res.sendStatus(200);
-    }
-    else res.sendStatus(400);
-  } catch(error){
-    return next(error);
+    });
+  } else {
+    res.sendStatus(400);
   }
 });
 
 // UPDATE
-router.put('/', async(req, res, next) => {
-  try{
-    if(req.body.data && req.body.id){
+// update data of id
+router.put('/', (req, res, next) => {
+  if(req.body.data && req.body.id){
+    Data.updateOne({_id:req.body.id}, {data:req.body.data}, function(err, opResult){
+      if(err) return next(err);
 
-      await db.Data.update({data:req.body.data},{
-        where: {
-          [Op.and]: [{userId:req.user.userId}, {id: req.body.id}],
-        }
-      });
       res.sendStatus(200);
-    } else {
-      res.sendStatus(400);
-    }
-  } catch(error) {
-    return next(error);
+    })
+  } else {
+    res.sendStatus(400);
   }
-})
+});
 
 // DELETE
-router.delete('/', async(req, res, next) => {
-  try{
-    if(req.body.id){
-      await db.Data.destroy({
-        where: {
-          [Op.and]:[{id: req.body.id}, {userId: req.user.userId}],
-        }
-      })
-    } else {
-      res.sendStatus(400);
-    }
-  } catch(error){
-    return next(error);
+// delete data of id
+router.delete('/', (req, res, next) => {
+  if(req.body.id){
+    Data.deleteOne({_id: req.body.id}, function(){
+      res.sendStatus(200);
+    });
+  } else {
+    res.sendStatus(400);
   }
 })
 module.exports=router;
+
+// get the 18 most recent projects for the home page 
+router.get('/recent', (req,res,next) => {
+  Data
+    .find()
+    .limit(18)
+    .sort({updated: -1})
+    .exec(function(err,data) {
+      if(err) return next(err);
+
+      res.json(data);
+    })
+});

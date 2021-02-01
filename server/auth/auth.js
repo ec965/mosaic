@@ -22,20 +22,13 @@ passport.use(
         if(user){
           return done(null, false, {message:"User already exists"});
         } else {
-          User.hashPassword(password, function(err, hash){
-            if (err) {
-              console.error("Error hashing password:", err);
+          User.create({ username: username, password: password}, function(err, user) {
+            if(err) {
+              console.error("Error putting new user in DB: ", err);
               return done(err);
             }
-            
-            User.create({ username: username, password: hash,}, function(err, user) {
-              if(err) {
-                console.error("Error putting new user in DB: ", err);
-                return done(err);
-              }
 
-              return done(null, user, {message: 'Registration successful'});
-            });
+            return done(null, user, {message: 'Registration successful'});
           });
         }
       })
@@ -49,6 +42,7 @@ passport.use(
     passwordField: 'password'
   },
   (username, password, done) => {
+
     User.findOne({'username': username}, function(err, user){
       if (err) {
         console.error("Error getting user from db: ", error);

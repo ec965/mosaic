@@ -4,11 +4,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const mongoose = require('mongoose');
 
-const db = require('./config/db');
 const routes = require('./routes/index');
 const PORT = process.env.PORT || 5000;
 const IPADDRESS = process.env.IPADDRESS || 'localhost';
+
+// connect to the DB
+const db = require('./config/db')(mongoose);
 
 // passport strategies
 require('./auth/auth');
@@ -20,13 +23,13 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 app.use('/auth', routes.auth);
-// app.use('/app', passport.authenticate('jwt', {session: false}), routes.app);
+app.use('/app', passport.authenticate('jwt', {session: false}), routes.app);
 
 // Error handler
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).json({message: "An error occured."});
-// })
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({message: "An error occured."});
+})
 
 app.get('/', (req, res) => {
   res.send("Hello World");

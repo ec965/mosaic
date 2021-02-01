@@ -1,17 +1,15 @@
-const mongoose = require('mongoose');
 const User = require('../models/users');
-// const url = process.env.DATABASE_URL;
-const url = 'mongodb+srv://enoch:test123@cluster0.cxson.mongodb.net/test?retryWrites=true&w=majority';
+const url = process.env.DATABASE_URL || 'mongodb://localhost:27017/test';
 
-// module.exports = () => {
+module.exports = (mongoose) => {
   mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   .catch((error)=> console.error("Error connecting to DB: ", error));
 
   const db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error:'));
 
-  // return db;
-// }
+  return db;
+}
 
 
 // User.findOne({'username': 'batman'}, 'username', function(err,user){

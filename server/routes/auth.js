@@ -16,7 +16,7 @@ router.post("/register",
 );
 
 router.post("/login",
-  async (req,res,next) => {
+  (req,res,next) => {
     passport.authenticate('login',
     (err, user, info) => {
       if (err) {
@@ -31,7 +31,7 @@ router.post("/login",
       req.login( user,{session:false}, (error) => {
           if(error) return next(error);
 
-          const body = {_id: user._id, username: user.username, userId: user.id};
+          const body = {_id: user._id, username: user.username};
           const token = jwt.sign({user: body}, SecretKey);
 
           return res.status(200).json({token})
