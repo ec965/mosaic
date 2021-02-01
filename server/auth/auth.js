@@ -1,9 +1,9 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
-const db = require('../models/index');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 const SecretKey = require('./secretkey');
+const User = require('../models/users');
 
 passport.use(
   'register',
@@ -11,30 +11,34 @@ passport.use(
     usernameField: 'username',
     passwordField: 'password'
   },
-  async (username, password, done) => {
-    try {
-      const user = await db.User.findOne({
-        where:{
-          username:username
+  (username, password, done) => {
+
+      User.findOne({'username': username}, 'username', function(err, user){
+        if(err) {
+          console.error("Error getting user from db: ", error);
+          return done(err);
         }
-      });
 
-      if(user){
-        done(null, false, {message:"User already exists"});
-      }
-      else {
-        const hashedPassword = await db.User.hashPassword(password);
-        const user = await db.User.create({
-          username: username,
-          password: hashedPassword
-        });
+        if(user){
+          return done(null, false, {message:"User already exists"});
+        } else {
+          User.hashPassword(password, function(err, hash){
+            if (err) {
+              console.error("Error hashing password:", err);
+              return done(err);
+            }
+            
+            User.create({ username: username, password: hash,}, function(err, user) {
+              if(err) {
+                console.error("Error putting new user in DB: ", err);
+                return done(err);
+              }
 
-        return done(null, user, {message: "Registration successful"});
-      }
-    }
-    catch(error){
-      done(error);
-    }
+              return done(null, user, {message: 'Registration successful'});
+            });
+          });
+        }
+      })
   })
 );
 
@@ -44,29 +48,27 @@ passport.use(
     usernameField: 'username',
     passwordField: 'password'
   },
-  async (username, password, done) => {
-    try{
-      const user = await db.User.findOne({
-        where: {
-          username: username
-        }
-      });
+  (username, password, done) => {
+    User.findOne({'username': username}, function(err, user){
+      if (err) {
+        console.error("Error getting user from db: ", error);
+        return done(err);
+      }
 
       if(!user){
         return done(null, false, {message: 'Your username doesn\'t exist.'});
       }
-
-      const validate = await user.checkPassword(password);
-
-      if (!validate){
-        return done(null, false, {message: "Your password is invalid."});
-      }
-
-      return done(null, user, {message: "Logged in successfully."});
-    } 
-    catch(error){
-      return done(error);
-    }
+      user.checkPassword(password, function(err, result){
+        if(err){
+          console.error("Error checking password hash:", err);
+          return done(err);
+        }
+        if(!result){
+          return done(null, false, {message: "Your password is invalid."});
+        }
+        return done(null, user, {message: "Logged in successfully."});
+      })
+    });
   })
 );
 

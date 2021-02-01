@@ -1,15 +1,12 @@
+const {Schema} = require("mongoose");
+const mongoose = require("mongoose");
 
-module.exports = (sequelize, DataTypes, Model) => {
-  class Data extends Model{}
+const dataSchema = new Schema({
+  username: {type: String, require: true},
+  edit_date: {type: Date, default: Date.now},
+  data:{
+    pixels:[{r:Number, g:Number, b:Number}]
+  }
+})
 
-  Data.init({
-    data:{
-      type: DataTypes.STRING,
-    }
-  },{
-    sequelize,
-    modelName: 'data'
-  });
-
-  return Data;;
-}
+module.exports = mongoose.model('Data', dataSchema);

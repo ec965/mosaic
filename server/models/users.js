@@ -1,28 +1,24 @@
 const bcrypt = require('bcrypt');
 const saltRounds = require('../config/salt')
-module.exports = (sequelize, DataTypes, Model) => {
-  class User extends Model{
-    static hashPassword(password){
-      return bcrypt.hash(password, saltRounds);
-    }
+const {Schema} = require('mongoose');
+const mongoose = require("mongoose");
 
-    checkPassword(password){
-      return bcrypt.compare(password, this.password);
-    }
-  }
-  User.init({
-    username:{
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password:{
-      type:DataTypes.STRING,
-      allownNull: false,
-    }
-  },{
-    sequelize,
-    modelName: 'user'
-  });
-  return User;
+const userSchema = new Schema({
+  username: { type: String, required: true, trim: true, index:{unique:true}},
+  password: {type:String, required: true},
+  date: {type: Date, default: Date.now}
+})
+
+userSchema.statics.hashPassword = function(password, cb){
+  bcrypt.hash(password, saltRounds, function(err, hash){
+    cb(err, hash);
+  })
 }
+
+userSchema.methods.checkPassword = function(password, cb) {
+  bcrypt.compare(password, this.password, function(err, result){
+    cb(err, result);
+  });
+}
+
+module.exports = mongoose.model('User', userSchema);
