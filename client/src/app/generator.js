@@ -47,10 +47,15 @@ export class RGBMinMax {
   constructor(rmin, rmax, gmin, gmax, bmin, bmax){
     this.rmin = this.check(rmin);
     this.rmax = this.check(rmax);
+    this.swap(this.rmin, this.rmax);
+
     this.gmin = this.check(gmin);
     this.gmax = this.check(gmax);
+    this.swap(this.gmin, this.gmax);
+    
     this.bmin = this.check(bmin);
     this.bmax = this.check(bmax);
+    this.swap(this.bmin, this.bmax);
   }
 
   check(n){
@@ -61,6 +66,14 @@ export class RGBMinMax {
       n=255;
     }
     return n;
+  }
+
+  swap(min, max){
+    if(min > max){
+      let temp = min;
+      min = max;
+      max = temp;
+    }
   }
 }
 

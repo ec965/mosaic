@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
+import {Button} from '../components/button';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import axios from "axios";
 import {APIURL, LOGIN} from '../config/api';
 import {FormError, FormButton} from './components';
 import {useAuth} from './functions';
+import {Row} from '../components/layout';
 
 const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
   const [authErr, setAuthErr] = useState("");
 
-  const alreadyLogged = useAuth("/profile");
-
+  const alreadyLogged = useAuth("/app");
 
   const login = async (username, password) => {
     const res = await axios.post(APIURL + LOGIN, {
@@ -22,6 +23,16 @@ const LoginForm = () => {
     }
 
     return res.data;
+  }
+  
+  const handleDemoUser = () => {
+    login('test', 'test123')
+    .then((data) => {
+      setAuthErr(data.message);
+    })
+    .catch((error) => {
+      setServerErr(true);
+    });
   }
 
   return(
@@ -59,9 +70,14 @@ const LoginForm = () => {
             <Field className="form-field" type="password" name="password" placeholder="Password"/>
             <ErrorMessage className="form-error" name="password" component="div"/>
 
-            <FormButton type="submit" disabled={isSubmitting}>
-              Submit
-            </FormButton>
+            <Row className='matrix'>
+              <FormButton type="submit" disabled={isSubmitting}>
+                Submit
+              </FormButton>
+              <Button onClick={handleDemoUser}>
+                Demo User 
+              </Button> 
+            </Row>
           </Form>
         )}
       </Formik>

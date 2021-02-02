@@ -7,7 +7,7 @@ import {
 import {Login, Register} from '../auth/index';
 import LandingPage from '../pages/landing';
 import PrivateRoute from './privateroute';
-import UserProfile from '../pages/profile';
+import IndexPage from '../pages';
 
 const App = () =>{
   return(
@@ -15,8 +15,8 @@ const App = () =>{
     {/* // components */}
 
       <Switch>
-        <PrivateRoute path="/profile">
-          <UserProfile/>
+        <PrivateRoute path="/app">
+          <IndexPage/>
         </PrivateRoute>
         <Route path="/login">
           <Login/>

@@ -15,9 +15,9 @@ const PixelDiv = (props) => {
   const style = {
     backgroundColor: `rgb(${props.pixel.r}, ${props.pixel.g}, ${props.pixel.b}`,
     // backgroundColor: props.pixel.hex,
-    height:`${props.dimension}`,
-    width:`${props.dimension}`,
-    borderRadius: '25%',
+    height:`${props.pixelSize}px`,
+    width:`${props.pixelSize}px`,
+    borderRadius: `${props.borderRadius}%`,
   }
   
   return(
@@ -25,29 +25,49 @@ const PixelDiv = (props) => {
   );
 }
 
-const PixelApp = () => {
+const PixelApp = (props) => {
   const [pixelMap, setPixelMap] = useState([[]]);
   
   useEffect(() => {
-    let minmax = new RGBMinMax(0,255,0,255,0,255)
-    let data = new RandomPixelSquare(60, minmax);
-    data.sortHueVertical();
+    let minmax = new RGBMinMax(props.rmin,props.rmax,props.gmin,props.gmax,props.bmin,props.bmax);
+    let data = new RandomPixelSquare(props.dimension, minmax);
+    if (props.sortHueCol){
+      data.sortHueVertical(props.sortHueColLen);
+    }
+    if (props.sortHueRow){
+      data.sortHue(props.sortHueRowLen);
+    }
     setPixelMap(data.data)
-  },[])
+  },[props.sortHueRowLen, props.sortHueColLen, props.sortHueCol, props.sortHueRow, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax, props.dimension])
 
   const render = pixelMap.map((inner,i) => {
     return(
       <Row key={i}>
-        {inner.map((p,i) => <PixelDiv pixel={p} dimension='12px'/>)}
+        {inner.map((p,j) => <PixelDiv key={j} pixel={p} pixelSize={props.pixelSize} borderRadius={props.borderRadius}/>)}
       </Row>
     );
   });
 
   return(
-    <Column>
+    <Column className={props.className}>
       {render}
     </Column>
   );
+}
+PixelApp.defaultProps={
+  dimension:30,
+  pixelSize:10,
+  borderRadius: 25,
+  rmin: 0,
+  rmax: 255,
+  gmin: 0,
+  gmax: 255,
+  bmin: 0,
+  bmax: 255,
+  sortHueRow: false,
+  sortHueCol: false,
+  sortHueRowLen: -1,
+  sortHueColLen: -1,
 }
 
 export default PixelApp;

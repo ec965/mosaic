@@ -6,13 +6,19 @@ const dataSchema = new Schema({
   updated: {type: Date, default: Date.now},
   name: {type: String},
   project:{
-    pixels:[
-      {
-        r:Number, 
-        g:Number, 
-        b:Number
-      }
-    ]
+    dimension: Number,
+    pixelSize: Number,
+    borderRadius: Number,
+    rmin: Number,
+    rmax: Number,
+    gmin: Number,
+    gmax: Number,
+    bmin: Number,
+    bmax: Number,
+    sortHueRow: Boolean,
+    sortHueCol: Boolean,
+    sortHueRowLen: Number,
+    sortHueColLen: Number,
   }
 });
 

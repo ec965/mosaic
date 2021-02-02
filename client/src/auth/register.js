@@ -11,7 +11,7 @@ const RegisterForm= () => {
   const [serverErr, setServerErr] = useState(false);
   const [registered, setRegistered] = useState(false);
   
-  const alreadyLogged = useAuth('/profile');
+  const alreadyLogged = useAuth('/app');
   
   const register = async (username,password) => {
     const res = await axios.post(APIURL + REGISTER, {
