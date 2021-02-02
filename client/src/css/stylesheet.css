@@ -108,6 +108,13 @@ a:hover{
   cursor: pointer;
 }
 
+.red {
+  background-color: var(--base08);
+}
+.red:hover{
+  background-color:var(--base0E);
+}
+
 button {
   border-style: none;
   border-radius: 12px;
@@ -292,10 +299,6 @@ form{
 }
 
 /*-----PROFILE-----*/
-.profile-panel{
-  width:33%;
-  box-shadow: 1px 1px 1px 2px rgba(0, 0, 0, 0.4);
-}
 .profile-card{
   margin: 12px 0 12px 0;
 }
@@ -343,6 +346,17 @@ form{
 .toggle input:checked + .toggle-slider:before{
   transform: translateX(24px);
 }
+/* ---- slider----*/
+.slider{
+  background:var(--base0D);
+  fill: var(--base0D);
+  stroke: none;
+  height: 25px;
+  width: 75%;
+}
+.slider:hover{
+  cursor: pointer;
+}
 
 /*-----generator app page------*/
 
@@ -355,6 +369,13 @@ form{
   position: relative;
   padding: 0 24px 24px 0;
   width:246px;
+}
+.panel .form-field{
+  width:200px;
+}
+.panel button{
+  margin-bottom: 6px;
+  margin-top: 6px;
 }
 .editor{
   position: relative;

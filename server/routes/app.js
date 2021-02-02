@@ -7,7 +7,9 @@ const Data = require("../models/data");
 router.get('/', (req, res, next) => {
   Data.
     find().
-    where('username').equals(req.user.username).
+    where('username').
+    equals(req.user.username).
+    sort({updated: -1}).
     exec(function(err, data){
       if(err) return next(err);
 
@@ -20,10 +22,11 @@ router.get('/', (req, res, next) => {
 // insert a new data model into the db
 router.post('/', (req, res, next) => {
 
-  if(req.user.username && req.body.data){
+  if(req.user.username && req.body){
     Data.create({
       username: req.user.username,
-      data: req.body.data,
+      project: req.body.project,
+      title: req.body.title,
     }, function(err, data){
       if(err) return next(err);
 
@@ -38,7 +41,7 @@ router.post('/', (req, res, next) => {
 // update data of id
 router.put('/', (req, res, next) => {
   if(req.body.data && req.body.id){
-    Data.updateOne({_id:req.body.id}, {data:req.body.data}, function(err, opResult){
+    Data.updateOne({_id:req.body.id}, {title:req.body.title, project:req.body.project},function(err, opResult){
       if(err) return next(err);
 
       res.sendStatus(200);

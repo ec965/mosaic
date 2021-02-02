@@ -18,7 +18,7 @@ const LandingPage = (props) => {
             dimension={10} 
             pixelSize={50}
           />
-          <a href="https://https://github.com/ec965/user-land">
+          <a href="https://github.com/ec965/user-land">
             <h3 className="landing-text vertical-text">GitHub</h3>
           </a>
         </Row>

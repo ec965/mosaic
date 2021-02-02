@@ -1,72 +1,21 @@
 import React, {useState} from 'react';
+import axios from 'axios';
+import {APIURL, APP} from '../config/api';
+import {Button} from '../components/button';
 import PixelApp from '../app/index';
 import {Column, Row} from '../components/layout';
 import Toggle from '../components/toggle';
+import {Redirect} from 'react-router-dom';
 import Slider from '../components/slider';
 
-const sliders = [
-  {
-    min: 1,
-    max: 30,
-    name:'dimensions',
-    defaultValue: 10,
-  },
-  {
-    min: 1,
-    max: 40,
-    name:'pixel size',
-    defaultValue: 30,
-  },
-  {
-    min: 0,
-    max: 50,
-    name:'border radius',
-    defualtValue: 50,
-  },
-  {
-    min: 0,
-    max: 255,
-    name:'rmin',
-    defaultValue: 0,
-  },
-  {
-    min: 0,
-    max: 255,
-    name:'rmax',
-    defaultValue: 255,
-  },
-  {
-    min: 0,
-    max: 255,
-    name:'gmin',
-    defaultValue: 0,
-  },
-  {
-    min: 0,
-    max: 255,
-    name:'gmax',
-    defaultValue: 255,
-  },
-  {
-    min: 0,
-    max: 255,
-    name:'bmin',
-    defaultValue: 0,
-  },
-  {
-    min: 0,
-    max: 255,
-    name:'bmax',
-    defaultValue: 255,
-  },
-];
 
-const ToolLabel = (props) => <h6 className="courier">{props.children}</h6>
+const ToolLabel = (props) => <h6 onClick={props.onClick} className={`${props.className} courier`}>{props.children}</h6>
 
 const Generator = () =>{
-  const [dimension, setDimension] = useState(sliders[0].defaultValue);
-  const [pixelSize, setPixelSize] = useState(sliders[1].defaultValue);
-  const [borderRadius, setBorderRadius] = useState(sliders[2].defaultValue);
+  const [title, setTitle] = useState('');
+  const [dimension, setDimension] = useState(10);
+  const [pixelSize, setPixelSize] = useState(30);
+  const [borderRadius, setBorderRadius] = useState(25);
   const [rmin, setRmin] = useState(0);
   const [rmax, setRmax] = useState(255);
   const [gmin, setGmin] = useState(0);
@@ -77,9 +26,80 @@ const Generator = () =>{
   const [sortHueRowLen, setSortHueRowLen] = useState(dimension);
   const [sortHueCol, setSortHueCol] = useState(false);
   const [sortHueColLen, setSortHueColLen] = useState(dimension);
+  const [serverError, setServerError] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+
+  const sliders = [
+    {
+      min: 1,
+      max: 30,
+      name:'dimensions',
+      defaultValue: 10,
+      var: dimension,
+    },
+    {
+      min: 1,
+      max: 40,
+      name:'pixel size',
+      defaultValue: 30,
+      var: pixelSize
+    },
+    {
+      min: 0,
+      max: 50,
+      name:'border radius',
+      defaultValue: 25,
+      var: borderRadius
+    },
+    {
+      min: 0,
+      max: 255,
+      name:'rmin',
+      defaultValue: 0,
+      var: rmin
+    },
+    {
+      min: 0,
+      max: 255,
+      name:'rmax',
+      defaultValue: 255,
+      var: rmax
+    },
+    {
+      min: 0,
+      max: 255,
+      name:'gmin',
+      defaultValue: 0,
+      var: gmin
+    },
+    {
+      min: 0,
+      max: 255,
+      name:'gmax',
+      defaultValue: 255,
+      var: gmax
+    },
+    {
+      min: 0,
+      max: 255,
+      name:'bmin',
+      defaultValue: 0,
+      var: bmin
+    },
+    {
+      min: 0,
+      max: 255,
+      name:'bmax',
+      defaultValue: 255,
+      var: bmax,
+    },
+  ];
 
   const handleChange = (event) => {
     switch(event.target.name){
+      case 'title':
+        setTitle(event.target.value);
+        break;
       case 'dimensions':
         setDimension(event.target.value);
         break;
@@ -121,21 +141,56 @@ const Generator = () =>{
 
   const handleSave = () => {
     const data = {
-      dimension: dimension,
-      pixelSize: pixelSize,
-      borderRadius: borderRadius,
-      rmin: rmin,
-      rmax: rmax,
-      gmin: gmin,
-      gmax: gmax,
-      bmin: bmin,
-      bmax: bmax,
-      sortHueRow: sortHueRow,
-      sortHueCol: sortHueCol,
-      sortHueColLen: sortHueColLen,
-      sortHueRowLen: sortHueRowLen,
+      title: title,
+      project:{
+        dimension: dimension,
+        pixelSize: pixelSize,
+        borderRadius: borderRadius,
+        rmin: rmin,
+        rmax: rmax,
+        gmin: gmin,
+        gmax: gmax,
+        bmin: bmin,
+        bmax: bmax,
+        sortHueRow: sortHueRow,
+        sortHueCol: sortHueCol,
+        sortHueColLen: sortHueColLen,
+        sortHueRowLen: sortHueRowLen,
+      }
     }
-    // post data to DB
+    
+    // get the token from local storage
+    let user = JSON.parse(localStorage.getItem('user'));
+    const token = user.token;
+
+    // post data
+    axios.post(APIURL + APP, 
+      data,
+      {headers: {"Authorization": `Bearer ${token}`}}
+    )
+    .then((res) => {
+      setRedirect(true);
+    })
+    .catch((error) => {
+      if(error.response.status === 500){
+        setServerError(true);
+      }
+      console.error(error);
+    })
+  }
+
+  const handleReset = () =>{
+    setDimension(sliders[0].defaultValue);
+    setPixelSize(sliders[1].defaultValue);
+    setBorderRadius(sliders[2].defaultValue);
+    setRmin(0);
+    setRmax(255);
+    setGmin(0);
+    setGmax(255);
+    setBmin(0);
+    setBmax(255);
+    setSortHueRowLen(sliders[0].defaultValue);
+    setSortHueColLen(sliders[0].defaultValue);
   }
 
   const handleToggle = (event) =>{
@@ -156,7 +211,7 @@ const Generator = () =>{
           max={t.max}
           onChange={handleChange}
           name={t.name}
-          defaultValue={t.defaultValue}
+          value={t.var}
         />
       </div>
     );
@@ -165,6 +220,8 @@ const Generator = () =>{
   return(
     <div className="generator">
       <div className='panel'>
+        <Button onClick={handleSave} className="courier">SAVE</Button>
+        <input onChange={handleChange} value={title} type="text" className='form-field' placeholder="Title" name="title"/>
         {sliderTools}
         <ToolLabel>sort hue by rows</ToolLabel>
         <Toggle onClick={handleToggle} name='sortHueRow'/>
@@ -186,6 +243,7 @@ const Generator = () =>{
           name="sortHueColLen"
           defaultValue={dimension}
         />
+        <Button onClick={handleReset} className="courier red">RESET DEFAULT</Button>
       </div>
       <div className='editor'>
         <PixelApp
@@ -204,6 +262,7 @@ const Generator = () =>{
           sortHueColLen={sortHueColLen}
         />
       </div>
+      {redirect && <Redirect to='/app/profile'/>}
     </div>
   );
 }

@@ -21,7 +21,28 @@ const UserProfile = () => {
 
   const cards = data.map((d, i) => {
     return(
-      <PixelCard className='profile-card' key={i} title={d.name} date={d.updated} />
+      <>
+      {d.project && 
+      <PixelCard 
+        className='profile-card' 
+        key={i} 
+        title={d.title} 
+        date={d.updated} 
+        dimension={d.project.dimension}
+        pixelSize={d.project.pixelSize}
+        borderRadius={d.project.borderRadius}
+        rmin={d.project.rmin}
+        rmax={d.project.rmax}
+        gmin={d.project.gmin}
+        gmax={d.project.gmax}
+        bmin={d.project.bmin}
+        bmax={d.project.bmax}
+        sortHueRow={d.project.sortHueRow}
+        sortHueRowLen={d.project.sortHueRowLen}
+        sortHueCol={d.project.sortHueCol}
+        sortHueColLen={d.project.sortHueColLen}
+      />}
+      </>
     )
   })
 

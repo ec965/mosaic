@@ -26,7 +26,7 @@ const LoginForm = () => {
   }
   
   const handleDemoUser = () => {
-    login('test', 'test123')
+    login('demo_user', 'test123')
     .then((data) => {
       setAuthErr(data.message);
     })
