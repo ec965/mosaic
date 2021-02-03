@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import PixelCard from '../app/card';
-import {Column, Row} from '../components/layout';
 import {APIURL, RECENT} from '../config/api';
 import {getToken} from '../auth/functions';
 import axios from 'axios';
 import {dateString} from '../util';
 import {Link} from 'react-router-dom'
+import {Page} from '../components/layout';
 
 const CardMatrix = () => {
   const [recentProjects, setRecentProjects] = useState([]);
@@ -29,10 +29,10 @@ const CardMatrix = () => {
       pixelSize = null;
     }
     return(
-      <Link to="" key={i}>
+      <Link to={`project/${p._id}`} key={i}>
         <PixelCard 
           title={p.title} 
-          date={dateString(p.updated)} 
+          date={dateString(p.updatedAt)} 
           username={p.username}
           dimension={p.project.dimension || null}
           pixelSize={pixelSize || null}
@@ -53,11 +53,11 @@ const CardMatrix = () => {
   })
 
   return(
-    <div className='center-page'>
+    <Page className='center-page'>
       <div className='matrix'>
         {cards}
       </div>
-    </div>
+    </Page>
   );
 }
 

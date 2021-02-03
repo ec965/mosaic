@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 
 const commentSchema = new Schema({
   username: String,
-  updated: {type: Date, default: Date.now},
   text: String,
   edited:{type: Boolean, default: false}
-})
+},{timestamps:true}
+);
 
 commentSchema.pre('save', function(next){
   var comment = this;
@@ -16,7 +16,6 @@ commentSchema.pre('save', function(next){
 
 const dataSchema = new Schema({
   username: {type: String, require: true},
-  updated: {type: Date, default: Date.now},
   title: {type: String},
   project:{
     dimension: Number,
@@ -34,12 +33,20 @@ const dataSchema = new Schema({
     sortHueColLen: Number,
   },
   comments: [commentSchema]
-});
+},{timestamps: true}
+);
 
 
 dataSchema.pre('save', function(next){
   var item = this;
-  item.updated = Date.now();
+  const minMaxCheck = (item, min, max) => {
+    if (item > max){
+      item = max;
+    } else if(item < min){
+      item = min;
+    }
+    return item;
+  }
 
   item.dimension = minMaxCheck(item.dimension,1,30);
   item.pixelSize = minMaxCheck(item.pixelSize,1,40);
@@ -55,13 +62,5 @@ dataSchema.pre('save', function(next){
   next();
 })
 
-const minMaxCheck = (item, min, max) => {
-  if (item > max){
-    item = max;
-  } else if(item < min){
-    item = min;
-  }
-  return item;
-}
 
 module.exports = mongoose.model('Data', dataSchema);

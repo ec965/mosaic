@@ -7,7 +7,12 @@ import {
 import {Login, Register} from '../auth/index';
 import LandingPage from '../pages/landing';
 import PrivateRoute from './privateroute';
-import IndexPage from '../pages';
+import UserProfile from '../pages/profile';
+import Generator from '../pages/generator';
+import CardMatrix from '../pages/home';
+import {Page} from '../components/layout';
+import UserNav from '../router/navbar';
+import ProjectPage from '../pages/project';
 
 const App = () =>{
   return(
@@ -15,9 +20,27 @@ const App = () =>{
     {/* // components */}
 
       <Switch>
-        <PrivateRoute path="/app">
-          <IndexPage/>
+        <PrivateRoute path="/project/:id">
+          <UserNav/>
+          <ProjectPage/>
         </PrivateRoute>
+        <PrivateRoute path="/home">
+          <UserNav/>
+          <CardMatrix/>
+        </PrivateRoute>
+        <PrivateRoute path='/generator/:id'>
+          <UserNav/>
+          <Generator/>
+        </PrivateRoute>
+        <PrivateRoute path={`/generator`}>
+          <UserNav/>
+          <Generator/>
+        </PrivateRoute>
+        <PrivateRoute path={`/profile`}>
+          <UserNav/>
+          <UserProfile/>
+        </PrivateRoute>
+
         <Route path="/login">
           <Login/>
         </Route>

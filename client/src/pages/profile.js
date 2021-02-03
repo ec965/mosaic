@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Row, Column} from '../components/layout';
-import {APIURL, USERPROJECTS} from '../config/api';
+import {Page, Column} from '../components/layout';
+import {APIURL, DELETE, USERPROJECTS} from '../config/api';
 import axios from "axios";
 import PixelCard from '../app/card';
 import  {getToken} from '../auth/functions';
 import {Button} from '../components/button';
-import {Link, useRouteMatch, Switch} from 'react-router-dom';
-import PrivateRoute from '../router/privateroute';
-import ProjectPage from './project';
+import {Link} from 'react-router-dom';
 
 const UserProfile = () => {
-  let match = useRouteMatch();
   const [username, setUsername] = useState('');
   const [data, setData] = useState([]);
   
@@ -24,14 +21,24 @@ const UserProfile = () => {
     .catch((error) => console.error(error));
   },[]);
 
+  const handleDelete = (event) => {
+    event.preventDefault();
+    const token = getToken();
+    axios.delete(APIURL + DELETE,
+      {id: event.target.name},
+      {headers: {"Authorization": `Bearer ${token}`}}
+    )
+  }
 
   const cards = data.map((d, i) => {
+    console.log(d);
     return(
-      <Link to={`${match.url}/${d._id}`} className='row profile-card' key={i}>
+      <div className='row profile-card' key={i}>
+      <Link to={`/project/${d._id}`} className='row profile-card'>
         <PixelCard 
           title={d.title} 
           className='profile-card' 
-          date={d.updated} 
+          date={d.updatedAt} 
           dimension={d.project.dimension || null}
           pixelSize={d.project.pixelSize || null}
           borderRadius={d.project.borderRadius || null}
@@ -47,27 +54,18 @@ const UserProfile = () => {
           sortHueColLen={d.project.sortHueColLen || null}
         />
       </Link>
+      <Button name={d.project._id} onClick={handleDelete} className="red">Delete</Button>
+      </div>
     )
   });
 
-  const routes = data.map((d,i) => {
-    return(
-      <PrivateRoute path={`${match.path}/${d._id}`} key={i}>
-        <ProjectPage id={d._id}/>
-      </PrivateRoute>
-    );
-  });
-
   return(
-    <Switch>
-      {routes}
-      <PrivateRoute path={`${match.path}`}>
-        <Column>
-          <h3>{username}'s Projects</h3>
-          {cards}
-        </Column>
-      </PrivateRoute>
-    </Switch>
+    <Page>
+      <Column>
+        <h3>{username}'s Projects</h3>
+        {cards}
+      </Column>
+    </Page>
   );
 }
 

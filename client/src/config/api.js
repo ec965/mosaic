@@ -12,6 +12,5 @@ export const UPDATE = APP + '/update'
 export const RECENT = APP + '/recent'
 
 export const PROJECT = '/project';
-export const NEWCOMMENT = PROJECT + '/comment'
-export const EDITCOMMENT= PROJECT + '/edit_comment'
+export const COMMENT = PROJECT + '/comment'
 export const DELETE = PROJECT + '/delete'

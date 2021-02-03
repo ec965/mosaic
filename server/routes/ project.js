@@ -97,16 +97,27 @@ router.post('/comment', (req,res,next)=>{
 }
 */
 // edit a comment
-router.patch('/edit_comment', (req,res,next) => {
-  if(req.body.project_id && req.body.comment.id && req.body.comment.text){
+router.patch('/comment', (req,res,next) => {
+  // check that current username is same as saved username
+
+  if(req.body.project_id && req.body.comment){
+    if(!req.body.comment.id || !req.body.comment.text){
+      res.sendStatus(400);
+    }
     // find the piece of data
     Data.findOne(
-      {_id: req.body.project_id},
+      {
+        _id: req.body.project_id,
+      },
       function(err, data){
         if(err) return next(err);
+        // check that the data exists
+        if(!data) return res.sendStatus(400);
 
         // update the comment
         const comment = data.comments.id(req.body.comment.id);
+        if(comment.username !== req.user.username) return res.sendStatus(400);
+
         comment.text = req.body.comment.text;
         comment.edited = true;
 

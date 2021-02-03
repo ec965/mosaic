@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import {APIURL, NEW} from '../config/api';
 import {Button} from '../components/button';
 import PixelApp from '../app/index';
-import {Column, Row} from '../components/layout';
 import Toggle from '../components/toggle';
-import {Redirect} from 'react-router-dom';
+import {useParams, Redirect} from 'react-router-dom';
 import Slider from '../components/slider';
+import {Page} from '../components/layout';
 
 
 const ToolLabel = (props) => <h6 onClick={props.onClick} className={`${props.className} courier`}>{props.children}</h6>
@@ -27,7 +27,16 @@ const Generator = () =>{
   const [sortHueCol, setSortHueCol] = useState(false);
   const [sortHueColLen, setSortHueColLen] = useState(dimension);
   const [serverError, setServerError] = useState(false);
-  const [redirect, setRedirect] = useState(false);
+  const [redirectId, setRedirectId] = useState(false);
+
+  // let {id} = useParams();
+
+  // useEffect(() => {
+  //   if(id){
+  //     // get the data for this project
+      
+  //   }
+  // },[])
 
   const sliders = [
     {
@@ -169,7 +178,8 @@ const Generator = () =>{
       {headers: {"Authorization": `Bearer ${token}`}}
     )
     .then((res) => {
-      setRedirect(true);
+      // the id of the new project is returned
+      setRedirectId(res.data);
     })
     .catch((error) => {
       if(error.response.status === 500){
@@ -204,6 +214,26 @@ const Generator = () =>{
     }
   }
 
+  const handleRandom = () => {
+    const rand = (min, max) => {
+      return Math.floor(Math.random()*(max-min) + min);
+    }
+
+    setDimension(rand(sliders[0].min, sliders[0].max));
+    setPixelSize(rand(sliders[1].min, sliders[1].max));
+    setBorderRadius(rand(sliders[2].min, sliders[2].max));
+    setRmin(rand(0,255));
+    setRmax(rand(0,255));
+    setGmin(rand(0,255));
+    setGmax(rand(0,255));
+    setBmin(rand(0,255));
+    setBmax(rand(0,255));
+    setSortHueRowLen(rand(0,dimension));
+    setSortHueColLen(rand(0,dimension));
+    setSortHueCol(rand(0,1) === 0 ? false : true);
+    setSortHueRow(rand(0,1) === 0 ? false : true);
+  }
+
   const sliderTools = sliders.map((t,i) => {
     return(
       <div key={i}>
@@ -220,10 +250,11 @@ const Generator = () =>{
   })
 
   return(
-    <div className="generator">
+    <Page className="generator">
       <div className='panel'>
-        <Button onClick={handleSave} className="courier">SAVE</Button>
+        <Button onClick={handleSave} className="courier">Save</Button>
         <input onChange={handleChange} value={title} type="text" className='form-field' placeholder="Title" name="title"/>
+        <Button onClick={handleRandom} className="courier">Random</Button>
         {sliderTools}
         <ToolLabel>sort hue by rows</ToolLabel>
         <Toggle onClick={handleToggle} name='sortHueRow' checked={sortHueRow}/>
@@ -245,7 +276,7 @@ const Generator = () =>{
           name="sortHueColLen"
           defaultValue={dimension}
         />
-        <Button onClick={handleReset} className="courier red">RESET DEFAULT</Button>
+        <Button onClick={handleReset} className="courier red">Reset</Button>
       </div>
       <div className='editor'>
         <PixelApp
@@ -264,8 +295,8 @@ const Generator = () =>{
           sortHueColLen={sortHueColLen}
         />
       </div>
-      {redirect && <Redirect to='/app/profile'/>}
-    </div>
+      {redirectId && <Redirect to={`/project/${redirectId}`}/>}
+    </Page>
   );
 }
 

@@ -6,9 +6,7 @@ const mongoose = require("mongoose");
 const userSchema = new Schema({
   username: { type: String, required: true, trim: true, index:{unique:true}},
   password: {type:String, required: true},
-  created: {type: Date, default: Date.now},
-  updated: {type: Date, default: Date.now}
-})
+},{timestamps:true});
 
 userSchema.methods.checkPassword = function(password, cb) {
   bcrypt.compare(password, this.password, function(err, result){
@@ -18,7 +16,7 @@ userSchema.methods.checkPassword = function(password, cb) {
 
 userSchema.pre('save', function(next){
   var user = this;
-  user.updated = Date.now();
+  console.log(JSON.stringify(user));
 
   // only hash  password if it's new or been modified
   if (!user.isModified('password')) return next();

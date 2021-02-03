@@ -4,11 +4,14 @@ import  {getToken} from '../auth/functions';
 import {Button} from '../components/button';
 import PixelApp from '../app/index';
 import {dateString} from '../util';
-import {APIURL, DELETE, PROJECT, NEWCOMMENT} from '../config/api';
+import {APIURL, PROJECT, COMMENT} from '../config/api';
 import axios from 'axios';
 import TextBoxForm from '../components/textbox';
+import {useParams} from 'react-router-dom';
 
-const ProjectPage = (props) => {
+const TEXTBOX = {maxLength: 160, rows:4, cols:40};
+
+const ProjectPage = () => {
   const [project, setProject] = useState({});
   const [username, setUserName] = useState("");
   const [date, setDate] = useState('');
@@ -16,28 +19,21 @@ const ProjectPage = (props) => {
   const [title, setTitle] = useState('');
   const [newComment, setNewComment] = useState('');
 
+  let {id} = useParams();
+
   useEffect (() => {
     const token = getToken();
-    axios.get(APIURL + PROJECT + '?id=' + props.id,
+    axios.get(APIURL + PROJECT + '?id=' + id,
       {headers: {"Authorization": `Bearer ${token}`}})
     .then((res) => {
       setUserName(res.data.username);
-      setDate(dateString(res.data.updated));
+      setDate(dateString(res.data.updatedAt));
       setTitle(res.data.title);
       setComments(res.data.comments.reverse());
       setProject(res.data.project);
     })
     .catch((error) => console.error(error));
   }, [])
-
-  const handleDelete = (event) => {
-    event.preventDefault();
-    const token = getToken();
-    axios.delete(APIURL + DELETE,
-      {id: event.target.name},
-      {headers: {"Authorization": `Bearer ${token}`}}
-    )
-  }
 
   const handleNewComment = (event) =>{
     setNewComment(event.target.value);
@@ -50,8 +46,8 @@ const ProjectPage = (props) => {
     setNewComment('');
 
     const token = getToken();
-    axios.post(APIURL + NEWCOMMENT,
-      {project_id: props.id, text: newComment},
+    axios.post(APIURL + COMMENT,
+      {project_id: id, text: newComment},
       {headers: {"Authorization": `Bearer ${token}`}}
     )
     .then((res) => {
@@ -65,14 +61,19 @@ const ProjectPage = (props) => {
     .catch((error) => console.error(error));
   }
 
+
   const commentList = comments.map((c,i) => {
+    const currentUser = localStorage.getItem('username');
     return(
       <Comment
         key={i}
-        username={c.usernmame}
+        username={c.username}
         text={c.text}
-        updated={c.updated}
+        updatedAt={c.updatedAt}
         edited={c.edited}
+        canEdit={c.username === currentUser}
+        id={c._id}
+        project_id={id}
       />
     );
   });
@@ -97,14 +98,13 @@ const ProjectPage = (props) => {
         sortHueColLen={project.sortHueColLen}
         sortHueRowLen={project.sortHueRowLen}
       />
-      <Button name={project._id} onClick={handleDelete} className="red">Delete</Button>
       <TextBoxForm
         onSubmit={submitNewComment}
-        maxLength={160}
+        maxLength={TEXTBOX.maxLength}
         value={newComment}
         onChange={handleNewComment}
-        rows={4}
-        cols={40}
+        rows={TEXTBOX.rows}
+        cols={TEXTBOX.cols}
       />
       {commentList}
     </div>
@@ -112,12 +112,59 @@ const ProjectPage = (props) => {
 }
 
 const Comment = (props) => {
+  const [showEditBox, setShowEditBox] = useState(false);
+  const [text, setText] = useState(props.text);
+  const [updatedAt, setupdatedAt] = useState(props.updatedAt);
+  const [username, setUsername] = useState(props.username);
+  const [edited, setEdited] = useState(props.edited);
+
+
+  const handleShowEdit = () => {
+    setShowEditBox(!showEditBox);
+  }
+  
+  const handleChange = (event) => {
+    setText(event.target.value);
+  }
+
+  const handleSubmit= (event) => {
+    event.preventDefault();
+    setShowEditBox(false);
+
+    const token = getToken();
+    const data = {project_id: props.project_id, comment:{id: props.id, text: text}};
+    axios.patch(APIURL + COMMENT,
+      data,
+      {headers: {"Authorization": `Bearer ${token}`}}
+    )
+    .then((res) => {
+      setupdatedAt(res.data.updatedAt);
+      setUsername(res.data.username);
+      setEdited(res.data.edited);
+      setText(res.data.text);
+    })
+    .catch((error) => console.error(error));
+  }
+
   return(
     <Column>
-      <p>{props.username}</p>
-      <p>{props.text}</p>
-      <p>{props.updated}</p>
-      {props.edited && <p>edited</p>}
+      <p>{username}</p>
+      <p>{text}</p>
+      <p>{updatedAt}</p>
+      {edited && <p>edited</p>}
+      {props.canEdit &&
+        <p className="link" onClick={handleShowEdit}>edit</p>
+      }
+      {showEditBox && 
+        <TextBoxForm
+          onSubmit={handleSubmit}
+          maxLength={TEXTBOX.maxLength}
+          value={text}
+          onChange={handleChange}
+          rows={TEXTBOX.rows}
+          cols={TEXTBOX.cols}
+        />
+      }      
     </Column>
   );
 }

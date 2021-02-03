@@ -11,7 +11,7 @@ const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
   const [authErr, setAuthErr] = useState("");
 
-  const alreadyLogged = useAuth("/app");
+  const alreadyLogged = useAuth("/home");
 
   const login = async (username, password) => {
     const res = await axios.post(APIURL + LOGIN, {
@@ -20,6 +20,7 @@ const LoginForm = () => {
     })
     if(res.data.token) {
       localStorage.setItem('user', JSON.stringify(res.data));
+      localStorage.setItem('username', username);
     }
 
     return res.data;

@@ -9,8 +9,8 @@ router.get('/myprojects', (req, res, next) => {
     find().
     where('username').
     equals(req.user.username).
-    sort({updated: -1}).
-    select('username updated title project').
+    sort({updatedAt: -1}).
+    select('username title project updatedAt').
     exec(function(err, data){
       if(err) return next(err);
 
@@ -32,7 +32,7 @@ router.post('/new', (req, res, next) => {
     }, function(err, data){
       if(err) return next(err);
 
-      res.sendStatus(200);
+      res.json(data._id);
     });
   } else {
     res.sendStatus(400);
@@ -62,8 +62,8 @@ router.get('/recent', (req,res,next) => {
   Data
     .find()
     .limit(18)
-    .sort({updated: -1})
-    .select('username updated title project')
+    .sort({updatedAt: -1})
+    .select('username title project updatedAt')
     .exec(function(err,data) {
       if(err) return next(err);
 
