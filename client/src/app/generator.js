@@ -12,16 +12,13 @@ export class Pixel {
     }
     return "#" + toHex(this.r) + toHex(this.g) + toHex(this.b);
   }
-  get sum(){
-    return parseInt(this.r + this.g + this.b);
-  }
   get hue(){ // hue is a degree from 0 to 359
     let r = this.r/255;
     let g = this.g/255;
     let b = this.b/255;
-    let hue;
     let max = Math.max(r,g,b);
     let min = Math.min(r,g,b);
+    let hue;
     switch(max){
       case r:
         hue = (g-b)/(max-min);
@@ -41,8 +38,31 @@ export class Pixel {
 
     return hue;
   }
+  get luminace(){
+    let r = this.r/255;
+    let g = this.g/255;
+    let b = this.b/255;
+    let max = Math.max(r,g,b);
+    let min = Math.min(r,g,b);
+    return (max + min)/2;    
+  }
+  get saturation(){
+    let r = this.r/255;
+    let g = this.g/255;
+    let b = this.b/255;
+    let max = Math.max(r,g,b);
+    let min = Math.min(r,g,b);
+    let lumi = this.luminance;
+    if (lumi <= 0.5){
+      return (max - min)/(max + min);
+    }
+    return (max-min)/(2-max-min);
+  }
 }
 
+// this object holds rgb min and max data
+// it also ensures that data is within the 0-255 range
+// and that min < max
 export class RGBMinMax {
   constructor(rmin, rmax, gmin, gmax, bmin, bmax){
     this.rmin = this.check(rmin);

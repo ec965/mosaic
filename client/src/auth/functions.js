@@ -4,6 +4,10 @@ import {Redirect} from 'react-router-dom';
 export const logout = () => {
   localStorage.removeItem('user');
 }
+export const getToken = () => {
+  let user = JSON.parse(localStorage.getItem('user'));
+  return user.token;
+}
 
 // checks local storage for jwt
 export const checkAuth = () =>{

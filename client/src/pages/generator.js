@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
-import {APIURL, APP} from '../config/api';
+import {APIURL, NEW} from '../config/api';
 import {Button} from '../components/button';
 import PixelApp from '../app/index';
 import {Column, Row} from '../components/layout';
@@ -164,7 +164,7 @@ const Generator = () =>{
     const token = user.token;
 
     // post data
-    axios.post(APIURL + APP, 
+    axios.post(APIURL + NEW, 
       data,
       {headers: {"Authorization": `Bearer ${token}`}}
     )
@@ -191,6 +191,8 @@ const Generator = () =>{
     setBmax(255);
     setSortHueRowLen(sliders[0].defaultValue);
     setSortHueColLen(sliders[0].defaultValue);
+    setSortHueCol(false);
+    setSortHueRow(false);
   }
 
   const handleToggle = (event) =>{
@@ -224,7 +226,7 @@ const Generator = () =>{
         <input onChange={handleChange} value={title} type="text" className='form-field' placeholder="Title" name="title"/>
         {sliderTools}
         <ToolLabel>sort hue by rows</ToolLabel>
-        <Toggle onClick={handleToggle} name='sortHueRow'/>
+        <Toggle onClick={handleToggle} name='sortHueRow' checked={sortHueRow}/>
         <ToolLabel>sort length</ToolLabel>
         <Slider
           min={0}
@@ -234,7 +236,7 @@ const Generator = () =>{
           defaultValue={dimension}
         />
         <ToolLabel>sort hue by columns</ToolLabel>
-        <Toggle onClick={handleToggle} name='sortHueCol'/>
+        <Toggle onClick={handleToggle} name='sortHueCol' checked={sortHueCol}/>
         <ToolLabel>sort length</ToolLabel>
         <Slider
           min={0}

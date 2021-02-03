@@ -1,6 +1,19 @@
 const {Schema} = require("mongoose");
 const mongoose = require("mongoose");
 
+const commentSchema = new Schema({
+  username: String,
+  updated: {type: Date, default: Date.now},
+  text: String,
+  edited:{type: Boolean, default: false}
+})
+
+commentSchema.pre('save', function(next){
+  var comment = this;
+  comment.updated = Date.now();
+  next();
+})
+
 const dataSchema = new Schema({
   username: {type: String, require: true},
   updated: {type: Date, default: Date.now},
@@ -19,8 +32,10 @@ const dataSchema = new Schema({
     sortHueCol: Boolean,
     sortHueRowLen: Number,
     sortHueColLen: Number,
-  }
+  },
+  comments: [commentSchema]
 });
+
 
 dataSchema.pre('save', function(next){
   var item = this;

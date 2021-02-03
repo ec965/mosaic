@@ -4,7 +4,7 @@ import PixelApp from './index';
 
 const PixelCard = (props) => {
   return(
-    <Column className={`${props.className} card`}>
+    <Column className={`${props.className} card`} onClick={props.onClick}>
       <PixelApp 
         dimension={props.dimension} 
         pixelSize={props.pixelSize}
@@ -22,8 +22,10 @@ const PixelCard = (props) => {
       />
       <Column className='card-body'>
         <h5 className='card-title'>{props.title}</h5>
-        <p className='card-text'>{props.date}</p>
         <p className='card-text'>{props.username}</p>
+        <p className='card-text'>{props.username}</p>
+        <p className='card-text'>{props.date}</p>
+        {props.children}
       </Column>
     </Column>
   );

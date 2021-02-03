@@ -4,12 +4,13 @@ const Data = require("../models/data");
 
 // READ
 // get all a user's data
-router.get('/', (req, res, next) => {
+router.get('/myprojects', (req, res, next) => {
   Data.
     find().
     where('username').
     equals(req.user.username).
     sort({updated: -1}).
+    select('username updated title project').
     exec(function(err, data){
       if(err) return next(err);
 
@@ -18,9 +19,10 @@ router.get('/', (req, res, next) => {
     });
 })
 
+
 // CREATE
 // insert a new data model into the db
-router.post('/', (req, res, next) => {
+router.post('/new', (req, res, next) => {
 
   if(req.user.username && req.body){
     Data.create({
@@ -39,30 +41,21 @@ router.post('/', (req, res, next) => {
 
 // UPDATE
 // update data of id
-router.put('/', (req, res, next) => {
+router.patch('/update', (req, res, next) => {
   if(req.body.data && req.body.id){
-    Data.updateOne({_id:req.body.id}, {title:req.body.title, project:req.body.project},function(err, opResult){
-      if(err) return next(err);
+    Data.updateOne(
+      {_id:req.body.id}, 
+      {title:req.body.title, project:req.body.project},
+      function(err, opResult){
+        if(err) return next(err);
 
-      res.sendStatus(200);
-    })
+        res.sendStatus(200);
+      }
+    );
   } else {
     res.sendStatus(400);
   }
 });
-
-// DELETE
-// delete data of id
-router.delete('/', (req, res, next) => {
-  if(req.body.id){
-    Data.deleteOne({_id: req.body.id}, function(){
-      res.sendStatus(200);
-    });
-  } else {
-    res.sendStatus(400);
-  }
-})
-module.exports=router;
 
 // get the 18 most recent projects for the home page 
 router.get('/recent', (req,res,next) => {
@@ -70,9 +63,12 @@ router.get('/recent', (req,res,next) => {
     .find()
     .limit(18)
     .sort({updated: -1})
+    .select('username updated title project')
     .exec(function(err,data) {
       if(err) return next(err);
 
       res.json(data);
     })
 });
+
+module.exports=router;

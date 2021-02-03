@@ -301,6 +301,7 @@ form{
 /*-----PROFILE-----*/
 .profile-card{
   margin: 12px 0 12px 0;
+  width:100%;
 }
 /*-----TOGGLE-----*/
 

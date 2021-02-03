@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 
 app.use('/auth', routes.auth);
 app.use('/app', passport.authenticate('jwt', {session: false}), routes.app);
+app.use('/project', passport.authenticate('jwt', {session: false}), routes.project)
 
 // Error handler
 app.use((err, req, res, next) => {
