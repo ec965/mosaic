@@ -1,8 +1,12 @@
+import React, {useContext} from 'react';
 import {NavBar, NavGroup, NavLogo, NavItem} from '../components/navbar';
 import {Logout} from '../auth/components';
 import {Link} from 'react-router-dom';
+import {UserContext} from './index';
 
 export const UserNav = () => {
+  const [currentUser, setCurrentUser] = useContext(UserContext);
+
   return(
     <NavBar>
       <NavLogo>
@@ -17,7 +21,7 @@ export const UserNav = () => {
           </Link>
         </NavItem>
         <NavItem>
-          <Link to={`/profile`}>
+          <Link to={`/profile/${currentUser}`}>
             <h4>Profile</h4>
           </Link>
         </NavItem>

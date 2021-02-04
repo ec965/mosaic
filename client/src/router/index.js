@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createContext, useState} from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,43 +14,49 @@ import {Page} from '../components/layout';
 import UserNav from '../router/navbar';
 import ProjectPage from '../pages/project';
 
+export const UserContext = createContext(null);
+// UserContext gets updated on login
+
 const App = () =>{
+  const [currentUser, setCurrentUser] = useState('');
+  // maybe add a function that if a token is detected, fetch some user metadata for the UserContext
+
   return(
     <Router>
-    {/* // components */}
+      <UserContext.Provider value={[currentUser, setCurrentUser]}>
+        <Switch>
+          <PrivateRoute path="/project/:id">
+            <UserNav/>
+            <ProjectPage/>
+          </PrivateRoute>
+          <PrivateRoute path="/home">
+            <UserNav/>
+            <CardMatrix/>
+          </PrivateRoute>
+          <PrivateRoute path='/generator/:id'>
+            <UserNav/>
+            <Generator/>
+          </PrivateRoute>
+          <PrivateRoute path={`/generator`}>
+            <UserNav/>
+            <Generator/>
+          </PrivateRoute>
+          <PrivateRoute path={`/profile/:thisUser`}>
+            <UserNav/>
+            <UserProfile/>
+          </PrivateRoute>
 
-      <Switch>
-        <PrivateRoute path="/project/:id">
-          <UserNav/>
-          <ProjectPage/>
-        </PrivateRoute>
-        <PrivateRoute path="/home">
-          <UserNav/>
-          <CardMatrix/>
-        </PrivateRoute>
-        <PrivateRoute path='/generator/:id'>
-          <UserNav/>
-          <Generator/>
-        </PrivateRoute>
-        <PrivateRoute path={`/generator`}>
-          <UserNav/>
-          <Generator/>
-        </PrivateRoute>
-        <PrivateRoute path={`/profile`}>
-          <UserNav/>
-          <UserProfile/>
-        </PrivateRoute>
-
-        <Route path="/login">
-          <Login/>
-        </Route>
-        <Route path="/register">
-          <Register/>
-        </Route>
-        <Route path="/">
-          <LandingPage/>
-        </Route>
-      </Switch>
+          <Route path="/login">
+            <Login/>
+          </Route>
+          <Route path="/register">
+            <Register/>
+          </Route>
+          <Route path="/">
+            <LandingPage/>
+          </Route>
+        </Switch>
+      </UserContext.Provider>
     </Router>
   );
 }

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Button} from '../components/button';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import axios from "axios";
@@ -6,10 +6,12 @@ import {APIURL, LOGIN} from '../config/api';
 import {FormError, FormButton} from './components';
 import {useAuth} from './functions';
 import {Row} from '../components/layout';
+import { UserContext } from '../router/index';
 
 const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
   const [authErr, setAuthErr] = useState("");
+  const [currentUser, setCurrentUser] = useContext(UserContext);
 
   const alreadyLogged = useAuth("/home");
 
@@ -20,7 +22,7 @@ const LoginForm = () => {
     })
     if(res.data.token) {
       localStorage.setItem('user', JSON.stringify(res.data));
-      localStorage.setItem('username', username);
+      setCurrentUser(username);
     }
 
     return res.data;

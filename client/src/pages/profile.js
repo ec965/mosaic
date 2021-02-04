@@ -5,21 +5,27 @@ import axios from "axios";
 import PixelCard from '../app/card';
 import  {getToken} from '../auth/functions';
 import {Button} from '../components/button';
-import {Link} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 
 const UserProfile = () => {
   const [username, setUsername] = useState('');
   const [data, setData] = useState([]);
+
+  let {thisUser} = useParams();
   
   useEffect (() => {
-    const token = getToken();
-    axios.get(APIURL+USERPROJECTS, {headers: {"Authorization": `Bearer ${token}`}})
-    .then((res)=>{
-      setUsername(res.data.username);
-      setData(res.data.data);
-    })
-    .catch((error) => console.error(error));
-  },[]);
+    function getUserInfo(){
+      const token = getToken();
+      axios.get(APIURL+USERPROJECTS + `?username=${thisUser}`, {headers: {"Authorization": `Bearer ${token}`}})
+      .then((res)=>{
+        setUsername(res.data.username);
+        setData(res.data.data);
+      })
+      .catch((error) => console.error(error));
+    }
+
+    getUserInfo();
+  },[thisUser]);
 
   const handleDelete = (event) => {
     event.preventDefault();
@@ -67,7 +73,7 @@ const UserProfile = () => {
     <Page>
       <Column>
         <h3>{username}'s Projects</h3>
-        {cards}
+        {data.length === 0 ? <h5>Nothing to see here.</h5> : cards}
       </Column>
     </Page>
   );

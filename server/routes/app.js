@@ -9,13 +9,12 @@ router.get('/myprojects', (req, res, next) => {
   Data.
     find().
     where('username').
-    equals(req.user.username).
-    sort({updatedAt: -1}).
+    equals(req.query.username).
     select('username title project updatedAt').
     exec(function(err, data){
       if(err) return next(err);
 
-      res.json({username:req.user.username, data: data});
+      res.json({username:req.query.username, data: data});
 
     });
 })

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Row, Column} from '../components/layout';
 import  {getToken} from '../auth/functions';
 import {Button} from '../components/button';
@@ -8,6 +8,7 @@ import {APIURL, PROJECT, COMMENT} from '../config/api';
 import axios from 'axios';
 import TextBoxForm from '../components/textbox';
 import {Link, useParams} from 'react-router-dom';
+import {UserContext} from '../router/index';
 
 const TEXTBOX = {maxLength: 160, rows:4, cols:40};
 
@@ -18,6 +19,7 @@ const ProjectPage = () => {
   const [comments, setComments] = useState([]);
   const [title, setTitle] = useState('');
   const [newComment, setNewComment] = useState('');
+  const [currentUser, setCurrentUser] = useContext(UserContext);
 
   let {id} = useParams();
 
@@ -88,7 +90,6 @@ const ProjectPage = () => {
   }
 
   const commentList = comments.map((c,i) => {
-    const currentUser = localStorage.getItem('username');
     return(
       <Comment
         key={i}
@@ -109,7 +110,9 @@ const ProjectPage = () => {
   return(
     <div>
       <h5>{title}</h5>
-      <h5>{username}</h5>
+      <Link to={`/profile/${username}`}>
+        <h5>{username}</h5>
+      </Link>
       <h5>{date}</h5>
       <PixelApp
         dimension={project.dimension}
@@ -176,7 +179,7 @@ const Comment = (props) => {
 
   return(
     <Column>
-      <Link to=''>
+      <Link to={`/profile/${username}`}>
         <p>{username}</p>
       </Link>
       <p>{text}</p>
