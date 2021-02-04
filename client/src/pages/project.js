@@ -7,7 +7,7 @@ import {dateString} from '../util';
 import {APIURL, PROJECT, COMMENT} from '../config/api';
 import axios from 'axios';
 import TextBoxForm from '../components/textbox';
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 
 const TEXTBOX = {maxLength: 160, rows:4, cols:40};
 
@@ -22,18 +22,22 @@ const ProjectPage = () => {
   let {id} = useParams();
 
   useEffect (() => {
-    const token = getToken();
-    axios.get(APIURL + PROJECT + '?id=' + id,
-      {headers: {"Authorization": `Bearer ${token}`}})
-    .then((res) => {
-      setUserName(res.data.username);
-      setDate(dateString(res.data.updatedAt));
-      setTitle(res.data.title);
-      setComments(res.data.comments.reverse());
-      setProject(res.data.project);
-    })
-    .catch((error) => console.error(error));
-  }, [])
+    function getInitialData(){
+      const token = getToken();
+      axios.get(APIURL + PROJECT + '?id=' + id,
+        {headers: {"Authorization": `Bearer ${token}`}})
+      .then((res) => {
+        setUserName(res.data.username);
+        setDate(dateString(res.data.updatedAt));
+        setTitle(res.data.title);
+        setProject(res.data.project);
+        setComments(res.data.comments);
+      })
+      .catch((error) => console.error(error));
+    }
+
+    getInitialData();
+  }, [id])
 
   const handleNewComment = (event) =>{
     setNewComment(event.target.value);
@@ -55,25 +59,49 @@ const ProjectPage = () => {
       let updateComments = comments.slice(0);
       // add comments in order of recency
       // new comments come first
-      updateComments.unshift(res.data);
+      updateComments.push(res.data);
       setComments(updateComments);
     })
     .catch((error) => console.error(error));
   }
 
+  const handleCommentDelete = (event) => {
+    event.preventDefault();
+    let metaData = JSON.parse(event.target.id);
+    let commentId = metaData.id;
+    let commentIndex = metaData.index;
+
+    const token = getToken();  
+    const params = `?project_id=${id}&comment_id=${commentId}`;
+    const header = {headers: {'Authorization': `Bearer ${token}`}};
+    axios.delete(APIURL + COMMENT + params,
+      header
+    )
+    .then((res) => {
+      // remove comment from comments array
+      let updateComments = comments.slice(0);
+      updateComments.splice(commentIndex, 1);
+      
+      setComments(updateComments);
+    })
+    .catch((error) => console.error(error));
+  }
 
   const commentList = comments.map((c,i) => {
     const currentUser = localStorage.getItem('username');
     return(
       <Comment
         key={i}
+        index={i}
         username={c.username}
         text={c.text}
         updatedAt={c.updatedAt}
+        createdAt={c.createdAt}
         edited={c.edited}
         canEdit={c.username === currentUser}
         id={c._id}
         project_id={id}
+        onDelete={handleCommentDelete}
       />
     );
   });
@@ -148,12 +176,17 @@ const Comment = (props) => {
 
   return(
     <Column>
-      <p>{username}</p>
+      <Link to=''>
+        <p>{username}</p>
+      </Link>
       <p>{text}</p>
-      <p>{updatedAt}</p>
-      {edited && <p>edited</p>}
+      <p>{props.createdAt}</p>
+      {edited && <p>edited on {updatedAt}</p>}
       {props.canEdit &&
-        <p className="link" onClick={handleShowEdit}>edit</p>
+        <>
+          <p className="link" onClick={handleShowEdit}>edit</p>
+          <p id={JSON.stringify({id:props.id, index:props.index})}  onClick={props.onDelete} className="red">X</p>
+        </>
       }
       {showEditBox && 
         <TextBoxForm

@@ -3,6 +3,7 @@ import {Redirect} from 'react-router-dom';
 
 export const logout = () => {
   localStorage.removeItem('user');
+  localStorage.removeItem('username');
 }
 export const getToken = () => {
   let user = JSON.parse(localStorage.getItem('user'));

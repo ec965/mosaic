@@ -12,6 +12,7 @@ const Slider = (props) => {
       className={`${props.className} slider`}
       onChange={props.onChange}
       name={props.name}
+      id={props.id}
     />
   );
 }

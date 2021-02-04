@@ -14,7 +14,6 @@ const CardMatrix = () => {
     const token=getToken();
     axios.get(APIURL+RECENT, {headers: {"Authorization": `Bearer ${token}`}})
     .then((res) => {
-      console.log(res.data);
       setRecentProjects(res.data);
     })
     .catch((err) => console.error(err));

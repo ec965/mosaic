@@ -30,31 +30,35 @@ const UserProfile = () => {
     )
   }
 
+
   const cards = data.map((d, i) => {
-    console.log(d);
     return(
       <div className='row profile-card' key={i}>
-      <Link to={`/project/${d._id}`} className='row profile-card'>
-        <PixelCard 
-          title={d.title} 
-          className='profile-card' 
-          date={d.updatedAt} 
-          dimension={d.project.dimension || null}
-          pixelSize={d.project.pixelSize || null}
-          borderRadius={d.project.borderRadius || null}
-          rmin={d.project.rmin || null}
-          rmax={d.project.rmax || null}
-          gmin={d.project.gmin || null}
-          gmax={d.project.gmax || null}
-          bmin={d.project.bmin || null}
-          bmax={d.project.bmax || null}
-          sortHueRow={d.project.sortHueRow || null}
-          sortHueRowLen={d.project.sortHueRowLen || null}
-          sortHueCol={d.project.sortHueCol || null}
-          sortHueColLen={d.project.sortHueColLen || null}
-        />
-      </Link>
-      <Button name={d.project._id} onClick={handleDelete} className="red">Delete</Button>
+        <Link to={`/project/${d._id}`} className='row profile-card'>
+          <PixelCard 
+            title={d.title} 
+            className='profile-card' 
+            date={d.updatedAt} 
+            dimension={d.project.dimension}
+            pixelSize={d.project.pixelSize}
+            borderRadius={d.project.borderRadius}
+            rmin={d.project.rmin}
+            rmax={d.project.rmax}
+            gmin={d.project.gmin}
+            gmax={d.project.gmax}
+            bmin={d.project.bmin}
+            bmax={d.project.bmax}
+            sortHueRow={d.project.sortHueRow}
+            sortHueRowLen={d.project.sortHueRowLen}
+            sortHueCol={d.project.sortHueCol}
+            sortHueColLen={d.project.sortHueColLen}
+          />
+        </Link>
+        <Button name={d.project._id} onClick={handleDelete} className="red">Delete</Button>
+
+        <Link to={`/generator/${d._id}`}>
+          <Button>Edit</Button>
+        </Link>
       </div>
     )
   });

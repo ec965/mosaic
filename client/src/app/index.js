@@ -29,8 +29,8 @@ const PixelApp = (props) => {
   const [pixelMap, setPixelMap] = useState([[]]);
   
   useEffect(() => {
-    let minmax = new RGBMinMax(props.rmin,props.rmax,props.gmin,props.gmax,props.bmin,props.bmax);
-    let data = new RandomPixelSquare(props.dimension, minmax);
+    // let minmax = new RGBMinMax(props.rmin,props.rmax,props.gmin,props.gmax,props.bmin,props.bmax);
+    let data = new RandomPixelSquare(props.dimension, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax);
     if (props.sortHueCol){
       data.sortHueVertical(props.sortHueColLen);
     }

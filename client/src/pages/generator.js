@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import {APIURL, NEW} from '../config/api';
+import {APIURL, NEW, PROJECT, UPDATE} from '../config/api';
 import {Button} from '../components/button';
 import PixelApp from '../app/index';
 import Toggle from '../components/toggle';
 import {useParams, Redirect} from 'react-router-dom';
 import Slider from '../components/slider';
 import {Page} from '../components/layout';
+import  {getToken} from '../auth/functions';
 
 
 const ToolLabel = (props) => <h6 onClick={props.onClick} className={`${props.className} courier`}>{props.children}</h6>
@@ -26,17 +27,40 @@ const Generator = () =>{
   const [sortHueRowLen, setSortHueRowLen] = useState(dimension);
   const [sortHueCol, setSortHueCol] = useState(false);
   const [sortHueColLen, setSortHueColLen] = useState(dimension);
-  const [serverError, setServerError] = useState(false);
   const [redirectId, setRedirectId] = useState(false);
+  const [disableSave, setdisableSave] = useState(false);
 
-  // let {id} = useParams();
+  let {id} = useParams();
 
-  // useEffect(() => {
-  //   if(id){
-  //     // get the data for this project
-      
-  //   }
-  // },[])
+  useEffect (() => {
+    // load initial data if the user is trying to EDIT
+    function getInitialData(){
+      const token = getToken();
+      axios.get(APIURL + PROJECT + '?id=' + id,
+        {headers: {"Authorization": `Bearer ${token}`}})
+      .then((res) => {
+        setTitle(res.data.title);
+        let project = res.data.project;
+        setDimension(project.dimension);
+        setPixelSize(project.pixelSize);
+        setBorderRadius(project.borderRadius);
+        setRmin(project.rmin);
+        setRmax(project.rmax);
+        setGmin(project.gmin);
+        setGmax(project.gmax);
+        setBmin(project.bmin);
+        setBmax(project.bmax);
+        setSortHueRow(project.sortHueRow);
+        setSortHueCol(project.sortHueCol);
+        setSortHueColLen(project.sortHueColLen);
+        setSortHueRowLen(project.sortHueRowLen);
+      })
+      .catch((error) => console.error(error));
+    }
+    if(id){
+      getInitialData();
+    }
+  }, [id])
 
   const sliders = [
     {
@@ -62,13 +86,13 @@ const Generator = () =>{
     },
     {
       min: 0,
-      max: 255,
+      max: rmax,
       name:'rmin',
       defaultValue: 0,
       var: rmin
     },
     {
-      min: 0,
+      min: rmin,
       max: 255,
       name:'rmax',
       defaultValue: 255,
@@ -76,13 +100,13 @@ const Generator = () =>{
     },
     {
       min: 0,
-      max: 255,
+      max: gmax,
       name:'gmin',
       defaultValue: 0,
       var: gmin
     },
     {
-      min: 0,
+      min: gmin,
       max: 255,
       name:'gmax',
       defaultValue: 255,
@@ -90,13 +114,13 @@ const Generator = () =>{
     },
     {
       min: 0,
-      max: 255,
+      max: bmax,
       name:'bmin',
       defaultValue: 0,
       var: bmin
     },
     {
-      min: 0,
+      min: bmin,
       max: 255,
       name:'bmax',
       defaultValue: 255,
@@ -105,7 +129,7 @@ const Generator = () =>{
   ];
 
   const handleChange = (event) => {
-    switch(event.target.name){
+    switch(event.target.id){
       case 'title':
         setTitle(event.target.value);
         break;
@@ -149,6 +173,8 @@ const Generator = () =>{
   }
 
   const handleSave = () => {
+    setdisableSave(true);
+
     const data = {
       title: title,
       project:{
@@ -168,24 +194,29 @@ const Generator = () =>{
       }
     }
     
-    // get the token from local storage
-    let user = JSON.parse(localStorage.getItem('user'));
-    const token = user.token;
+    async function sendData(){
+      // get the token from local storage
+      const token = getToken();
+      const header = {headers: {"Authorization": `Bearer ${token}`}}
 
-    // post data
-    axios.post(APIURL + NEW, 
-      data,
-      {headers: {"Authorization": `Bearer ${token}`}}
-    )
+      // if we are editing something, then PATCH
+      if (id){
+        data.project_id = id.toString();
+        return await axios.patch(APIURL + UPDATE, data, header)
+      } else {
+        // post data if we are creating something NEW
+        return await axios.post(APIURL + NEW, data, header)
+      }
+    }
+
+    sendData()
     .then((res) => {
-      // the id of the new project is returned
-      setRedirectId(res.data);
+      setRedirectId(res.data._id);
+      setdisableSave(false);
     })
     .catch((error) => {
-      if(error.response.status === 500){
-        setServerError(true);
-      }
       console.error(error);
+      setdisableSave(false);
     })
   }
 
@@ -206,10 +237,10 @@ const Generator = () =>{
   }
 
   const handleToggle = (event) =>{
-    if(event.target.name === "sortHueRow"){
+    if(event.target.id === "sortHueRow"){
       setSortHueRow(event.target.checked);
     }
-    if(event.target.name === "sortHueCol"){
+    if(event.target.id === "sortHueCol"){
       setSortHueCol(event.target.checked);
     }
   }
@@ -237,12 +268,12 @@ const Generator = () =>{
   const sliderTools = sliders.map((t,i) => {
     return(
       <div key={i}>
-        <ToolLabel>{t.name}</ToolLabel>
+        <ToolLabel>{t.name}:{t.var}</ToolLabel>
         <Slider
           min={t.min}
           max={t.max}
           onChange={handleChange}
-          name={t.name}
+          id={t.name}
           value={t.var}
         />
       </div>
@@ -252,28 +283,28 @@ const Generator = () =>{
   return(
     <Page className="generator">
       <div className='panel'>
-        <Button onClick={handleSave} className="courier">Save</Button>
-        <input onChange={handleChange} value={title} type="text" className='form-field' placeholder="Title" name="title"/>
+        <Button disabled={disableSave} onClick={handleSave} className="courier">Save</Button>
+        <input onChange={handleChange} value={title} type="text" className='form-field' placeholder="Title" id="title"/>
         <Button onClick={handleRandom} className="courier">Random</Button>
         {sliderTools}
         <ToolLabel>sort hue by rows</ToolLabel>
-        <Toggle onClick={handleToggle} name='sortHueRow' checked={sortHueRow}/>
+        <Toggle onChange={handleToggle} id='sortHueRow' checked={sortHueRow}/>
         <ToolLabel>sort length</ToolLabel>
         <Slider
           min={0}
           max={dimension}
           onChange={handleChange}
-          name="sortHueRowLen"
+          id="sortHueRowLen"
           defaultValue={dimension}
         />
         <ToolLabel>sort hue by columns</ToolLabel>
-        <Toggle onClick={handleToggle} name='sortHueCol' checked={sortHueCol}/>
+        <Toggle onChange={handleToggle} id='sortHueCol' checked={sortHueCol}/>
         <ToolLabel>sort length</ToolLabel>
         <Slider
           min={0}
           max={dimension}
           onChange={handleChange}
-          name="sortHueColLen"
+          id="sortHueColLen"
           defaultValue={dimension}
         />
         <Button onClick={handleReset} className="courier red">Reset</Button>

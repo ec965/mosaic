@@ -63,55 +63,71 @@ export class Pixel {
 // this object holds rgb min and max data
 // it also ensures that data is within the 0-255 range
 // and that min < max
-export class RGBMinMax {
-  constructor(rmin, rmax, gmin, gmax, bmin, bmax){
-    this.rmin = this.check(rmin);
-    this.rmax = this.check(rmax);
-    this.swap(this.rmin, this.rmax);
+// export class RGBMinMax {
+//   constructor(rmin, rmax, gmin, gmax, bmin, bmax){
+//     function check(n){
+//       if(n < 0){
+//         n = 0;
+//       }
+//       else if (n > 255){
+//         n=255;
+//       }
+//       return n;
+//     }
 
-    this.gmin = this.check(gmin);
-    this.gmax = this.check(gmax);
-    this.swap(this.gmin, this.gmax);
+//     function swap(min, max){
+//       if(min > max){
+//         let temp = min;
+//         min = max;
+//         max = temp;
+//       }
+//       return {min, max}
+//     }
+
+//     this.rmin = check(rmin);
+//     this.rmax = check(rmax);
+//     let r = swap(this.rmin, this.rmax);
+//     this.rmin = r.min;
+//     this.rmax = r.max;
     
-    this.bmin = this.check(bmin);
-    this.bmax = this.check(bmax);
-    this.swap(this.bmin, this.bmax);
-  }
+//     this.gmin = check(gmin);
+//     this.gmax = check(gmax);
+//     let g = swap(this.gmin, this.gmax);
+//     this.gmin = g.min;
+//     this.gmax = g.max;
 
-  check(n){
-    if(n < 0){
-      n = 0;
-    }
-    else if (n > 255){
-      n=255;
-    }
-    return n;
-  }
+    
+//     this.bmin = check(bmin);
+//     this.bmax = check(bmax);
+//     let b = swap(this.bmin, this.bmax);
+//     this.bmin = b.min;
+//     this.bmax = b.max;
+//   }
 
-  swap(min, max){
-    if(min > max){
-      let temp = min;
-      min = max;
-      max = temp;
-    }
-  }
-}
+// }
 
 export class RandomPixelSquare {
-  constructor(dimension, rgbminmax=new RGBMinMax(0,255,0,255,0,255)){
+  constructor(dimension, rmin, rmax, gmin, gmax, bmin, bmax) {//rgbminmax=new RGBMinMax(0,255,0,255,0,255)){
+    function randInt(min, max){
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random()*(max-min + 1)) + min;
+    }
+
     this.data = [];
     for(let i=0; i<dimension; i++){
       let inner = [];
       for(let j=0; j<dimension; j++){
-        let r = Math.floor(Math.random()*rgbminmax.rmax + rgbminmax.rmin);
-        let g = Math.floor(Math.random()*rgbminmax.gmax + rgbminmax.gmin);
-        let b = Math.floor(Math.random()*rgbminmax.bmax + rgbminmax.bmin);
+        let r = randInt(rmin, rmax);
+        let g = randInt(gmin, gmax);
+        let b = randInt(bmin, bmax);
         let p = new Pixel(r, g, b);
         inner.push(p)
       }
       this.data.push(inner);
     }
   }
+
   sortHue(length) { // horizontal
     if (!length || length < 0) length = this.data[0].length;
     if (length > this.data[0].length) length = this.data[0].length;
