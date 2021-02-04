@@ -29,7 +29,7 @@ app.use('/project', passport.authenticate('jwt', {session: false}), routes.proje
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({message: "An error occured."});
+  res.status(500).json({message: err.toString()});
 })
 
 app.get('/', (req, res) => {

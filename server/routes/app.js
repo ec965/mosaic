@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Data = require("../models/data");
 
@@ -32,7 +33,7 @@ router.post('/new', (req, res, next) => {
     }, function(err, data){
       if(err) return next(err);
 
-      res.json(data._id);
+      res.json(data);
     });
   } else {
     res.sendStatus(400);
@@ -42,19 +43,23 @@ router.post('/new', (req, res, next) => {
 // UPDATE
 // update data of id
 router.patch('/update', (req, res, next) => {
-  if(req.body.data && req.body.id){
-    Data.updateOne(
-      {_id:req.body.id}, 
-      {title:req.body.title, project:req.body.project},
-      function(err, opResult){
-        if(err) return next(err);
+  if(!req.body) return res.sendStatus(400);
 
-        res.sendStatus(200);
-      }
-    );
-  } else {
-    res.sendStatus(400);
-  }
+  Data.findOne({
+     username: req.user.username,
+    _id: req.body.project_id,
+  }, function(err, data) {
+    if(err) return next(err);
+
+    if(!data) return res.sendStatus(400);
+
+    data.project = req.body.project;
+    data.title = req.body.title;
+    data.save(function(err,data){
+      if (err) return next(err);
+      res.json(data);
+    });
+  })
 });
 
 // get the 18 most recent projects for the home page 
@@ -62,7 +67,7 @@ router.get('/recent', (req,res,next) => {
   Data
     .find()
     .limit(18)
-    .sort({updatedAt: -1})
+    .sort({createdAt: -1})
     .select('username title project updatedAt')
     .exec(function(err,data) {
       if(err) return next(err);

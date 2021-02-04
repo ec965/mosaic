@@ -46,17 +46,20 @@ const Data = require("../models/data");
 // get a specific project
 router.get('/', (req, res, next) => {
   if(req.user.username && req.query.id){
-    Data.findOne().
-      where('_id').
-      equals(req.query.id).
-      exec(function(err, data){
-        if(err) return next(err);
-        res.status(200).send(data);
-      })
+    Data.findOne({
+      _id: req.query.id,
+    }, function(err, data){
+      if(err) return next(err);
+
+      res.status(200).send(data);
+    })
+
   } else {
     res.sendStatus(400);
   }
 });
+
+
 /*
 {
   project_id: "id",
@@ -107,6 +110,7 @@ router.patch('/comment', (req,res,next) => {
     // find the piece of data
     Data.findOne(
       {
+        username: req.user.username,
         _id: req.body.project_id,
       },
       function(err, data){
@@ -138,12 +142,55 @@ router.patch('/comment', (req,res,next) => {
 // delete data of id
 router.delete('/delete', (req, res, next) => {
   if(req.body.id){
-    Data.deleteOne({_id: req.body.id}, function(){
-      res.sendStatus(200);
+    Data.deleteOne({_id: req.body.id, username: req.user.username}, function(err, result){
+      if(err) return next(err);
+
+      if (res){
+        res.send(result);
+      }
     });
   } else {
     res.sendStatus(400);
   }
+})
+
+
+// delete a comment
+router.delete('/comment', (req,res,next) => {
+  // console.log(req.headers);
+  // check that request params are correct
+  if(!req.query.comment_id || !req.query.project_id){
+    res.sendStatus(400);
+    return next();
+  } 
+  // find the data object
+  Data.findOne(
+    {
+      _id:req.query.project_id,
+    }, function(err, data){
+      if(err) return next(err);
+
+      if(!data){
+        res.sendStatus(400);
+        return next();
+      }
+      // find the comment
+      const comment = data.comments.id(req.query.comment_id);
+      // check that the user ID matches up
+      if(comment.username !== req.user.username){
+        res.sendStatus(400);
+        return next();
+      }
+      // delete the comment
+      comment.remove();
+      data.save(function(err){
+        if(err) return next(err);
+
+        res.sendStatus(200);
+      })      
+    }
+  )
+  
 })
 
 module.exports=router;
