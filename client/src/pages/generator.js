@@ -6,7 +6,7 @@ import {APIURL, NEW, PROJECT, UPDATE} from '../config/api';
 import { getToken } from '../util';
 
 import {Button} from '../components/button';
-import PixelApp from '../app/index';
+import PixelApp from '../app/app';
 import Toggle from '../components/toggle';
 import Slider from '../components/slider';
 import {Page} from '../components/layout';

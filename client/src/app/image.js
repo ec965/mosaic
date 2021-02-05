@@ -1,9 +1,7 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {PixelApp} from './index';
+import {PixelApp} from './app';
 
-function imgArray(data, width, height, sampleSize){
-  console.log('total:', data.length, 'width:', width, 'height:', height);
-  console.log('wxhx4',width*height*4);
+function pixelizeImage(data, width, height, sampleSize){
   let arr = []
   for(let y=0; y<height; y+=sampleSize){
     let subarr = [];
@@ -23,19 +21,15 @@ function imgArray(data, width, height, sampleSize){
   return arr;
 }
 
-// function compressImg (arr){
 
-// }
-
-const Canvas = () => {
+const ImageGenerator = ({imgSrc, borderRadius, pixelSize, scale, grid, backgroundColor}) => {
   const [dimension, setDimension] = useState({width:window.innerWidth, height: window.innerHeight})
   const canvasRef = useRef(null);
   const [pixelMap, setPixelMap] = useState([[]]);
-  const size = 720;
 
   useEffect(() => {
     var img = new Image();
-    img.src = './test.png';
+    img.src = imgSrc;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -48,27 +42,45 @@ const Canvas = () => {
       
       let imgData = ctx.getImageData(0,0,this.width,this.height);
 
-      let imgarr = imgArray(imgData.data, imgData.width, imgData.height, 16);
-      console.log(imgarr);
+      let imgarr = pixelizeImage(imgData.data, imgData.width, imgData.height, scale);
       setPixelMap(imgarr);
     }
-  },[])
+  },[imgSrc, scale])
 
 
+  // I want the canvas to be invisible
   return(
-    <div>
+    <>
     <canvas
+      style={{
+        'opacity': 0,
+        'position': 'absolute',
+        'zIndex': -1,
+        'height':0,
+        'width':0,
+      }}
       width={dimension.width}
       height={dimension.height}
       ref={canvasRef}
     />
     <PixelApp
       pixelMap={pixelMap}
-      borderRadius={0}
-      pixelSize={12}
+      borderRadius={borderRadius}
+      pixelSize={pixelSize}
+      grid={grid}
+      backgroundColor={backgroundColor}
     />
-    </div>
+    </>
   );
 }
 
-export default Canvas;
+ImageGenerator.defaultProps={
+  imgSrc: './test1.png',
+  borderRadius: 0,
+  pixelSize: 10,
+  scale:16,
+  grid: false,
+  backgroundColor: null,
+}
+
+export default ImageGenerator;

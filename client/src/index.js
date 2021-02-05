@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 import App from './router/index';
 import './css/stylesheet.css';
 import {StoreContextProvider} from './contextreducer';
-import Canvas from './app/pixelize.js'
+
+import ImageGenerator from './app/image.js'
+import RandomGenerator from './app/random';
 
 const AppWrapper = () => {
   return(
@@ -18,5 +20,8 @@ const AppWrapper = () => {
 
 ReactDOM.render(
 //  <AppWrapper/> 
-<Canvas/>
+<div>
+  <ImageGenerator/>
+  <RandomGenerator/>
+</div>
   , document.getElementById('root'));

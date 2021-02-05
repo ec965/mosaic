@@ -6,7 +6,7 @@ import {APIURL, PROJECT, COMMENT} from '../config/api';
 import {getToken} from '../util.js';
 import {StoreContext} from '../contextreducer';
 
-import PixelApp from '../app/index';
+import PixelApp from '../app/app';
 import {Column} from '../components/layout';
 import {dateString} from '../util';
 import TextBoxForm from '../components/textbox';
