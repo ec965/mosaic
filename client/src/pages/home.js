@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import PixelCard from '../app/card';
-import {APIURL, RECENT} from '../config/api';
-import {getToken} from '../auth/functions';
 import axios from 'axios';
-import {dateString} from '../util';
+import {APIURL, RECENT} from '../config/api';
+
+import {dateString, getToken} from '../util';
+
+import PixelCard from '../app/card';
 import {Link} from 'react-router-dom'
 import {Page} from '../components/layout';
 
@@ -11,12 +12,16 @@ const CardMatrix = () => {
   const [recentProjects, setRecentProjects] = useState([]);
   // fetch the most recent projects
   useEffect(() => {
-    const token=getToken();
-    axios.get(APIURL+RECENT, {headers: {"Authorization": `Bearer ${token}`}})
-    .then((res) => {
-      setRecentProjects(res.data);
-    })
-    .catch((err) => console.error(err));
+    function getRecent(){
+      const token = getToken();
+      axios.get(APIURL+RECENT, {headers: {"Authorization": `Bearer ${token}`}})
+      .then((res) => {
+        setRecentProjects(res.data);
+      })
+      .catch((err) => console.error(err));
+    }
+
+    getRecent();
   },[])
 
   const cards = recentProjects.map((p, i) => {

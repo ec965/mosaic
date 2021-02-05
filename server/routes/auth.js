@@ -32,9 +32,11 @@ router.post("/login",
           if(error) return next(error);
 
           const body = {_id: user._id, username: user.username};
-          const token = jwt.sign({user: body}, SecretKey);
-
-          return res.status(200).json({token})
+          const token = {
+            jwt: jwt.sign({user: body}, SecretKey), 
+            username: user.username
+          };
+          return res.status(200).json(token);
         }
       );
     }

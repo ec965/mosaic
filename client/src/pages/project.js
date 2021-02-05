@@ -1,14 +1,14 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {Row, Column} from '../components/layout';
-import  {getToken} from '../auth/functions';
-import {Button} from '../components/button';
-import PixelApp from '../app/index';
-import {dateString} from '../util';
-import {APIURL, PROJECT, COMMENT} from '../config/api';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import TextBoxForm from '../components/textbox';
 import {Link, useParams} from 'react-router-dom';
-import {UserContext} from '../router/index';
+
+import {APIURL, PROJECT, COMMENT} from '../config/api';
+import {getUsername, getToken} from '../util.js';
+
+import PixelApp from '../app/index';
+import {Column} from '../components/layout';
+import {dateString} from '../util';
+import TextBoxForm from '../components/textbox';
 
 const TEXTBOX = {maxLength: 160, rows:4, cols:40};
 
@@ -19,8 +19,8 @@ const ProjectPage = () => {
   const [comments, setComments] = useState([]);
   const [title, setTitle] = useState('');
   const [newComment, setNewComment] = useState('');
-  const [currentUser, setCurrentUser] = useContext(UserContext);
 
+  const currentUser = getUsername();
   let {id} = useParams();
 
   useEffect (() => {
@@ -50,7 +50,6 @@ const ProjectPage = () => {
     event.preventDefault();
     // reset comment box
     setNewComment('');
-
     const token = getToken();
     axios.post(APIURL + COMMENT,
       {project_id: id, text: newComment},
@@ -73,8 +72,8 @@ const ProjectPage = () => {
     let commentId = metaData.id;
     let commentIndex = metaData.index;
 
-    const token = getToken();  
     const params = `?project_id=${id}&comment_id=${commentId}`;
+    const token = getToken();
     const header = {headers: {'Authorization': `Bearer ${token}`}};
     axios.delete(APIURL + COMMENT + params,
       header
@@ -149,7 +148,6 @@ const Comment = (props) => {
   const [username, setUsername] = useState(props.username);
   const [edited, setEdited] = useState(props.edited);
 
-
   const handleShowEdit = () => {
     setShowEditBox(!showEditBox);
   }
@@ -162,8 +160,8 @@ const Comment = (props) => {
     event.preventDefault();
     setShowEditBox(false);
 
-    const token = getToken();
     const data = {project_id: props.project_id, comment:{id: props.id, text: text}};
+    const token = getToken();
     axios.patch(APIURL + COMMENT,
       data,
       {headers: {"Authorization": `Bearer ${token}`}}

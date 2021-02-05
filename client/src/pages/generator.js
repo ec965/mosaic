@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
+import {useParams, Redirect} from 'react-router-dom';
 import axios from 'axios';
+
 import {APIURL, NEW, PROJECT, UPDATE} from '../config/api';
+import { getToken } from '../util';
+
 import {Button} from '../components/button';
 import PixelApp from '../app/index';
 import Toggle from '../components/toggle';
-import {useParams, Redirect} from 'react-router-dom';
 import Slider from '../components/slider';
 import {Page} from '../components/layout';
-import  {getToken} from '../auth/functions';
 
 
 const ToolLabel = (props) => <h6 onClick={props.onClick} className={`${props.className} courier`}>{props.children}</h6>
@@ -35,7 +37,7 @@ const Generator = () =>{
   useEffect (() => {
     // load initial data if the user is trying to EDIT
     function getInitialData(){
-      const token = getToken();
+      let token = getToken();
       axios.get(APIURL + PROJECT + '?id=' + id,
         {headers: {"Authorization": `Bearer ${token}`}})
       .then((res) => {
@@ -195,8 +197,8 @@ const Generator = () =>{
     }
     
     async function sendData(){
+      let token = getToken();
       // get the token from local storage
-      const token = getToken();
       const header = {headers: {"Authorization": `Bearer ${token}`}}
 
       // if we are editing something, then PATCH

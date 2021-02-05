@@ -1,33 +1,46 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Button} from '../components/button';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
-import axios from "axios";
-import {APIURL, LOGIN} from '../config/api';
 import {FormError, FormButton} from './components';
-import {useAuth} from './functions';
 import {Row} from '../components/layout';
-import { UserContext } from '../router/index';
+import axios from 'axios';
+import {APIURL, LOGIN} from '../config/api';
+import {Redirect} from 'react-router-dom';
 
 const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
   const [authErr, setAuthErr] = useState("");
-  const [currentUser, setCurrentUser] = useContext(UserContext);
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const alreadyLogged = useAuth("/home");
+  useEffect(() => {
+    if(localStorage.getItem('token') && localStorage.getItem('username')){
+      setLoggedIn(true);
+    }
+  },[])
 
-  const login = async (username, password) => {
-    const res = await axios.post(APIURL + LOGIN, {
+  async function login(username, password, rememberMe = false){
+    let res = await axios.post(APIURL + LOGIN,{
       username: username,
       password: password
     })
-    if(res.data.token) {
-      localStorage.setItem('user', JSON.stringify(res.data));
-      setCurrentUser(username);
-    }
+    if(res.data){
+      let token = res.data.jwt;
+      let currentUser = res.data.username
 
-    return res.data;
+      if(rememberMe){
+        localStorage.setItem('token', token);
+        localStorage.setItem('username', currentUser);
+
+      } else {
+        sessionStorage.setItem('username', currentUser);
+        sessionStorage.setItem('token', token);
+      }
+      setLoggedIn(true);
+      // redirect
+    }
   }
-  
+
+
   const handleDemoUser = () => {
     login('demo_user', 'test123')
     .then((data) => {
@@ -40,6 +53,7 @@ const LoginForm = () => {
 
   return(
     <>
+      {! loggedIn && 
       <Formik
         initialValues={{username: '', password: ''}}
         validate={values=> {
@@ -53,13 +67,16 @@ const LoginForm = () => {
           return errors;
         }}
         onSubmit={(values, {setSubmitting}) => {
-          login(values.username, values.password)
+          login(values.username, values.password, values.rememberMe)
           .then((data) => {
             setAuthErr(data.message);
             setSubmitting(false);
           })
           .catch((error) => {
-            setServerErr(true);
+            console.error(error);
+            if(error){
+              setServerErr(true);
+            }
             setSubmitting(false);
           });
 
@@ -73,6 +90,9 @@ const LoginForm = () => {
             <Field className="form-field" type="password" name="password" placeholder="Password"/>
             <ErrorMessage className="form-error" name="password" component="div"/>
 
+            <p>Remember Me</p>
+            <Field type="checkbox" name="rememberMe"/>
+
             <Row className='matrix'>
               <FormButton type="submit" disabled={isSubmitting}>
                 Submit
@@ -83,10 +103,10 @@ const LoginForm = () => {
             </Row>
           </Form>
         )}
-      </Formik>
-      {serverErr && <FormError>"A server error has occured, please try again later.</FormError>}
+      </Formik>}
+      {serverErr && <FormError>A server error has occured, please try again later.</FormError>}
       {authErr && <FormError>{authErr}</FormError>}
-      {alreadyLogged}
+      {loggedIn && <Redirect to="/home"/>}
     </>
   );
 }

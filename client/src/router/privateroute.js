@@ -1,9 +1,14 @@
 import React from 'react';
+import {getToken} from '../util.js';
 import {Route, Redirect} from 'react-router-dom';
-import {checkAuth} from '../auth/functions';
 
 const PrivateRoute = ({children, ...rest}) => {
-  let auth=checkAuth();
+  let token = getToken();
+  let auth;
+
+  if (token){
+    auth=true;
+  }
 
   return(
     <Route

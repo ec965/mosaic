@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Page, Column} from '../components/layout';
-import {APIURL, DELETE, USERPROJECTS} from '../config/api';
-import axios from "axios";
-import PixelCard from '../app/card';
-import  {getToken} from '../auth/functions';
-import {Button} from '../components/button';
 import {Link, useParams} from 'react-router-dom';
+import axios from "axios";
+import {APIURL, DELETE, USERPROJECTS} from '../config/api';
+import {getToken} from '../util.js';
+
+import {Page, Column} from '../components/layout';
+import PixelCard from '../app/card';
+import {Button} from '../components/button';
 
 const UserProfile = () => {
   const [username, setUsername] = useState('');
@@ -16,7 +17,10 @@ const UserProfile = () => {
   useEffect (() => {
     function getUserInfo(){
       const token = getToken();
-      axios.get(APIURL+USERPROJECTS + `?username=${thisUser}`, {headers: {"Authorization": `Bearer ${token}`}})
+      axios.get(
+        APIURL+USERPROJECTS + `?username=${thisUser}`,
+       {headers: {"Authorization": `Bearer ${token}`}}
+      )
       .then((res)=>{
         setUsername(res.data.username);
         setData(res.data.data);
@@ -29,7 +33,7 @@ const UserProfile = () => {
 
   const handleDelete = (event) => {
     event.preventDefault();
-    const token = getToken();
+    let token = getToken();
     axios.delete(APIURL + DELETE,
       {id: event.target.name},
       {headers: {"Authorization": `Bearer ${token}`}}

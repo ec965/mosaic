@@ -1,12 +1,31 @@
-import React, {useContext} from 'react';
+import React, {useState} from 'react';
+import {Redirect} from 'react-router-dom';
+
 import {NavBar, NavGroup, NavLogo, NavItem} from '../components/navbar';
-import {Logout} from '../auth/components';
 import {Link} from 'react-router-dom';
-import {UserContext} from './index';
+import {getUsername} from '../util.js';
 
-export const UserNav = () => {
-  const [currentUser, setCurrentUser] = useContext(UserContext);
+const Logout = (props) => {
+  const [loggedIn, setLoggedIn] = useState(true);
 
+  const handleClick = (event) => {
+    localStorage.clear();
+    sessionStorage.clear();
+    setLoggedIn(false);
+  }
+
+  return(
+    <>
+      <h4 className="logout link" onClick={handleClick}>
+        {props.children}
+      </h4>
+      {!loggedIn && <Redirect to="/"/>}
+    </>
+  );
+}
+
+const UserNav = () => {
+  let currentUser = getUsername();
   return(
     <NavBar>
       <NavLogo>
