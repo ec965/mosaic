@@ -5,10 +5,7 @@ const Toggle = (props) => {
     <label className={"toggle " + props.className}>
       <input 
         type="checkbox" 
-        onChange={props.onChange} 
-        name={props.name} 
-        checked={props.checked} 
-        id={props.id}
+        {...props}
       />
       <span className="toggle-slider"></span>
     </label>

@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const Footer = (props) => {
-  return <footer className={props.className}>{props.children}</footer>
+  return <footer className={props.className} {... props} >{props.children}</footer>
 }
 
 // export const FooterItem = (props) => {
@@ -9,5 +9,5 @@ export const Footer = (props) => {
 // }
 
 export const FooterGroup = (props) => {
-  return <div className={props.className + ' footer-group'}>{props.children}</div>
+  return <div className={props.className + ' footer-group'} {... props} >{props.children}</div>
 }

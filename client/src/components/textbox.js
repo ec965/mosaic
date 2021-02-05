@@ -5,12 +5,7 @@ const TextBoxForm = (props) => {
     <form onSubmit={props.onSubmit}>
       <textarea 
         maxLength={props.maxLength} 
-        name={props.name} 
-        className={`${props.className}`}
-        value={props.value}
-        onChange={props.onChange}
-        rows={props.rows}
-        cols={props.cols}
+        {...props}
       >
       </textarea>
       <input type="submit" value="Submit"/> 
