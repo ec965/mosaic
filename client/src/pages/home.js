@@ -39,7 +39,7 @@ const CardMatrix = () => {
           date={dateString(p.updatedAt)} 
           username={p.username}
           dimension={p.project.dimension || null}
-          pixelSize={pixelSize || null}
+          pixelDensity={300}
           borderRadius={p.project.borderRadius || null}
           rmin={p.project.rmin || null}
           rmax={p.project.rmax || null}

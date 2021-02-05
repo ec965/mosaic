@@ -1,5 +1,5 @@
 import React from 'react';
-import {Column, Row} from '../components/layout';
+import {Column} from '../components/layout';
 import PixelApp from './index';
 
 const PixelCard = (props) => {
@@ -7,8 +7,8 @@ const PixelCard = (props) => {
     <Column className={`${props.className} card`} onClick={props.onClick}>
       <PixelApp 
         dimension={props.dimension} 
-        pixelSize={props.pixelSize}
         borderRadius={props.borderRadius}
+        pixelDensity={props.pixelDensity}
         rmin={props.rmin}
         rmax={props.rmax}
         gmin={props.gmin}

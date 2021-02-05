@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Button} from '../components/button';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {FormError, FormButton} from './components';
@@ -6,6 +6,8 @@ import {Row} from '../components/layout';
 import axios from 'axios';
 import {APIURL, LOGIN} from '../config/api';
 import {Redirect} from 'react-router-dom';
+import {getToken} from '../util.js';
+
 
 const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
@@ -13,42 +15,44 @@ const LoginForm = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    if(localStorage.getItem('token') && localStorage.getItem('username')){
+    if(getToken()){
       setLoggedIn(true);
     }
   },[])
 
-  async function login(username, password, rememberMe = false){
-    let res = await axios.post(APIURL + LOGIN,{
+  function login(username, password, rememberMe = false){
+    axios.post(APIURL + LOGIN,{
       username: username,
       password: password
     })
-    if(res.data){
-      let token = res.data.jwt;
-      let currentUser = res.data.username
-
-      if(rememberMe){
-        localStorage.setItem('token', token);
-        localStorage.setItem('username', currentUser);
-
-      } else {
-        sessionStorage.setItem('username', currentUser);
-        sessionStorage.setItem('token', token);
+    .then((res) => {
+      if(res.data){
+        let token = res.data.jwt;
+        if(rememberMe){
+          localStorage.setItem('token', token);
+        } else {
+          sessionStorage.setItem('token', token);
+        }
       }
-      setLoggedIn(true);
-      // redirect
-    }
-  }
-
-
-  const handleDemoUser = () => {
-    login('demo_user', 'test123')
+      return res.data;
+    })
     .then((data) => {
-      setAuthErr(data.message);
+      if(data.message){
+        setAuthErr(data.message);
+      } else {
+        setLoggedIn(true);
+      }
     })
     .catch((error) => {
-      setServerErr(true);
-    });
+      console.error(error);
+      if(error){
+        setServerErr(true);
+      }
+    })
+  }
+
+  const handleDemoUser = () => {
+    login('demo_user', 'test123');
   }
 
   return(
@@ -67,19 +71,8 @@ const LoginForm = () => {
           return errors;
         }}
         onSubmit={(values, {setSubmitting}) => {
-          login(values.username, values.password, values.rememberMe)
-          .then((data) => {
-            setAuthErr(data.message);
-            setSubmitting(false);
-          })
-          .catch((error) => {
-            console.error(error);
-            if(error){
-              setServerErr(true);
-            }
-            setSubmitting(false);
-          });
-
+          login(values.username, values.password, values.rememberMe);
+          setSubmitting(false);
         }}
       >
         {({isSubmitting}) => (

@@ -3,20 +3,15 @@ export const dateString = (date) => {
   return d.toLocaleDateString();
 }
 
-export const getUsername = () => {
-  let username = localStorage.getItem('username');
-  if (!username){
-    username = sessionStorage.getItem('username');
-  }
-  return username;
-}
-
 export const getToken = () => {
-  let token = localStorage.getItem('token');
-  if (!token){
-    token = sessionStorage.getItem('token');
-  }
-
-  return token;
+  return getStorageItem('token');
 }
 
+const getStorageItem = (key) => {
+  let value = localStorage.getItem(key);
+  if (!value){
+    value = sessionStorage.getItem(key);
+  }
+
+  return value;
+}

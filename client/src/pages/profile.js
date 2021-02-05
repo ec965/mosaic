@@ -50,7 +50,6 @@ const UserProfile = () => {
             className='profile-card' 
             date={d.updatedAt} 
             dimension={d.project.dimension}
-            pixelSize={d.project.pixelSize}
             borderRadius={d.project.borderRadius}
             rmin={d.project.rmin}
             rmax={d.project.rmax}

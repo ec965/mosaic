@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {RandomPixelSquare, RGBMinMax} from './generator';
+import {RandomPixelSquare} from './generator';
 import {Row, Column} from '../components/layout';
 
 // parameters to tweak
@@ -29,21 +29,25 @@ const PixelApp = (props) => {
   const [pixelMap, setPixelMap] = useState([[]]);
   
   useEffect(() => {
-    // let minmax = new RGBMinMax(props.rmin,props.rmax,props.gmin,props.gmax,props.bmin,props.bmax);
-    let data = new RandomPixelSquare(props.dimension, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax);
-    if (props.sortHueCol){
-      data.sortHueVertical(props.sortHueColLen);
+    if(!props.data){
+      let data = new RandomPixelSquare(props.dimension, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax);
+      if (props.sortHueCol){
+        data.sortHueVertical(props.sortHueColLen);
+      }
+      if (props.sortHueRow){
+        data.sortHue(props.sortHueRowLen);
+      }
+      setPixelMap(data.data)
     }
-    if (props.sortHueRow){
-      data.sortHue(props.sortHueRowLen);
+    else {
+      setPixelMap(props.data);
     }
-    setPixelMap(data.data)
-  },[props.sortHueRowLen, props.sortHueColLen, props.sortHueCol, props.sortHueRow, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax, props.dimension])
+  },[props.data, props.sortHueRowLen, props.sortHueColLen, props.sortHueCol, props.sortHueRow, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax, props.dimension])
 
   const render = pixelMap.map((inner,i) => {
     return(
       <Row key={i}>
-        {inner.map((p,j) => <PixelDiv key={j} pixel={p} pixelSize={props.pixelSize} borderRadius={props.borderRadius}/>)}
+        {inner.map((p,j) => <PixelDiv key={j} pixel={p} pixelSize={props.pixelDensity/props.dimension} borderRadius={props.borderRadius}/>)}
       </Row>
     );
   });
@@ -56,7 +60,7 @@ const PixelApp = (props) => {
 }
 PixelApp.defaultProps={
   dimension:30,
-  pixelSize:10,
+  pixelDensity: 300,
   borderRadius: 25,
   rmin: 0,
   rmax: 255,

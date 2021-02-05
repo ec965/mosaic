@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import {Link, useParams} from 'react-router-dom';
 
 import {APIURL, PROJECT, COMMENT} from '../config/api';
-import {getUsername, getToken} from '../util.js';
+import {getToken} from '../util.js';
+import {StoreContext} from '../contextreducer';
 
 import PixelApp from '../app/index';
 import {Column} from '../components/layout';
@@ -20,7 +21,9 @@ const ProjectPage = () => {
   const [title, setTitle] = useState('');
   const [newComment, setNewComment] = useState('');
 
-  const currentUser = getUsername();
+  const {state} = useContext(StoreContext);
+  const currentUser = state.username;
+
   let {id} = useParams();
 
   useEffect (() => {
@@ -115,8 +118,8 @@ const ProjectPage = () => {
       <h5>{date}</h5>
       <PixelApp
         dimension={project.dimension}
-        pixelSize={project.pixelSize}
         borderRadius={project.borderRadius}
+        pixelDensity={540}
         rmin={project.rmin}
         rmax={project.rmax}
         gmin={project.gmin}

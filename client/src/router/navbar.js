@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Redirect} from 'react-router-dom';
+
+import {StoreContext} from '../contextreducer';
 
 import {NavBar, NavGroup, NavLogo, NavItem} from '../components/navbar';
 import {Link} from 'react-router-dom';
-import {getUsername} from '../util.js';
 
 const Logout = (props) => {
   const [loggedIn, setLoggedIn] = useState(true);
+
 
   const handleClick = (event) => {
     localStorage.clear();
@@ -25,7 +27,8 @@ const Logout = (props) => {
 }
 
 const UserNav = () => {
-  let currentUser = getUsername();
+  const {state} = useContext(StoreContext);
+
   return(
     <NavBar>
       <NavLogo>
@@ -40,7 +43,7 @@ const UserNav = () => {
           </Link>
         </NavItem>
         <NavItem>
-          <Link to={`/profile/${currentUser}`}>
+          <Link to={`/profile/${state.username}`}>
             <h4>Profile</h4>
           </Link>
         </NavItem>

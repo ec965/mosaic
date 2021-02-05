@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from "axios";
 import {APIURL, REGISTER} from '../config/api';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {FormError, FormButton} from './components';
 import {Redirect} from 'react-router-dom';
+import { getToken } from '../util';
 
 const RegisterForm= () => {
   const [nameErr, setNameErr] = useState(false);
@@ -17,6 +18,12 @@ const RegisterForm= () => {
     });
     return res;
   }
+
+  useEffect(() => {
+    if(getToken()){
+      setRegistered(true);
+    }
+  },[])
 
   return(
     <>

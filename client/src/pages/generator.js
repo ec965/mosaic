@@ -17,7 +17,6 @@ const ToolLabel = (props) => <h6 onClick={props.onClick} className={`${props.cla
 const Generator = () =>{
   const [title, setTitle] = useState('');
   const [dimension, setDimension] = useState(10);
-  const [pixelSize, setPixelSize] = useState(30);
   const [borderRadius, setBorderRadius] = useState(25);
   const [rmin, setRmin] = useState(0);
   const [rmax, setRmax] = useState(255);
@@ -44,7 +43,6 @@ const Generator = () =>{
         setTitle(res.data.title);
         let project = res.data.project;
         setDimension(project.dimension);
-        setPixelSize(project.pixelSize);
         setBorderRadius(project.borderRadius);
         setRmin(project.rmin);
         setRmax(project.rmax);
@@ -68,16 +66,9 @@ const Generator = () =>{
     {
       min: 1,
       max: 30,
-      name:'dimensions',
+      name:'pixel density',
       defaultValue: 10,
       var: dimension,
-    },
-    {
-      min: 1,
-      max: 40,
-      name:'pixel size',
-      defaultValue: 30,
-      var: pixelSize
     },
     {
       min: 0,
@@ -135,11 +126,8 @@ const Generator = () =>{
       case 'title':
         setTitle(event.target.value);
         break;
-      case 'dimensions':
+      case 'pixel density':
         setDimension(event.target.value);
-        break;
-      case 'pixel size':
-        setPixelSize(event.target.value);
         break;
       case 'border radius':
         setBorderRadius(event.target.value);
@@ -181,7 +169,6 @@ const Generator = () =>{
       title: title,
       project:{
         dimension: dimension,
-        pixelSize: pixelSize,
         borderRadius: borderRadius,
         rmin: rmin,
         rmax: rmax,
@@ -224,8 +211,7 @@ const Generator = () =>{
 
   const handleReset = () =>{
     setDimension(sliders[0].defaultValue);
-    setPixelSize(sliders[1].defaultValue);
-    setBorderRadius(sliders[2].defaultValue);
+    setBorderRadius(sliders[1].defaultValue);
     setRmin(0);
     setRmax(255);
     setGmin(0);
@@ -253,8 +239,7 @@ const Generator = () =>{
     }
 
     setDimension(rand(sliders[0].min, sliders[0].max));
-    setPixelSize(rand(sliders[1].min, sliders[1].max));
-    setBorderRadius(rand(sliders[2].min, sliders[2].max));
+    setBorderRadius(rand(sliders[1].min, sliders[1].max));
     setRmin(rand(0,255));
     setRmax(rand(0,255));
     setGmin(rand(0,255));
@@ -314,7 +299,7 @@ const Generator = () =>{
       <div className='editor'>
         <PixelApp
           dimension={dimension}
-          pixelSize={pixelSize}
+          pixelDensity={540}
           borderRadius={borderRadius}
           rmin={rmin}
           rmax={rmax}

@@ -2,19 +2,36 @@ import React from 'react';
 import {getToken} from '../util.js';
 import {Route, Redirect} from 'react-router-dom';
 
-const PrivateRoute = ({children, ...rest}) => {
-  let token = getToken();
-  let auth;
+// import axios from 'axios';
+// import { APIURL, VALIDATE } from '../config/api.js';
 
-  if (token){
-    auth=true;
+// async function validate() {
+//   const token = getToken();
+//   try{
+//     let res = await axios.post(APIURL + VALIDATE,
+//       {data:'data'},
+//       {headers: {"Authorization": `Bearer ${token}`}}
+//     )
+//     if (res.status === 200) return true;
+
+//   } catch(error){
+//     return false;
+//   }
+// }
+
+const PrivateRoute = ({children, ...rest}) => {
+  function validate(){
+    if(!getToken()){
+      return false;
+    }
+    return true;
   }
 
   return(
     <Route
       {...rest}
       render={({location}) =>
-        auth ? (
+        validate() ? (
           children
         ) : (
           <Redirect 
