@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Button} from '../components/button';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {FormError, FormButton} from './components';

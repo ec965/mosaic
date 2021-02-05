@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './router/index';
 import './css/stylesheet.css';
 import {StoreContextProvider} from './contextreducer';
+import Canvas from './app/pixelize.js'
 
 const AppWrapper = () => {
   return(
@@ -16,5 +17,6 @@ const AppWrapper = () => {
 
 
 ReactDOM.render(
- <AppWrapper/> 
+//  <AppWrapper/> 
+<Canvas/>
   , document.getElementById('root'));

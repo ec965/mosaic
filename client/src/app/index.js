@@ -25,9 +25,9 @@ const PixelDiv = (props) => {
   );
 }
 
-const PixelApp = (props) => {
+const RandomGenerator = (props) => {
   const [pixelMap, setPixelMap] = useState([[]]);
-  
+
   useEffect(() => {
     if(!props.data){
       let data = new RandomPixelSquare(props.dimension, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax);
@@ -43,35 +43,46 @@ const PixelApp = (props) => {
       setPixelMap(props.data);
     }
   },[props.data, props.sortHueRowLen, props.sortHueColLen, props.sortHueCol, props.sortHueRow, props.rmin, props.rmax, props.gmin, props.gmax, props.bmin, props.bmax, props.dimension])
+}
+
+
+
+
+
+export const PixelApp = ({pixelMap, pixelSize, borderRadius}) => {
+  const width = pixelMap[0].length;
+  const height = pixelMap.length;
 
   const render = pixelMap.map((inner,i) => {
     return(
       <Row key={i}>
-        {inner.map((p,j) => <PixelDiv key={j} pixel={p} pixelSize={props.pixelDensity/props.dimension} borderRadius={props.borderRadius}/>)}
+        {inner.map((p,j) => <PixelDiv key={j} pixel={p} pixelSize={pixelSize} borderRadius={borderRadius}/>)}
       </Row>
     );
   });
 
   return(
-    <Column className={props.className}>
+    <Column>
       {render}
     </Column>
   );
 }
-PixelApp.defaultProps={
-  dimension:30,
-  pixelDensity: 300,
-  borderRadius: 25,
-  rmin: 0,
-  rmax: 255,
-  gmin: 0,
-  gmax: 255,
-  bmin: 0,
-  bmax: 255,
-  sortHueRow: false,
-  sortHueCol: false,
-  sortHueRowLen: -1,
-  sortHueColLen: -1,
-}
+
+
+// PixelApp.defaultProps={
+//   dimension:30,
+//   pixelDensity: 300,
+//   borderRadius: 25,
+//   rmin: 0,
+//   rmax: 255,
+//   gmin: 0,
+//   gmax: 255,
+//   bmin: 0,
+//   bmax: 255,
+//   sortHueRow: false,
+//   sortHueCol: false,
+//   sortHueRowLen: -1,
+//   sortHueColLen: -1,
+// }
 
 export default PixelApp;
