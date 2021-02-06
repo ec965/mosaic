@@ -1,33 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getAppRecent } from '../config/api';
+import { getAppRecent } from "../config/api";
 
 import { dateString } from "../util/util";
 import PixelCard from "../app/card";
-import PixelApp from '../app/app';
+import PixelApp from "../app/app";
 import { Page } from "../components/layout";
 
 const CardMatrix = () => {
-  const [recentProjects, setRecentProjects] = useState([{
-      title: '',
-      username: '',
+  const [recentProjects, setRecentProjects] = useState([
+    {
+      title: "",
+      username: "",
       createdAt: 1,
-      project:{
-        pixelMap: [[{r:1, g:1, b:1}]],
+      project: {
+        pixelMap: [[{ r: 1, g: 1, b: 1 }]],
         borderRadius: 0,
         grid: false,
-        backgroundColor: '#fff',
-      }
-    }]);
+        backgroundColor: "#fff",
+      },
+    },
+  ]);
 
   // fetch the most recent projects
   useEffect(() => {
     function getRecent() {
       getAppRecent()
-      .then((res) => {
-        setRecentProjects(res.data);
-      })
-      .catch((err) => console.error(err));
+        .then((res) => {
+          setRecentProjects(res.data);
+        })
+        .catch((err) => console.error(err));
     }
 
     getRecent();
@@ -43,8 +45,7 @@ const CardMatrix = () => {
           date={p.createdAt}
           project={p.project}
           maxWidth={360}
-        >
-        </PixelCard>
+        ></PixelCard>
       </Link>
     );
   });

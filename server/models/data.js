@@ -16,12 +16,13 @@ commentSchema.pre("save", function (next) {
   next();
 });
 
-const pixelSchema = new Schema (
+const pixelSchema = new Schema(
   {
     r: Number,
     g: Number,
-    b: Number
-  },{_id: false}
+    b: Number,
+  },
+  { _id: false }
 );
 
 const dataSchema = new Schema(
@@ -30,9 +31,9 @@ const dataSchema = new Schema(
     title: { type: String },
     project: {
       pixelMap: [[pixelSchema]],
-      borderRadius: {type: Number, default: 25},
-      grid: {type: Boolean, default: false},
-      backgroundColor: {type: String, default: '#fff'},
+      borderRadius: { type: Number, default: 25 },
+      grid: { type: Boolean, default: false },
+      backgroundColor: { type: String, default: "#fff" },
     },
     comments: [commentSchema],
   },

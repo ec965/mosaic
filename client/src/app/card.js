@@ -16,22 +16,26 @@ const Card = (props) => {
   );
 };
 
-const PixelCard = ({title, username, date , maxWidth, project: {pixelMap, borderRadius, backgroundColor, grid}}) => {
-  return(
-    <Card
-      title={title}
-      username={username}
-      date={dateString(date)}
-    >
+const PixelCard = ({
+  title,
+  username,
+  date,
+  maxWidth,
+  project: { pixelMap, borderRadius, backgroundColor, grid },
+}) => {
+  return (
+    <Card title={title} username={username} date={dateString(date)}>
       <PixelApp
         pixelMap={pixelMap}
-        pixelSize={ grid ? (maxWidth/(pixelMap.length))-2 : 360/pixelMap.length}
+        pixelSize={
+          grid ? maxWidth / pixelMap.length - 2 : 360 / pixelMap.length
+        }
         borderRadius={borderRadius}
         grid={grid}
         backgroundColor={backgroundColor}
       />
     </Card>
   );
-}
+};
 
 export default PixelCard;

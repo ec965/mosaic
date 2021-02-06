@@ -7,25 +7,32 @@ import PixelApp from "../app/app";
 import { Column } from "../components/layout";
 import { dateString } from "../util/util";
 import TextBoxForm from "../components/textbox";
-import { getProject, postProjectComment, deleteProjectComment, patchProjectComment } from "../config/api";
+import {
+  getProject,
+  postProjectComment,
+  deleteProjectComment,
+  patchProjectComment,
+} from "../config/api";
 
 const TEXTBOX = { maxLength: 160, rows: 4, cols: 40 };
 
 const ProjectPage = () => {
   const [project, setProject] = useState({
     grid: false,
-    pixelMap: [[{r:1, g:1, b:1}]],
+    pixelMap: [[{ r: 1, g: 1, b: 1 }]],
     borderRadius: 25,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   });
   const [username, setUserName] = useState("");
   const [date, setDate] = useState("");
-  const [comments, setComments] = useState([{
-    username: '',
-    test: '',
-    edited: false,
-    updatedAt: 1,
-  }]);
+  const [comments, setComments] = useState([
+    {
+      username: "",
+      test: "",
+      edited: false,
+      updatedAt: 1,
+    },
+  ]);
   const [title, setTitle] = useState("");
   const [newComment, setNewComment] = useState("");
 
@@ -114,7 +121,7 @@ const ProjectPage = () => {
       <h5>{date}</h5>
       <PixelApp
         pixelMap={project.pixelMap}
-        pixelSize={360/project.pixelMap.length}
+        pixelSize={360 / project.pixelMap.length}
         borderRadius={project.borderRadius}
         grid={project.grid}
         backgroundColor={project.backgroundColor}

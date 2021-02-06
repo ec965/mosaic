@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from '../components/button';
+import { Button } from "../components/button";
 import Slider from "../components/slider";
 
 export const ToolLabel = (props) => (
@@ -18,12 +18,24 @@ slider = {
   var,
 }
 */
-const Controller = ({ top, sliders, bottom, handleSave, disableSave, onTitleChange, title }) => {
+const Controller = ({
+  top,
+  sliders,
+  bottom,
+  handleSave,
+  disableSave,
+  onTitleChange,
+  title,
+}) => {
   const sliderTools = sliders.map((t, i) => {
     return (
       <div key={i}>
         <ToolLabel>
-          {t.name}:{t.percent ? Math.floor(((t.var-t.min) / (t.max-t.min))*100) : t.var}{t.percent && '%'}
+          {t.name}:
+          {t.percent
+            ? Math.floor(((t.var - t.min) / (t.max - t.min)) * 100)
+            : t.var}
+          {t.percent && "%"}
         </ToolLabel>
         <Slider
           min={t.min}

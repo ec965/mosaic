@@ -5,7 +5,7 @@ import { FormError, FormButton } from "./components";
 import { Row } from "../components/layout";
 import { Redirect } from "react-router-dom";
 import { getToken } from "../util/util.js";
-import { postLogin } from '../config/api';
+import { postLogin } from "../config/api";
 
 const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);

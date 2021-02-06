@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { FormError, FormButton } from "./components";
 import { Redirect } from "react-router-dom";
-import { postRegister } from '../config/api';
-import { getToken } from '../util/util';
+import { postRegister } from "../config/api";
+import { getToken } from "../util/util";
 
 const RegisterForm = () => {
   const [nameErr, setNameErr] = useState(false);

@@ -1,13 +1,13 @@
 import React from "react";
 
-export const Column = ({className, ...props}) => {
+export const Column = ({ className, ...props }) => {
   return (
     <div className={className + " col"} {...props}>
       {props.children}
     </div>
   );
 };
-export const Row = ({className, ...props}) => {
+export const Row = ({ className, ...props }) => {
   return (
     <div className={className + " row"} {...props}>
       {props.children}
@@ -15,7 +15,7 @@ export const Row = ({className, ...props}) => {
   );
 };
 
-export const Page = ({className, ...props}) => {
+export const Page = ({ className, ...props }) => {
   return (
     <div className={className + " page"} {...props}>
       {props.children}

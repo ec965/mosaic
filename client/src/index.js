@@ -16,7 +16,7 @@ const AppWrapper = () => {
 };
 
 ReactDOM.render(
-   <AppWrapper/>,
+  <AppWrapper />,
   // <div>
   //   {/* <ImageGenerator/> */}
   //   <RandomGenerator />

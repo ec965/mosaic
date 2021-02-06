@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useReducer } from "react";
-import { useParams } from 'react-router-dom';
-import { HuePicker } from 'react-color';
-import { Button } from '../components/button';
+import { useParams } from "react-router-dom";
+import { HuePicker } from "react-color";
+import { Button } from "../components/button";
 import { Page } from "../components/layout";
 import { RandomPixelSquare } from "./generator";
 import PixelApp from "./app.js";
 import Controller, { ToolLabel } from "./controller";
-import Toggle from '../components/toggle';
-import Slider from '../components/slider';
+import Toggle from "../components/toggle";
+import Slider from "../components/slider";
 import { getProject, postAppNew } from "../config/api";
 
 const ACTION = {
@@ -24,12 +24,12 @@ const ACTION = {
   SORTHUECOL: "sortHueCol",
   SORTHUEROWLEN: "sortHueRowLen",
   SORTHUECOLLEN: "sortHueColLen",
-  GRID: 'grid',
-  BGCOLOR: 'backgroundColor',
+  GRID: "grid",
+  BGCOLOR: "backgroundColor",
   RESET: "reset",
   RANDOM: "random",
-  TITLE: 'title',
-  GETDATA: 'getData',
+  TITLE: "title",
+  GETDATA: "getData",
 };
 
 function reducer(state, action) {
@@ -40,7 +40,7 @@ function reducer(state, action) {
   }
   switch (action.type) {
     case ACTION.BGCOLOR:
-      return {...state, backgroundColor: action.payload};
+      return { ...state, backgroundColor: action.payload };
     case ACTION.DIMENSION:
       return { ...state, dimension: action.payload };
     case ACTION.PIXELSIZE:
@@ -60,22 +60,22 @@ function reducer(state, action) {
     case ACTION.BMAX:
       return { ...state, bmax: action.payload };
     case ACTION.SORTHUEROW:
-      return {...state, sortHueRow: action.payload};
+      return { ...state, sortHueRow: action.payload };
     case ACTION.SORTHUEROWLEN:
-      return {...state, sortHueRowLen: action.payload};
+      return { ...state, sortHueRowLen: action.payload };
     case ACTION.SORTHUECOL:
-      return {...state, sortHueCol: action.payload};
+      return { ...state, sortHueCol: action.payload };
     case ACTION.SORTHUECOLLEN:
-      return {...state, sortHueColLen: action.payload};
+      return { ...state, sortHueColLen: action.payload };
     case ACTION.GRID:
-      return {...state, grid: action.payload};
+      return { ...state, grid: action.payload };
     case ACTION.TITLE:
-      return {...state, title:action.payload};
+      return { ...state, title: action.payload };
     case ACTION.RESET:
       return initialState;
     case ACTION.RANDOM:
       return {
-        ...state, 
+        ...state,
         dimension: randInt(minMax.dimension.min, minMax.dimension.max),
         borderRadius: randInt(minMax.borderRadius.min, minMax.borderRadius.max),
         rmin: randInt(minMax.rgb.min, state.rmax),
@@ -84,13 +84,16 @@ function reducer(state, action) {
         gmax: randInt(state.gmin, minMax.rgb.max),
         bmin: randInt(minMax.rgb.min, state.bmax),
         bmax: randInt(state.bmin, minMax.rgb.max),
-        sortHueRow: randInt(0,1),
-        sortHueCol: randInt(0,1),
+        sortHueRow: randInt(0, 1),
+        sortHueCol: randInt(0, 1),
         sortHueRowLen: -1,
         sortHueColLen: -1,
-        grid: randInt(0,1),
-        backgroundColor: `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)}`,
-      }
+        grid: randInt(0, 1),
+        backgroundColor: `rgb(${randInt(0, 255)}, ${randInt(0, 255)}, ${randInt(
+          0,
+          255
+        )}`,
+      };
     default:
       return state;
   }
@@ -111,8 +114,8 @@ const initialState = {
   sortHueRowLen: -1,
   sortHueColLen: -1,
   grid: false,
-  backgroundColor: '#fff',
-  title: '',
+  backgroundColor: "#fff",
+  title: "",
 };
 
 const minMax = {
@@ -120,43 +123,43 @@ const minMax = {
     min: 1,
     max: 30,
   },
-  pixelSize:{
+  pixelSize: {
     min: 280,
-    max: 720
+    max: 720,
   },
-  borderRadius:{
-    min:0,
-    max:50
+  borderRadius: {
+    min: 0,
+    max: 50,
   },
-  rgb:{
-    min:0,
-    max:255
-  }
-}
+  rgb: {
+    min: 0,
+    max: 255,
+  },
+};
 
 const RandomGenerator = (props) => {
   const [pixelMap, setPixelMap] = useState([[]]);
   const [disableSave, setDisableSave] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
-  
+
   const { projectId } = useParams();
 
   useEffect(() => {
-    function getInitialData(){
+    function getInitialData() {
       getProject(projectId)
-      .then((res) => {
-        console.log(res.data);
+        .then((res) => {
+          console.log(res.data);
 
-        // this action has not been implemented yet!
-        dispatch({type: ACTION.GETDATA, payload: res.data});
-      })
-      .catch((error) => console.error(error));
+          // this action has not been implemented yet!
+          dispatch({ type: ACTION.GETDATA, payload: res.data });
+        })
+        .catch((error) => console.error(error));
     }
 
-    if (projectId){
+    if (projectId) {
       getInitialData();
     }
-  }, [projectId])
+  }, [projectId]);
 
   const sliders = [
     {
@@ -188,7 +191,7 @@ const RandomGenerator = (props) => {
       var: state.borderRadius,
       onChange: (e) =>
         dispatch({ type: ACTION.BORDERRADIUS, payload: e.target.value }),
-      percent: true
+      percent: true,
     },
     {
       var: state.rmin,
@@ -271,24 +274,24 @@ const RandomGenerator = (props) => {
     state.dimension,
   ]);
 
-  const handleSave = () =>{
+  const handleSave = () => {
     setDisableSave(true);
     let data = {
       title: state.title,
-      project:{
+      project: {
         pixelMap: pixelMap,
         borderRadius: state.borderRadius,
         grid: state.grid,
-        backgroundColor: state.backgroundColor
-      }
+        backgroundColor: state.backgroundColor,
+      },
     };
 
     postAppNew(data)
-    .then((res) => console.log(JSON.stringify(res.data, null,2)))
-    .catch((err) => console.error(err));
+      .then((res) => console.log(JSON.stringify(res.data, null, 2)))
+      .catch((err) => console.error(err));
 
     setDisableSave(false);
-  }
+  };
 
   return (
     <Page className="generator">
@@ -296,68 +299,100 @@ const RandomGenerator = (props) => {
         disableSave={disableSave}
         handleSave={handleSave}
         title={state.title}
-        onTitleChange={(e) => dispatch({type: ACTION.TITLE, payload: e.target.value})}
-        sliders={sliders} 
+        onTitleChange={(e) =>
+          dispatch({ type: ACTION.TITLE, payload: e.target.value })
+        }
+        sliders={sliders}
         top={
           <>
-          <Button onClick={(e) => {dispatch({type: ACTION.RANDOM})}} className="courier">
-            Random
-          </Button>
+            <Button
+              onClick={(e) => {
+                dispatch({ type: ACTION.RANDOM });
+              }}
+              className="courier"
+            >
+              Random
+            </Button>
           </>
         }
         bottom={
           <>
-          <ToolLabel>grid lines</ToolLabel>
-          <Toggle
-            onChange={(e) => dispatch({type: ACTION.GRID, payload: e.target.checked})}
-            checked={state.grid}
-          />
-          <ToolLabel>background color</ToolLabel>
-          <HuePicker
-            color={state.backgroundColor}
-            onChangeComplete={(color, e) => dispatch({type: ACTION.BGCOLOR, payload: color.hex})}
-          /> 
-          <Toggle
-            onChange={(e) => dispatch({type: ACTION.GRID, payload: e.target.checked})}
-            checked={state.grid}
-          />
-          <ToolLabel>sort hue by rows</ToolLabel>
-          <Toggle 
-            onChange={(e)=>dispatch({type:ACTION.SORTHUEROW, payload: e.target.checked})} 
-            id="sortHueRow" 
-            checked={state.sortHueRow} 
-          />
-          <ToolLabel>sort length:{state.sortHueRowLen}</ToolLabel>
-          <Slider
-            min={0}
-            max={state.dimension}
-            onChange={(e) => dispatch({type:ACTION.SORTHUEROWLEN, payload: e.target.value})}
-            id="sortHueRowLen"
-            defaultValue={state.dimension}
-          />
-          <ToolLabel>sort hue by columns</ToolLabel>
-          <Toggle 
-            onChange={(e) => dispatch({type: ACTION.SORTHUECOL, payload: e.target.checked})} 
-            id="sortHueCol" 
-            checked={state.sortHueCol} 
-          />
-          <ToolLabel>sort length:{state.sortHueColLen}</ToolLabel>
-          <Slider
-            min={0}
-            max={state.dimension}
-            onChange={(e) => dispatch({type: ACTION.SORTHUECOLLEN, payload: e.target.value})}
-            id="sortHueColLen"
-            defaultValue={state.dimension}
-          />
-          <Button onClick={(e) => {dispatch({type: ACTION.RESET})}} className="courier red">
-            Reset
-          </Button>
+            <ToolLabel>grid lines</ToolLabel>
+            <Toggle
+              onChange={(e) =>
+                dispatch({ type: ACTION.GRID, payload: e.target.checked })
+              }
+              checked={state.grid}
+            />
+            <ToolLabel>background color</ToolLabel>
+            <HuePicker
+              color={state.backgroundColor}
+              onChangeComplete={(color, e) =>
+                dispatch({ type: ACTION.BGCOLOR, payload: color.hex })
+              }
+            />
+            <Toggle
+              onChange={(e) =>
+                dispatch({ type: ACTION.GRID, payload: e.target.checked })
+              }
+              checked={state.grid}
+            />
+            <ToolLabel>sort hue by rows</ToolLabel>
+            <Toggle
+              onChange={(e) =>
+                dispatch({ type: ACTION.SORTHUEROW, payload: e.target.checked })
+              }
+              id="sortHueRow"
+              checked={state.sortHueRow}
+            />
+            <ToolLabel>sort length:{state.sortHueRowLen}</ToolLabel>
+            <Slider
+              min={0}
+              max={state.dimension}
+              onChange={(e) =>
+                dispatch({
+                  type: ACTION.SORTHUEROWLEN,
+                  payload: e.target.value,
+                })
+              }
+              id="sortHueRowLen"
+              defaultValue={state.dimension}
+            />
+            <ToolLabel>sort hue by columns</ToolLabel>
+            <Toggle
+              onChange={(e) =>
+                dispatch({ type: ACTION.SORTHUECOL, payload: e.target.checked })
+              }
+              id="sortHueCol"
+              checked={state.sortHueCol}
+            />
+            <ToolLabel>sort length:{state.sortHueColLen}</ToolLabel>
+            <Slider
+              min={0}
+              max={state.dimension}
+              onChange={(e) =>
+                dispatch({
+                  type: ACTION.SORTHUECOLLEN,
+                  payload: e.target.value,
+                })
+              }
+              id="sortHueColLen"
+              defaultValue={state.dimension}
+            />
+            <Button
+              onClick={(e) => {
+                dispatch({ type: ACTION.RESET });
+              }}
+              className="courier red"
+            >
+              Reset
+            </Button>
           </>
         }
       />
       <PixelApp
         pixelMap={pixelMap}
-        pixelSize={state.pixelSize/state.dimension}//state.pixelSize}
+        pixelSize={state.pixelSize / state.dimension} //state.pixelSize}
         borderRadius={state.borderRadius}
         grid={state.grid}
         backgroundColor={state.backgroundColor}

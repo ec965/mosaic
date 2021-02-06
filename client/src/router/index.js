@@ -9,7 +9,7 @@ import UserProfile from "../pages/profile";
 import CardMatrix from "../pages/home";
 import UserNav from "../router/navbar";
 import ProjectPage from "../pages/project";
-import RandomGenerator from '../app/random';
+import RandomGenerator from "../app/random";
 
 const App = () => {
   return (

@@ -8,17 +8,19 @@ import { deleteProject, getAppUserProjects } from "../config/api";
 
 const UserProfile = () => {
   const [username, setUsername] = useState("");
-  const [projects, setProjects] = useState([{
-    title: '',
-    username: '',
-    createdAt: 1,
-    project:{
-      pixelMap: [[{r:1, g:1, b:1}]],
-      borderRadius: 0,
-      grid: false,
-      backgroundColor: '#fff',
-    }
-  }]);
+  const [projects, setProjects] = useState([
+    {
+      title: "",
+      username: "",
+      createdAt: 1,
+      project: {
+        pixelMap: [[{ r: 1, g: 1, b: 1 }]],
+        borderRadius: 0,
+        grid: false,
+        backgroundColor: "#fff",
+      },
+    },
+  ]);
 
   let { thisUser } = useParams();
 
@@ -39,11 +41,11 @@ const UserProfile = () => {
     event.preventDefault();
     let info = JSON.parse(event.target.id);
     let index = info.index;
-    let id = info.id
+    let id = info.id;
     deleteProject(id)
       .then((res) => {
-        let update = [...projects]
-        update.splice(index,1);
+        let update = [...projects];
+        update.splice(index, 1);
         setProjects(update);
       })
       .catch((error) => console.error(error));
@@ -59,10 +61,13 @@ const UserProfile = () => {
             date={p.createdAt}
             project={p.project}
             maxWidth={360}
-          >
-          </PixelCard>
+          ></PixelCard>
         </Link>
-        <Button id={JSON.stringify({id:p._id, index:i})} onClick={handleDelete} className="red">
+        <Button
+          id={JSON.stringify({ id: p._id, index: i })}
+          onClick={handleDelete}
+          className="red"
+        >
           Delete
         </Button>
 

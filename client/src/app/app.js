@@ -54,11 +54,11 @@ export const PixelApp = ({
 };
 
 PixelApp.defaultProps = {
-  pixelMap: [[{r:1, g:1, b:1}]],
+  pixelMap: [[{ r: 1, g: 1, b: 1 }]],
   pixelSize: 30,
   borderRadius: 0,
   grid: false,
-  backgroundColor: '#AAA'
+  backgroundColor: "#AAA",
 };
 
 export default PixelApp;
