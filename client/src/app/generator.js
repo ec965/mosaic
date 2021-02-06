@@ -1,36 +1,37 @@
 export class Pixel {
-  constructor(r, g, b){
+  constructor(r, g, b) {
     this.r = r;
     this.g = g;
     this.b = b;
   }
-  get hex(){
-    function toHex(n){
+  get hex() {
+    function toHex(n) {
       let hex = n.toString(16);
       if (hex.length === 1) hex = "0" + hex;
       return hex;
     }
     return "#" + toHex(this.r) + toHex(this.g) + toHex(this.b);
   }
-  get hue(){ // hue is a degree from 0 to 359
-    let r = this.r/255;
-    let g = this.g/255;
-    let b = this.b/255;
-    let max = Math.max(r,g,b);
-    let min = Math.min(r,g,b);
+  get hue() {
+    // hue is a degree from 0 to 359
+    let r = this.r / 255;
+    let g = this.g / 255;
+    let b = this.b / 255;
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
     let hue;
-    switch(max){
+    switch (max) {
       case r:
-        hue = (g-b)/(max-min);
+        hue = (g - b) / (max - min);
         break;
       case g:
-        hue = 2 + (b-r)/(max-min);
+        hue = 2 + (b - r) / (max - min);
         break;
       case b:
-        hue = 4 + (r-g)/(max-min);
+        hue = 4 + (r - g) / (max - min);
         break;
       default:
-        hue=0;
+        hue = 0;
     }
     hue *= 60;
     if (hue < 0) hue += 360;
@@ -38,25 +39,25 @@ export class Pixel {
 
     return hue;
   }
-  get luminace(){
-    let r = this.r/255;
-    let g = this.g/255;
-    let b = this.b/255;
-    let max = Math.max(r,g,b);
-    let min = Math.min(r,g,b);
-    return (max + min)/2;    
+  get luminace() {
+    let r = this.r / 255;
+    let g = this.g / 255;
+    let b = this.b / 255;
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+    return (max + min) / 2;
   }
-  get saturation(){
-    let r = this.r/255;
-    let g = this.g/255;
-    let b = this.b/255;
-    let max = Math.max(r,g,b);
-    let min = Math.min(r,g,b);
+  get saturation() {
+    let r = this.r / 255;
+    let g = this.g / 255;
+    let b = this.b / 255;
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
     let lumi = this.luminance;
-    if (lumi <= 0.5){
-      return (max - min)/(max + min);
+    if (lumi <= 0.5) {
+      return (max - min) / (max + min);
     }
-    return (max-min)/(2-max-min);
+    return (max - min) / (2 - max - min);
   }
 }
 
@@ -89,14 +90,13 @@ export class Pixel {
 //     let r = swap(this.rmin, this.rmax);
 //     this.rmin = r.min;
 //     this.rmax = r.max;
-    
+
 //     this.gmin = check(gmin);
 //     this.gmax = check(gmax);
 //     let g = swap(this.gmin, this.gmax);
 //     this.gmin = g.min;
 //     this.gmax = g.max;
 
-    
 //     this.bmin = check(bmin);
 //     this.bmax = check(bmax);
 //     let b = swap(this.bmin, this.bmax);
@@ -107,38 +107,40 @@ export class Pixel {
 // }
 
 export class RandomPixelSquare {
-  constructor(dimension, rmin, rmax, gmin, gmax, bmin, bmax) {//rgbminmax=new RGBMinMax(0,255,0,255,0,255)){
-    function randInt(min, max){
+  constructor(dimension, rmin, rmax, gmin, gmax, bmin, bmax) {
+    //rgbminmax=new RGBMinMax(0,255,0,255,0,255)){
+    function randInt(min, max) {
       min = Math.ceil(min);
       max = Math.floor(max);
-      return Math.floor(Math.random()*(max-min + 1)) + min;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     this.data = [];
-    for(let i=0; i<dimension; i++){
+    for (let i = 0; i < dimension; i++) {
       let inner = [];
-      for(let j=0; j<dimension; j++){
+      for (let j = 0; j < dimension; j++) {
         let r = randInt(rmin, rmax);
         let g = randInt(gmin, gmax);
         let b = randInt(bmin, bmax);
         let p = new Pixel(r, g, b);
-        inner.push(p)
+        inner.push(p);
       }
       this.data.push(inner);
     }
   }
 
-  sortHue(length) { // horizontal
+  sortHue(length) {
+    // horizontal
     if (!length || length < 0) length = this.data[0].length;
     if (length > this.data[0].length) length = this.data[0].length;
 
     let i, j, row;
-    for(row of this.data){
-      for(i=1; i<length; i++){
+    for (row of this.data) {
+      for (i = 1; i < length; i++) {
         let temp = row[i].hue;
         let temp_item = row[i];
-        for(j=i; j > 0 && temp < row[j-1].hue; j--){
-          row[j] = row[j-1];
+        for (j = i; j > 0 && temp < row[j - 1].hue; j--) {
+          row[j] = row[j - 1];
         }
         row[j] = temp_item;
       }
@@ -146,23 +148,22 @@ export class RandomPixelSquare {
     return this.data;
   }
 
-  sortHueVertical(length){
+  sortHueVertical(length) {
     if (!length || length < 0) length = this.data.length;
     if (length > this.data.length) length = this.data.length;
 
-    let i,j,k;
+    let i, j, k;
 
-    for(j=0; j<this.data[0].length; j++){
-      for(i=1;i<this.data.length; i++){
+    for (j = 0; j < this.data[0].length; j++) {
+      for (i = 1; i < this.data.length; i++) {
         let temp = this.data[i][j].hue;
         let temp_item = this.data[i][j];
-        for(k=i; k > 0 && temp < this.data[k-1][j].hue; k--){
-          this.data[k][j] = this.data[k-1][j];
+        for (k = i; k > 0 && temp < this.data[k - 1][j].hue; k--) {
+          this.data[k][j] = this.data[k - 1][j];
         }
         this.data[k][j] = temp_item;
       }
     }
     return this.data;
   }
-
 }

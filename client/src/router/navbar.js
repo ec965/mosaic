@@ -1,38 +1,37 @@
-import React, {useState, useContext} from 'react';
-import {Redirect} from 'react-router-dom';
+import React, { useState, useContext } from "react";
+import { Redirect } from "react-router-dom";
 
-import {StoreContext} from '../util/contextreducer';
+import { StoreContext } from "../util/contextreducer";
 
-import {NavBar, NavGroup, NavLogo, NavItem} from '../components/navbar';
-import {Link} from 'react-router-dom';
+import { NavBar, NavGroup, NavLogo, NavItem } from "../components/navbar";
+import { Link } from "react-router-dom";
 
 const Logout = (props) => {
   const [loggedIn, setLoggedIn] = useState(true);
-
 
   const handleClick = (event) => {
     localStorage.clear();
     sessionStorage.clear();
     setLoggedIn(false);
-  }
+  };
 
-  return(
+  return (
     <>
       <h4 className="logout link" onClick={handleClick}>
         {props.children}
       </h4>
-      {!loggedIn && <Redirect to="/"/>}
+      {!loggedIn && <Redirect to="/" />}
     </>
   );
-}
+};
 
 const UserNav = () => {
-  const {state} = useContext(StoreContext);
+  const { state } = useContext(StoreContext);
 
-  return(
+  return (
     <NavBar>
       <NavLogo>
-        <Link to='/home'>
+        <Link to="/home">
           <h2>User-Land</h2>
         </Link>
       </NavLogo>
@@ -49,13 +48,11 @@ const UserNav = () => {
         </NavItem>
         <NavItem>
           <div>
-            <Logout>
-              Logout
-            </Logout>
+            <Logout>Logout</Logout>
           </div>
         </NavItem>
       </NavGroup>
     </NavBar>
   );
-}
+};
 export default UserNav;

@@ -1,73 +1,76 @@
-import React, {useState, useEffect, useContext} from 'react';
-import axios from 'axios';
-import {Link, useParams} from 'react-router-dom';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { Link, useParams } from "react-router-dom";
 
-import {APIURL, PROJECT, COMMENT} from '../config/api';
-import {getToken} from '../util/util.js';
-import {StoreContext} from '../util/contextreducer';
+import { APIURL, PROJECT, COMMENT } from "../config/api";
+import { getToken } from "../util/util.js";
+import { StoreContext } from "../util/contextreducer";
 
-import PixelApp from '../app/app';
-import {Column} from '../components/layout';
-import {dateString} from '../util/util';
-import TextBoxForm from '../components/textbox';
+import PixelApp from "../app/app";
+import { Column } from "../components/layout";
+import { dateString } from "../util/util";
+import TextBoxForm from "../components/textbox";
 
-const TEXTBOX = {maxLength: 160, rows:4, cols:40};
+const TEXTBOX = { maxLength: 160, rows: 4, cols: 40 };
 
 const ProjectPage = () => {
   const [project, setProject] = useState({});
   const [username, setUserName] = useState("");
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState("");
   const [comments, setComments] = useState([]);
-  const [title, setTitle] = useState('');
-  const [newComment, setNewComment] = useState('');
+  const [title, setTitle] = useState("");
+  const [newComment, setNewComment] = useState("");
 
-  const {state} = useContext(StoreContext);
+  const { state } = useContext(StoreContext);
   const currentUser = state.username;
 
-  let {id} = useParams();
+  let { id } = useParams();
 
-  useEffect (() => {
-    function getInitialData(){
+  useEffect(() => {
+    function getInitialData() {
       const token = getToken();
-      axios.get(APIURL + PROJECT + '?id=' + id,
-        {headers: {"Authorization": `Bearer ${token}`}})
-      .then((res) => {
-        setUserName(res.data.username);
-        setDate(dateString(res.data.updatedAt));
-        setTitle(res.data.title);
-        setProject(res.data.project);
-        setComments(res.data.comments);
-      })
-      .catch((error) => console.error(error));
+      axios
+        .get(APIURL + PROJECT + "?id=" + id, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setUserName(res.data.username);
+          setDate(dateString(res.data.updatedAt));
+          setTitle(res.data.title);
+          setProject(res.data.project);
+          setComments(res.data.comments);
+        })
+        .catch((error) => console.error(error));
     }
 
     getInitialData();
-  }, [id])
+  }, [id]);
 
-  const handleNewComment = (event) =>{
+  const handleNewComment = (event) => {
     setNewComment(event.target.value);
-  }
-
+  };
 
   const submitNewComment = (event) => {
     event.preventDefault();
     // reset comment box
-    setNewComment('');
+    setNewComment("");
     const token = getToken();
-    axios.post(APIURL + COMMENT,
-      {project_id: id, text: newComment},
-      {headers: {"Authorization": `Bearer ${token}`}}
-    )
-    .then((res) => {
-      // add the new comment to ui
-      let updateComments = comments.slice(0);
-      // add comments in order of recency
-      // new comments come first
-      updateComments.push(res.data);
-      setComments(updateComments);
-    })
-    .catch((error) => console.error(error));
-  }
+    axios
+      .post(
+        APIURL + COMMENT,
+        { project_id: id, text: newComment },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .then((res) => {
+        // add the new comment to ui
+        let updateComments = comments.slice(0);
+        // add comments in order of recency
+        // new comments come first
+        updateComments.push(res.data);
+        setComments(updateComments);
+      })
+      .catch((error) => console.error(error));
+  };
 
   const handleCommentDelete = (event) => {
     event.preventDefault();
@@ -77,22 +80,21 @@ const ProjectPage = () => {
 
     const params = `?project_id=${id}&comment_id=${commentId}`;
     const token = getToken();
-    const header = {headers: {'Authorization': `Bearer ${token}`}};
-    axios.delete(APIURL + COMMENT + params,
-      header
-    )
-    .then((res) => {
-      // remove comment from comments array
-      let updateComments = comments.slice(0);
-      updateComments.splice(commentIndex, 1);
-      
-      setComments(updateComments);
-    })
-    .catch((error) => console.error(error));
-  }
+    const header = { headers: { Authorization: `Bearer ${token}` } };
+    axios
+      .delete(APIURL + COMMENT + params, header)
+      .then((res) => {
+        // remove comment from comments array
+        let updateComments = comments.slice(0);
+        updateComments.splice(commentIndex, 1);
 
-  const commentList = comments.map((c,i) => {
-    return(
+        setComments(updateComments);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const commentList = comments.map((c, i) => {
+    return (
       <Comment
         key={i}
         index={i}
@@ -109,7 +111,7 @@ const ProjectPage = () => {
     );
   });
 
-  return(
+  return (
     <div>
       <h5>{title}</h5>
       <Link to={`/profile/${username}`}>
@@ -142,7 +144,7 @@ const ProjectPage = () => {
       {commentList}
     </div>
   );
-}
+};
 
 const Comment = (props) => {
   const [showEditBox, setShowEditBox] = useState(false);
@@ -153,32 +155,35 @@ const Comment = (props) => {
 
   const handleShowEdit = () => {
     setShowEditBox(!showEditBox);
-  }
-  
+  };
+
   const handleChange = (event) => {
     setText(event.target.value);
-  }
+  };
 
-  const handleSubmit= (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     setShowEditBox(false);
 
-    const data = {project_id: props.project_id, comment:{id: props.id, text: text}};
+    const data = {
+      project_id: props.project_id,
+      comment: { id: props.id, text: text },
+    };
     const token = getToken();
-    axios.patch(APIURL + COMMENT,
-      data,
-      {headers: {"Authorization": `Bearer ${token}`}}
-    )
-    .then((res) => {
-      setupdatedAt(res.data.updatedAt);
-      setUsername(res.data.username);
-      setEdited(res.data.edited);
-      setText(res.data.text);
-    })
-    .catch((error) => console.error(error));
-  }
+    axios
+      .patch(APIURL + COMMENT, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setupdatedAt(res.data.updatedAt);
+        setUsername(res.data.username);
+        setEdited(res.data.edited);
+        setText(res.data.text);
+      })
+      .catch((error) => console.error(error));
+  };
 
-  return(
+  return (
     <Column>
       <Link to={`/profile/${username}`}>
         <p>{username}</p>
@@ -186,13 +191,21 @@ const Comment = (props) => {
       <p>{text}</p>
       <p>{props.createdAt}</p>
       {edited && <p>edited on {updatedAt}</p>}
-      {props.canEdit &&
+      {props.canEdit && (
         <>
-          <p className="link" onClick={handleShowEdit}>edit</p>
-          <p id={JSON.stringify({id:props.id, index:props.index})}  onClick={props.onDelete} className="red">X</p>
+          <p className="link" onClick={handleShowEdit}>
+            edit
+          </p>
+          <p
+            id={JSON.stringify({ id: props.id, index: props.index })}
+            onClick={props.onDelete}
+            className="red"
+          >
+            X
+          </p>
         </>
-      }
-      {showEditBox && 
+      )}
+      {showEditBox && (
         <TextBoxForm
           onSubmit={handleSubmit}
           maxLength={TEXTBOX.maxLength}
@@ -201,9 +214,9 @@ const Comment = (props) => {
           rows={TEXTBOX.rows}
           cols={TEXTBOX.cols}
         />
-      }      
+      )}
     </Column>
   );
-}
+};
 
 export default ProjectPage;

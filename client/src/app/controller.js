@@ -1,7 +1,12 @@
-import React from 'react'
-import Slider from '../components/slider';
+import React from "react";
+import { Button } from '../components/button';
+import Slider from "../components/slider";
 
-const ToolLabel = (props) => <h6 onClick={props.onClick} className={`${props.className} courier`}>{props.children}</h6>
+export const ToolLabel = (props) => (
+  <h6 onClick={props.onClick} className={`${props.className} courier`}>
+    {props.children}
+  </h6>
+);
 
 /* 
 slider = {
@@ -13,12 +18,13 @@ slider = {
   var,
 }
 */
-const Controller = ({top, sliders, bottom}) => {
-
-  const sliderTools = sliders.map((t,i) => {
-    return(
+const Controller = ({ top, sliders, bottom, handleSave, disableSave, onTitleChange, title }) => {
+  const sliderTools = sliders.map((t, i) => {
+    return (
       <div key={i}>
-        <ToolLabel>{t.name}:{t.var}</ToolLabel>
+        <ToolLabel>
+          {t.name}:{t.percent ? Math.floor(((t.var-t.min) / (t.max-t.min))*100) : t.var}{t.percent && '%'}
+        </ToolLabel>
         <Slider
           min={t.min}
           max={t.max}
@@ -28,15 +34,26 @@ const Controller = ({top, sliders, bottom}) => {
         />
       </div>
     );
-  })
+  });
 
   return (
     <div className="panel">
+      <Button disabled={disableSave} onClick={handleSave} className="courier">
+        Save
+      </Button>
+      <input
+        onChange={onTitleChange}
+        value={title}
+        type="text"
+        className="form-field"
+        placeholder="Title"
+        id="title"
+      />
       {top}
       {sliderTools}
       {bottom}
     </div>
-  )
-}
+  );
+};
 
-export default Controller
+export default Controller;

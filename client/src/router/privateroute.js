@@ -1,6 +1,6 @@
-import React from 'react';
-import {getToken} from '../util/util.js';
-import {Route, Redirect} from 'react-router-dom';
+import React from "react";
+import { getToken } from "../util/util.js";
+import { Route, Redirect } from "react-router-dom";
 
 // import axios from 'axios';
 // import { APIURL, VALIDATE } from '../config/api.js';
@@ -19,31 +19,31 @@ import {Route, Redirect} from 'react-router-dom';
 //   }
 // }
 
-const PrivateRoute = ({children, ...rest}) => {
-  function validate(){
-    if(!getToken()){
+const PrivateRoute = ({ children, ...rest }) => {
+  function validate() {
+    if (!getToken()) {
       return false;
     }
     return true;
   }
 
-  return(
+  return (
     <Route
       {...rest}
-      render={({location}) =>
+      render={({ location }) =>
         validate() ? (
           children
         ) : (
-          <Redirect 
+          <Redirect
             to={{
-              pathname:"/",
-              state: {from:location}
+              pathname: "/",
+              state: { from: location },
             }}
           />
         )
       }
     />
   );
-}
+};
 
 export default PrivateRoute;

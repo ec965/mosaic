@@ -1,29 +1,28 @@
-import React from 'react';
-import RegisterForm from './register';
-import LoginForm from './login';
-import {FormCard} from './components';
-import {Page, Row} from '../components/layout';
+import React from "react";
+import RegisterForm from "./register";
+import LoginForm from "./login";
+import { FormCard } from "./components";
+import { Page, Row } from "../components/layout";
 
 export const Login = () => {
-  return(
+  return (
     <Page>
       <Row>
         <FormCard title="Login">
-          <LoginForm/>
+          <LoginForm />
         </FormCard>
       </Row>
     </Page>
-  )
-}
+  );
+};
 export const Register = () => {
-  return(
+  return (
     <Page>
       <Row>
         <FormCard title="Register">
-          <RegisterForm/>
+          <RegisterForm />
         </FormCard>
       </Row>
     </Page>
-  )
-}
-
+  );
+};

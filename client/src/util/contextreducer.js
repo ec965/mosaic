@@ -1,6 +1,6 @@
-import React, {createContext, useReducer, useEffect} from 'react';
-import {getToken} from './util.js';
-import jwt_decode from 'jwt-decode';
+import React, { createContext, useReducer, useEffect } from "react";
+import { getToken } from "./util.js";
+import jwt_decode from "jwt-decode";
 
 export const StoreContext = createContext(null);
 export const ACTION = {
@@ -9,16 +9,16 @@ export const ACTION = {
 
 // reducer
 // gets the jwt info from local storage/ session storage
-function reducer(state, action){
-  switch (action.type){
+function reducer(state, action) {
+  switch (action.type) {
     case ACTION.GET:
       // gets the token from local storage
       const token = getToken();
       // decodes the token and gets the username from the token
-      if(token){
+      if (token) {
         const decoded = jwt_decode(token);
 
-        return {username: decoded.user.username, id: decoded.user._id}
+        return { username: decoded.user.username, id: decoded.user._id };
       } else {
         return state;
       }
@@ -27,16 +27,16 @@ function reducer(state, action){
   }
 }
 // context provider wrapper
-export const StoreContextProvider = ({children}) => {
-  const [state, dispatch] = useReducer(reducer, {username:null, id: null})
-  
+export const StoreContextProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, { username: null, id: null });
+
   useEffect(() => {
-    dispatch({type: ACTION.GET});
-  }, [dispatch])
+    dispatch({ type: ACTION.GET });
+  }, [dispatch]);
 
   return (
-    <StoreContext.Provider value={{state, dispatch}}>
+    <StoreContext.Provider value={{ state, dispatch }}>
       {children}
     </StoreContext.Provider>
   );
-}
+};
