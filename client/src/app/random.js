@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useReducer } from "react";
+import { useParams } from 'react-router-dom';
 import { HuePicker } from 'react-color';
 import { Button } from '../components/button';
 import { Page } from "../components/layout";
@@ -7,7 +8,7 @@ import PixelApp from "./app.js";
 import Controller, { ToolLabel } from "./controller";
 import Toggle from '../components/toggle';
 import Slider from '../components/slider';
-import { postAppNew } from "../config/api";
+import { getProject, postAppNew } from "../config/api";
 
 const ACTION = {
   DIMENSION: "dimension",
@@ -28,6 +29,7 @@ const ACTION = {
   RESET: "reset",
   RANDOM: "random",
   TITLE: 'title',
+  GETDATA: 'getData',
 };
 
 function reducer(state, action) {
@@ -73,8 +75,8 @@ function reducer(state, action) {
       return initialState;
     case ACTION.RANDOM:
       return {
+        ...state, 
         dimension: randInt(minMax.dimension.min, minMax.dimension.max),
-        pixelSize: randInt(minMax.pixelSize.min, minMax.pixelSize.max),
         borderRadius: randInt(minMax.borderRadius.min, minMax.borderRadius.max),
         rmin: randInt(minMax.rgb.min, state.rmax),
         rmax: randInt(state.rmin, minMax.rgb.max),
@@ -136,6 +138,25 @@ const RandomGenerator = (props) => {
   const [pixelMap, setPixelMap] = useState([[]]);
   const [disableSave, setDisableSave] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
+  
+  const { projectId } = useParams();
+
+  useEffect(() => {
+    function getInitialData(){
+      getProject(projectId)
+      .then((res) => {
+        console.log(res.data);
+
+        // this action has not been implemented yet!
+        dispatch({type: ACTION.GETDATA, payload: res.data});
+      })
+      .catch((error) => console.error(error));
+    }
+
+    if (projectId){
+      getInitialData();
+    }
+  }, [projectId])
 
   const sliders = [
     {
@@ -253,14 +274,17 @@ const RandomGenerator = (props) => {
   const handleSave = () =>{
     setDisableSave(true);
     let data = {
-      pixelMap: pixelMap,
-      borderRadius: state.borderRadius,
-      grid: state.grid,
-      backgroundColor: state.backgroundColor
+      title: state.title,
+      project:{
+        pixelMap: pixelMap,
+        borderRadius: state.borderRadius,
+        grid: state.grid,
+        backgroundColor: state.backgroundColor
+      }
     };
 
     postAppNew(data)
-    .then((res) => console.log(res))
+    .then((res) => console.log(JSON.stringify(res.data, null,2)))
     .catch((err) => console.error(err));
 
     setDisableSave(false);

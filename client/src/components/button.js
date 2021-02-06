@@ -1,23 +1,23 @@
 import React from "react";
 
-export const Button = (props) => {
+export const Button = ({children, ...props}) => {
   return (
     <button {...props} type="button">
-      {props.children}
+      {children}
     </button>
   );
 };
-export const ButtonLink = (props) => {
+export const ButtonLink = ({link, onClick, children, ...props}) => {
   const handleClick = () => {
-    window.open(props.link);
+    window.open(link);
   };
   return (
     <button
       type="button"
       {...props}
-      onClick={props.link ? handleClick : props.onClick}
+      onClick={link ? handleClick : onClick}
     >
-      {props.children}
+      {children}
     </button>
   );
 };

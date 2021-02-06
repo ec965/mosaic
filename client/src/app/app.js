@@ -30,8 +30,8 @@ export const PixelApp = ({
   grid,
   backgroundColor,
 }) => {
-  const width = pixelMap[0].length;
-  const height = pixelMap.length;
+  // const width = pixelMap[0].length;
+  // const height = pixelMap.length;
 
   const render = pixelMap.map((inner, i) => {
     return (
@@ -51,6 +51,14 @@ export const PixelApp = ({
   });
 
   return <Column>{render}</Column>;
+};
+
+PixelApp.defaultProps = {
+  pixelMap: [[{r:1, g:1, b:1}]],
+  pixelSize: 30,
+  borderRadius: 0,
+  grid: false,
+  backgroundColor: '#AAA'
 };
 
 export default PixelApp;

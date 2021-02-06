@@ -6,31 +6,35 @@ import { Login, Register } from "../auth/index";
 
 import LandingPage from "../pages/landing";
 import UserProfile from "../pages/profile";
-import Generator from "../pages/generator";
 import CardMatrix from "../pages/home";
 import UserNav from "../router/navbar";
 import ProjectPage from "../pages/project";
+import RandomGenerator from '../app/random';
 
 const App = () => {
   return (
     <Router>
       <Switch>
-        <PrivateRoute path="/project/:id">
+        <PrivateRoute path="/project/:projectId">
           <UserNav />
           <ProjectPage />
         </PrivateRoute>
+
         <PrivateRoute path="/home">
           <UserNav />
           <CardMatrix />
         </PrivateRoute>
-        <PrivateRoute path="/generator/:id">
+
+        <PrivateRoute path="/generator/:projectId">
           <UserNav />
-          <Generator />
+          <RandomGenerator />
         </PrivateRoute>
+
         <PrivateRoute path={`/generator`}>
           <UserNav />
-          <Generator />
+          <RandomGenerator />
         </PrivateRoute>
+
         <PrivateRoute path={`/profile/:thisUser`}>
           <UserNav />
           <UserProfile />

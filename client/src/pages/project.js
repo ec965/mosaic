@@ -1,38 +1,42 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 
-import { APIURL, PROJECT, COMMENT } from "../config/api";
-import { getToken } from "../util/util.js";
 import { StoreContext } from "../util/contextreducer";
 
 import PixelApp from "../app/app";
 import { Column } from "../components/layout";
 import { dateString } from "../util/util";
 import TextBoxForm from "../components/textbox";
+import { getProject, postProjectComment, deleteProjectComment, patchProjectComment } from "../config/api";
 
 const TEXTBOX = { maxLength: 160, rows: 4, cols: 40 };
 
 const ProjectPage = () => {
-  const [project, setProject] = useState({});
+  const [project, setProject] = useState({
+    grid: false,
+    pixelMap: [[{r:1, g:1, b:1}]],
+    borderRadius: 25,
+    backgroundColor: '#fff',
+  });
   const [username, setUserName] = useState("");
   const [date, setDate] = useState("");
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([{
+    username: '',
+    test: '',
+    edited: false,
+    updatedAt: 1,
+  }]);
   const [title, setTitle] = useState("");
   const [newComment, setNewComment] = useState("");
 
   const { state } = useContext(StoreContext);
   const currentUser = state.username;
 
-  let { id } = useParams();
+  let { projectId } = useParams();
 
   useEffect(() => {
     function getInitialData() {
-      const token = getToken();
-      axios
-        .get(APIURL + PROJECT + "?id=" + id, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+      getProject(projectId)
         .then((res) => {
           setUserName(res.data.username);
           setDate(dateString(res.data.updatedAt));
@@ -44,7 +48,7 @@ const ProjectPage = () => {
     }
 
     getInitialData();
-  }, [id]);
+  }, [projectId]);
 
   const handleNewComment = (event) => {
     setNewComment(event.target.value);
@@ -53,21 +57,15 @@ const ProjectPage = () => {
   const submitNewComment = (event) => {
     event.preventDefault();
     // reset comment box
-    setNewComment("");
-    const token = getToken();
-    axios
-      .post(
-        APIURL + COMMENT,
-        { project_id: id, text: newComment },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+    postProjectComment(projectId, newComment)
       .then((res) => {
         // add the new comment to ui
-        let updateComments = comments.slice(0);
+        let updateComments = [...comments];
         // add comments in order of recency
         // new comments come first
         updateComments.push(res.data);
         setComments(updateComments);
+        setNewComment("");
       })
       .catch((error) => console.error(error));
   };
@@ -78,11 +76,7 @@ const ProjectPage = () => {
     let commentId = metaData.id;
     let commentIndex = metaData.index;
 
-    const params = `?project_id=${id}&comment_id=${commentId}`;
-    const token = getToken();
-    const header = { headers: { Authorization: `Bearer ${token}` } };
-    axios
-      .delete(APIURL + COMMENT + params, header)
+    deleteProjectComment(projectId, commentId)
       .then((res) => {
         // remove comment from comments array
         let updateComments = comments.slice(0);
@@ -105,7 +99,7 @@ const ProjectPage = () => {
         edited={c.edited}
         canEdit={c.username === currentUser}
         id={c._id}
-        project_id={id}
+        project_id={projectId}
         onDelete={handleCommentDelete}
       />
     );
@@ -119,19 +113,11 @@ const ProjectPage = () => {
       </Link>
       <h5>{date}</h5>
       <PixelApp
-        dimension={project.dimension}
+        pixelMap={project.pixelMap}
+        pixelSize={360/project.pixelMap.length}
         borderRadius={project.borderRadius}
-        pixelDensity={540}
-        rmin={project.rmin}
-        rmax={project.rmax}
-        gmin={project.gmin}
-        gmax={project.gmax}
-        bmin={project.bmin}
-        bmax={project.bmax}
-        sortHueRow={project.sortHueRow}
-        sortHueCol={project.sortHueCol}
-        sortHueColLen={project.sortHueColLen}
-        sortHueRowLen={project.sortHueRowLen}
+        grid={project.grid}
+        backgroundColor={project.backgroundColor}
       />
       <TextBoxForm
         onSubmit={submitNewComment}
@@ -163,17 +149,10 @@ const Comment = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     setShowEditBox(false);
 
-    const data = {
-      project_id: props.project_id,
-      comment: { id: props.id, text: text },
-    };
-    const token = getToken();
-    axios
-      .patch(APIURL + COMMENT, data, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    patchProjectComment(props.project_id, props.id, text)
       .then((res) => {
         setupdatedAt(res.data.updatedAt);
         setUsername(res.data.username);

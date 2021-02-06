@@ -1,29 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
-import { APIURL, DELETE, USERPROJECTS } from "../config/api";
-import { getToken } from "../util/util.js";
 
 import { Page, Column } from "../components/layout";
 import PixelCard from "../app/card";
 import { Button } from "../components/button";
+import { deleteProject, getAppUserProjects } from "../config/api";
 
 const UserProfile = () => {
   const [username, setUsername] = useState("");
-  const [data, setData] = useState([]);
+  const [projects, setProjects] = useState([{
+    title: '',
+    username: '',
+    createdAt: 1,
+    project:{
+      pixelMap: [[{r:1, g:1, b:1}]],
+      borderRadius: 0,
+      grid: false,
+      backgroundColor: '#fff',
+    }
+  }]);
 
   let { thisUser } = useParams();
 
   useEffect(() => {
     function getUserInfo() {
-      const token = getToken();
-      axios
-        .get(APIURL + USERPROJECTS + `?username=${thisUser}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+      getAppUserProjects(thisUser)
         .then((res) => {
           setUsername(res.data.username);
-          setData(res.data.data);
+          setProjects(res.data.data);
         })
         .catch((error) => console.error(error));
     }
@@ -33,41 +37,36 @@ const UserProfile = () => {
 
   const handleDelete = (event) => {
     event.preventDefault();
-    let token = getToken();
-    axios.delete(
-      APIURL + DELETE,
-      { id: event.target.name },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    let info = JSON.parse(event.target.id);
+    let index = info.index;
+    let id = info.id
+    deleteProject(id)
+      .then((res) => {
+        let update = [...projects]
+        update.splice(index,1);
+        setProjects(update);
+      })
+      .catch((error) => console.error(error));
   };
 
-  const cards = data.map((d, i) => {
+  const cards = projects.map((p, i) => {
     return (
       <div className="row profile-card" key={i}>
-        <Link to={`/project/${d._id}`} className="row profile-card">
+        <Link to={`/project/${p._id}`} className="row profile-card">
           <PixelCard
-            title={d.title}
-            className="profile-card"
-            date={d.updatedAt}
-            dimension={d.project.dimension}
-            borderRadius={d.project.borderRadius}
-            rmin={d.project.rmin}
-            rmax={d.project.rmax}
-            gmin={d.project.gmin}
-            gmax={d.project.gmax}
-            bmin={d.project.bmin}
-            bmax={d.project.bmax}
-            sortHueRow={d.project.sortHueRow}
-            sortHueRowLen={d.project.sortHueRowLen}
-            sortHueCol={d.project.sortHueCol}
-            sortHueColLen={d.project.sortHueColLen}
-          />
+            title={p.title}
+            username={p.username}
+            date={p.createdAt}
+            project={p.project}
+            maxWidth={360}
+          >
+          </PixelCard>
         </Link>
-        <Button name={d.project._id} onClick={handleDelete} className="red">
+        <Button id={JSON.stringify({id:p._id, index:i})} onClick={handleDelete} className="red">
           Delete
         </Button>
 
-        <Link to={`/generator/${d._id}`}>
+        <Link to={`/generator/${p._id}`}>
           <Button>Edit</Button>
         </Link>
       </div>
@@ -78,7 +77,7 @@ const UserProfile = () => {
     <Page>
       <Column>
         <h3>{username}'s Projects</h3>
-        {data.length === 0 ? <h5>Nothing to see here.</h5> : cards}
+        {projects.length === 0 ? <h5>Nothing to see here.</h5> : cards}
       </Column>
     </Page>
   );

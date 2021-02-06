@@ -1,23 +1,23 @@
 import React from "react";
 
-export const Column = (props) => {
+export const Column = ({className, ...props}) => {
   return (
-    <div className={props.className + " col"} {...props}>
+    <div className={className + " col"} {...props}>
       {props.children}
     </div>
   );
 };
-export const Row = (props) => {
+export const Row = ({className, ...props}) => {
   return (
-    <div className={props.className + " row"} {...props}>
+    <div className={className + " row"} {...props}>
       {props.children}
     </div>
   );
 };
 
-export const Page = (props) => {
+export const Page = ({className, ...props}) => {
   return (
-    <div className={props.className + " page"} {...props}>
+    <div className={className + " page"} {...props}>
       {props.children}
     </div>
   );

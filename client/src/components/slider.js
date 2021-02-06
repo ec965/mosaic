@@ -1,8 +1,8 @@
 import React from "react";
 
-const Slider = (props) => {
+const Slider = ({className, ...props}) => {
   return (
-    <input type="range" className={`${props.className} slider`} {...props} />
+    <input type="range" className={`${className} slider`} {...props} />
   );
 };
 

@@ -1,8 +1,8 @@
 import React from "react";
 
-const Toggle = (props) => {
+const Toggle = ({className, ...props}) => {
   return (
-    <label className={"toggle " + props.className}>
+    <label className={"toggle " + className}>
       <input type="checkbox" {...props} />
       <span className="toggle-slider"></span>
     </label>

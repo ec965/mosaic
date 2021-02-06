@@ -1,25 +1,33 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { APIURL, RECENT } from "../config/api";
-
-import { dateString, getToken } from "../util/util";
-
-import PixelCard from "../app/card";
 import { Link } from "react-router-dom";
+import { getAppRecent } from '../config/api';
+
+import { dateString } from "../util/util";
+import PixelCard from "../app/card";
+import PixelApp from '../app/app';
 import { Page } from "../components/layout";
 
 const CardMatrix = () => {
-  const [recentProjects, setRecentProjects] = useState([]);
+  const [recentProjects, setRecentProjects] = useState([{
+      title: '',
+      username: '',
+      createdAt: 1,
+      project:{
+        pixelMap: [[{r:1, g:1, b:1}]],
+        borderRadius: 0,
+        grid: false,
+        backgroundColor: '#fff',
+      }
+    }]);
+
   // fetch the most recent projects
   useEffect(() => {
     function getRecent() {
-      const token = getToken();
-      axios
-        .get(APIURL + RECENT, { headers: { Authorization: `Bearer ${token}` } })
-        .then((res) => {
-          setRecentProjects(res.data);
-        })
-        .catch((err) => console.error(err));
+      getAppRecent()
+      .then((res) => {
+        setRecentProjects(res.data);
+      })
+      .catch((err) => console.error(err));
     }
 
     getRecent();
@@ -27,32 +35,16 @@ const CardMatrix = () => {
 
   const cards = recentProjects.map((p, i) => {
     // scale to fit on home page
-    let pixelSize;
-    if (p.project.dimension) {
-      pixelSize = 300 / p.project.dimension;
-    } else {
-      pixelSize = null;
-    }
     return (
       <Link to={`project/${p._id}`} key={i}>
         <PixelCard
           title={p.title}
-          date={dateString(p.updatedAt)}
           username={p.username}
-          dimension={p.project.dimension || null}
-          pixelDensity={300}
-          borderRadius={p.project.borderRadius || null}
-          rmin={p.project.rmin || null}
-          rmax={p.project.rmax || null}
-          gmin={p.project.gmin || null}
-          gmax={p.project.gmax || null}
-          bmin={p.project.bmin || null}
-          bmax={p.project.bmax || null}
-          sortHueRow={p.project.sortHueRow || null}
-          sortHueCol={p.project.sortHueCol || null}
-          sortHueRowLen={p.project.sortHueRowLen || null}
-          sortHueColLen={p.project.sortHueColLen || null}
-        />
+          date={p.createdAt}
+          project={p.project}
+          maxWidth={360}
+        >
+        </PixelCard>
       </Link>
     );
   });
