@@ -3,7 +3,7 @@ import {useParams, Redirect} from 'react-router-dom';
 import axios from 'axios';
 
 import {APIURL, NEW, PROJECT, UPDATE} from '../config/api';
-import { getToken } from '../util';
+import { getToken } from '../util/util';
 
 import {Button} from '../components/button';
 import PixelApp from '../app/app';

@@ -4,7 +4,7 @@ import {APIURL, REGISTER} from '../config/api';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {FormError, FormButton} from './components';
 import {Redirect} from 'react-router-dom';
-import { getToken } from '../util';
+import { getToken } from '../util/util';
 
 const RegisterForm= () => {
   const [nameErr, setNameErr] = useState(false);

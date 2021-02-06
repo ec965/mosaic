@@ -15,5 +15,4 @@ export const PROJECT = '/project';
 export const COMMENT = PROJECT + '/comment'
 export const DELETE = PROJECT + '/delete'
 
-
 export const VALIDATE = '/validate';

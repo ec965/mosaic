@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import {APIURL, RECENT} from '../config/api';
 
-import {dateString, getToken} from '../util';
+import {dateString, getToken} from '../util/util';
 
 import PixelCard from '../app/card';
 import {Link} from 'react-router-dom'

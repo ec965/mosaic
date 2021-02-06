@@ -3,12 +3,12 @@ import axios from 'axios';
 import {Link, useParams} from 'react-router-dom';
 
 import {APIURL, PROJECT, COMMENT} from '../config/api';
-import {getToken} from '../util.js';
-import {StoreContext} from '../contextreducer';
+import {getToken} from '../util/util.js';
+import {StoreContext} from '../util/contextreducer';
 
 import PixelApp from '../app/app';
 import {Column} from '../components/layout';
-import {dateString} from '../util';
+import {dateString} from '../util/util';
 import TextBoxForm from '../components/textbox';
 
 const TEXTBOX = {maxLength: 160, rows:4, cols:40};

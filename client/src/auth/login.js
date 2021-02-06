@@ -6,7 +6,7 @@ import {Row} from '../components/layout';
 import axios from 'axios';
 import {APIURL, LOGIN} from '../config/api';
 import {Redirect} from 'react-router-dom';
-import {getToken} from '../util.js';
+import {getToken} from '../util/util.js';
 
 
 const LoginForm = () => {

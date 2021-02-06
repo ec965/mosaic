@@ -1,7 +1,7 @@
 import React, {useState, useContext} from 'react';
 import {Redirect} from 'react-router-dom';
 
-import {StoreContext} from '../contextreducer';
+import {StoreContext} from '../util/contextreducer';
 
 import {NavBar, NavGroup, NavLogo, NavItem} from '../components/navbar';
 import {Link} from 'react-router-dom';

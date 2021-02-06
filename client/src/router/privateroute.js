@@ -1,5 +1,5 @@
 import React from 'react';
-import {getToken} from '../util.js';
+import {getToken} from '../util/util.js';
 import {Route, Redirect} from 'react-router-dom';
 
 // import axios from 'axios';

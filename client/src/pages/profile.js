@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
 import axios from "axios";
 import {APIURL, DELETE, USERPROJECTS} from '../config/api';
-import {getToken} from '../util.js';
+import {getToken} from '../util/util.js';
 
 import {Page, Column} from '../components/layout';
 import PixelCard from '../app/card';
