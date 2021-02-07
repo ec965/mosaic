@@ -5,22 +5,11 @@ import { Page, Column } from "../components/layout";
 import PixelCard from "../app/card";
 import { Button } from "../components/button";
 import { deleteProject, getAppUserProjects } from "../config/api";
+import { initialPixMapArr } from "../config/pixmap";
 
 const UserProfile = () => {
   const [username, setUsername] = useState("");
-  const [projects, setProjects] = useState([
-    {
-      title: "",
-      username: "",
-      createdAt: 1,
-      project: {
-        pixelMap: [[{ r: 1, g: 1, b: 1 }]],
-        borderRadius: 0,
-        grid: false,
-        backgroundColor: "#fff",
-      },
-    },
-  ]);
+  const [projects, setProjects] = useState(initialPixMapArr);
 
   let { thisUser } = useParams();
 

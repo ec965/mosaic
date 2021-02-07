@@ -2,25 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getAppRecent } from "../config/api";
 
-import { dateString } from "../util/util";
 import PixelCard from "../app/card";
-import PixelApp from "../app/app";
 import { Page } from "../components/layout";
+import { initialPixMapArr } from '../config/pixmap';
 
 const CardMatrix = () => {
-  const [recentProjects, setRecentProjects] = useState([
-    {
-      title: "",
-      username: "",
-      createdAt: 1,
-      project: {
-        pixelMap: [[{ r: 1, g: 1, b: 1 }]],
-        borderRadius: 0,
-        grid: false,
-        backgroundColor: "#fff",
-      },
-    },
-  ]);
+  const [recentProjects, setRecentProjects] = useState(initialPixMapArr);
 
   // fetch the most recent projects
   useEffect(() => {

@@ -30,6 +30,13 @@ export const patchAppUpdate = async (data) =>
   await axios.patch(APIURL + UPDATE, data, header);
 export const getAppRecent = async () =>
   await axios.get(APIURL + RECENT, header);
+export const postOrPatchApp = async (data, projectId=null) => {
+  if(projectId){
+    data.project_id = projectId; // updating requires the project ia
+    return await patchAppUpdate(data);
+  }
+  return await postAppNew(data);
+}
 
 export const PROJECT = "/project";
 export const COMMENT = PROJECT + "/comment";

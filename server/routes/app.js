@@ -51,7 +51,6 @@ router.patch("/update", (req, res, next) => {
     },
     function (err, data) {
       if (err) return next(err);
-
       if (!data) return res.sendStatus(400);
 
       data.project = req.body.project;

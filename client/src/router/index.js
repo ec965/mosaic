@@ -10,6 +10,7 @@ import CardMatrix from "../pages/home";
 import UserNav from "../router/navbar";
 import ProjectPage from "../pages/project";
 import RandomGenerator from "../app/random";
+import ImageGenerator from "../app/image";
 
 const App = () => {
   return (
@@ -23,6 +24,16 @@ const App = () => {
         <PrivateRoute path="/home">
           <UserNav />
           <CardMatrix />
+        </PrivateRoute>
+
+        <PrivateRoute path="/image/:projectId">
+          <UserNav />
+          <ImageGenerator />
+        </PrivateRoute>
+
+        <PrivateRoute path="/image">
+          <UserNav />
+          <ImageGenerator />
         </PrivateRoute>
 
         <PrivateRoute path="/generator/:projectId">

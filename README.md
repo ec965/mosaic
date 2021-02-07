@@ -14,6 +14,6 @@ Add User context: if a token is detected, then fetch the username and save it to
 
 ## Todos
 
-- implement image w/ pixelization
-- redirect after generating
+- fix first comment
+- add loading banner (similar style to error banner)
 - hella css

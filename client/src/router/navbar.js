@@ -1,17 +1,20 @@
 import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 
-import { StoreContext } from "../util/contextreducer";
+import { ACTION, StoreContext } from "../util/contextreducer";
 
 import { NavBar, NavGroup, NavLogo, NavItem } from "../components/navbar";
 import { Link } from "react-router-dom";
 
 const Logout = (props) => {
+  const { dispatch } = useContext(StoreContext);
   const [loggedIn, setLoggedIn] = useState(true);
 
   const handleClick = (event) => {
     localStorage.clear();
     sessionStorage.clear();
+    dispatch({type: ACTION.LOGOUT});
+
     setLoggedIn(false);
   };
 
@@ -36,6 +39,11 @@ const UserNav = () => {
         </Link>
       </NavLogo>
       <NavGroup>
+        <NavItem>
+          <Link to={`/image`}>
+            <h4>Image</h4>
+          </Link>
+        </NavItem>
         <NavItem>
           <Link to={`/generator`}>
             <h4>Generator</h4>

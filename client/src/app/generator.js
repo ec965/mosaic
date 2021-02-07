@@ -107,29 +107,32 @@ export class Pixel {
 // }
 
 export class RandomPixelSquare {
-  constructor(dimension, rmin, rmax, gmin, gmax, bmin, bmax) {
-    //rgbminmax=new RGBMinMax(0,255,0,255,0,255)){
-    function randInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    this.data = [];
-    for (let i = 0; i < dimension; i++) {
-      let inner = [];
-      for (let j = 0; j < dimension; j++) {
-        let r = randInt(rmin, rmax);
-        let g = randInt(gmin, gmax);
-        let b = randInt(bmin, bmax);
-        let p = new Pixel(r, g, b);
-        inner.push(p);
+  constructor(dimension=null, rmin=0, rmax=255, gmin=0, gmax=255, bmin=0, bmax=255, data=null) {
+    if (!data){
+      function randInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
       }
-      this.data.push(inner);
+
+      this.data = [];
+      for (let i = 0; i < dimension; i++) {
+        let inner = [];
+        for (let j = 0; j < dimension; j++) {
+          let r = randInt(rmin, rmax);
+          let g = randInt(gmin, gmax);
+          let b = randInt(bmin, bmax);
+          let p = new Pixel(r, g, b);
+          inner.push(p);
+        }
+        this.data.push(inner);
+      }
+    } else {
+      this.data = data;
     }
   }
 
-  sortHue(length) {
+  sortHue(length=null) {
     // horizontal
     if (!length || length < 0) length = this.data[0].length;
     if (length > this.data[0].length) length = this.data[0].length;
@@ -148,7 +151,7 @@ export class RandomPixelSquare {
     return this.data;
   }
 
-  sortHueVertical(length) {
+  sortHueVertical(length=null) {
     if (!length || length < 0) length = this.data.length;
     if (length > this.data.length) length = this.data.length;
 

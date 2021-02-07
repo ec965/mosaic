@@ -126,6 +126,12 @@ a:hover {
 .red:hover {
   background-color: var(--base0E);
 }
+.grey{
+  color: var(--base00);
+}
+.grey:hover {
+  color: var(--base03);
+}
 
 button {
   border-style: none;
@@ -294,7 +300,6 @@ form {
 
 /*-----CARD-----*/
 .card {
-  transition: 0.2s;
   border-radius: 1%;
   max-width: fit-content;
 }
@@ -392,4 +397,25 @@ form {
 }
 .editor {
   position: relative;
+}
+
+/*----- banner -----*/
+.banner{
+  background-color: var(--base08);
+  position: fixed;
+  top: 60px;
+  z-index: 100;
+  left: 38vw;
+  top: 70px;
+  border-radius: 5px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.4);
+}
+.banner-close{
+  cursor: pointer;
+  font-size: .8em;
+  padding-left: 5px;
 }

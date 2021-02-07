@@ -24,8 +24,6 @@ userSchema.methods.checkPassword = function (password, cb) {
 
 userSchema.pre("save", function (next) {
   var user = this;
-  console.log(JSON.stringify(user));
-
   // only hash  password if it's new or been modified
   if (!user.isModified("password")) return next();
 

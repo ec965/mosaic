@@ -26,6 +26,7 @@ const Controller = ({
   disableSave,
   onTitleChange,
   title,
+  titleError,
 }) => {
   const sliderTools = sliders.map((t, i) => {
     return (
@@ -61,6 +62,7 @@ const Controller = ({
         placeholder="Title"
         id="title"
       />
+      {titleError && <span>Please enter a title.</span>}
       {top}
       {sliderTools}
       {bottom}

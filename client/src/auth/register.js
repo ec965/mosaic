@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { FormError, FormButton } from "./components";
-import { Redirect } from "react-router-dom";
 import { postRegister } from "../config/api";
 import { getToken } from "../util/util";
 
 const RegisterForm = () => {
   const [nameErr, setNameErr] = useState(false);
   const [serverErr, setServerErr] = useState(false);
-  const [registered, setRegistered] = useState(false);
 
   const register = async (username, password) => {
     const res = postRegister(username, password);
@@ -17,7 +15,7 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (getToken()) {
-      setRegistered(true);
+      window.location.replace(window.location.origin + '/login')
     }
   }, []);
 
@@ -30,8 +28,17 @@ const RegisterForm = () => {
           if (!values.username) {
             errors.username = "Required";
           }
+          if (values.username.length < 5){
+            errors.username = "Please create a username of at least 5 characters.";
+          }
           if (!values.password) {
             errors.password = "Required";
+          }
+          if (values.password.length < 5){
+            errors.password = "Please create a password of at least 5 characters.";
+          }
+          if (values.password === values.username){
+            errors.password = "Please do not use your username as your password.";
           }
           if (values.password !== values.repassword) {
             errors.repassword = "Passwords do not match.";
@@ -42,8 +49,8 @@ const RegisterForm = () => {
           register(values.username, values.password)
             .then((data) => {
               setSubmitting(false);
-              setRegistered(true);
-              // redirect to login page
+              // redirect to login page after registration
+              window.location.replace(window.location.origin + '/login')
             })
             .catch((error) => {
               if (error.response.status === 401) {
@@ -117,7 +124,6 @@ const RegisterForm = () => {
           A server error has occured, please try again later.
         </FormError>
       )}
-      {registered && <Redirect to="/login" />}
     </>
   );
 };

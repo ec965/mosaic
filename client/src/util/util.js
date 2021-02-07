@@ -1,3 +1,5 @@
+import { Redirect } from "react-router";
+
 export const dateString = (date) => {
   const d = new Date(date);
   return d.toLocaleDateString();
@@ -21,3 +23,7 @@ const getStorageItem = (key) => {
 
   return value;
 };
+
+export function redirect(path){
+  window.location.replace(window.location.origin + path)
+}

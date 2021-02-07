@@ -23,12 +23,15 @@ const PixelCard = ({
   maxWidth,
   project: { pixelMap, borderRadius, backgroundColor, grid },
 }) => {
+  const longer = Math.max(pixelMap[0].length, pixelMap.length);
   return (
     <Card title={title} username={username} date={dateString(date)}>
       <PixelApp
         pixelMap={pixelMap}
         pixelSize={
-          grid ? maxWidth / pixelMap.length - 2 : 360 / pixelMap.length
+          grid 
+          ? maxWidth / longer - 2 
+          : maxWidth / longer
         }
         borderRadius={borderRadius}
         grid={grid}

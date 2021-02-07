@@ -14,15 +14,12 @@ import {
   patchProjectComment,
 } from "../config/api";
 
+import { initialPixMap } from '../config/pixmap';
+
 const TEXTBOX = { maxLength: 160, rows: 4, cols: 40 };
 
 const ProjectPage = () => {
-  const [project, setProject] = useState({
-    grid: false,
-    pixelMap: [[{ r: 1, g: 1, b: 1 }]],
-    borderRadius: 25,
-    backgroundColor: "#fff",
-  });
+  const [project, setProject] = useState(initialPixMap.project);
   const [username, setUserName] = useState("");
   const [date, setDate] = useState("");
   const [comments, setComments] = useState([
@@ -63,6 +60,7 @@ const ProjectPage = () => {
 
   const submitNewComment = (event) => {
     event.preventDefault();
+    if (newComment.length <= 0) return;
     // reset comment box
     postProjectComment(projectId, newComment)
       .then((res) => {
@@ -156,6 +154,7 @@ const Comment = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (text.length <= 0) return;
 
     setShowEditBox(false);
 
