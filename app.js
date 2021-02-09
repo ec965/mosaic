@@ -21,7 +21,7 @@ app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
   directives: {
     ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-    "img-src": ["'self'", "herokuapp.com"]
+    "img-src": ["'self'", "data:", "blob:", "mosaiorama.herokuapp.com"]
   }
 }));
 app.use(cors());
