@@ -4,10 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon --inspect app.js",
+    "start": "node app.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently --kill-others \"npm start\" \"npm run client\"",
-    "setup": "npm install --prefix client && npm install"
+    "dev": "concurrently --kill-others \"nodemon --inspect app.js\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "repository": {
     "type": "git",
