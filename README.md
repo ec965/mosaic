@@ -2,6 +2,8 @@
 
 Mosaic is a full stack webapp to create mosaic style components using either a reference image or randomly generated values.
 
+![mosaic_site_img](./mosaic.png)
+
 ## Users
 
 Users are implemented using [JSON web tokens](https://jwt.io/). 
