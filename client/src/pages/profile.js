@@ -4,7 +4,7 @@ import { dispatchError, StoreContext } from '../util/contextreducer';
 
 import { Page, Row, Column } from "../components/layout";
 import PixelCard from "../app/card";
-import { deleteProject, getAppUserProjects } from "../config/api";
+import { deleteProject } from "../config/api";
 import { maxPixelCardWidth } from '../util/util';
 import Loader from 'react-loader-spinner';
 import { COLORS } from '../config/colors';
