@@ -11,18 +11,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ec965/user-land.git"
+    "url": "git+https://github.com/ec965/mosaic.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ec965/user-land/issues"
+    "url": "https://github.com/ec965/mosaic/issues"
   },
-  "homepage": "https://github.com/ec965/user-land#readme",
+  "homepage": "https://github.com/ec965/mosaic#readme",
   "dependencies": {
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -31,12 +30,8 @@
     "mongodb": "^3.6.3",
     "mongoose": "^5.11.14",
     "passport": "^0.4.1",
-    "passport-cookie": "^1.0.9",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "pg": "^8.5.1",
-    "pg-hstore": "^2.3.3",
-    "sequelize": "^6.5.0"
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7",

@@ -2,10 +2,9 @@ import axios from "axios";
 import { getToken } from "../util/util";
 require('dotenv').config();
 
-const APIADDRESS = window.location.hostname;
-let APIURL = `http://${APIADDRESS}`;
+let APIURL = `http://${window.location.host}/api`;
 if(process.env.NODE_ENV !== "production"){
-  APIURL = APIURL + ':5000';
+  APIURL = `http://${window.location.hostname}:5000/api`
 }
 
 export const instance = axios.create({

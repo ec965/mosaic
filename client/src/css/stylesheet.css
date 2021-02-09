@@ -241,6 +241,9 @@ button:hover {
   padding-top: 1px;
   padding-bottom: 1px;
 }
+.nav-logo h2{
+  padding-left: 6px;
+}
 .nav-item {
   padding-left: 16px;
 }
@@ -343,7 +346,7 @@ form {
 /*----Grid matrix-----*/
 .matrix {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
   grid-gap: 12px;
   justify-content: space-between;
 }
@@ -548,5 +551,11 @@ form {
 
   .matrix {
     grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  }
+  .nav-item h4{
+    font-size: 14px;
+  }
+  .nav-item{
+    padding: 2px;
   }
 }

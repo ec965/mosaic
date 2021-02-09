@@ -5,7 +5,7 @@ const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
+const path = require('path');
 
 const routes = require("./routes/index");
 const PORT = process.env.PORT || 5000;
@@ -22,29 +22,31 @@ app.use(helmet());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cookieParser());
 
-app.use("/auth", routes.auth);
-app.use("/app", passport.authenticate("jwt", { session: false }), routes.app);
+app.use("/api/auth", routes.auth);
+app.use("/api/app", passport.authenticate("jwt", { session: false }), routes.app);
 app.use(
-  "/project",
+  "/api/project",
   passport.authenticate("jwt", { session: false }),
   routes.project
 );
 app.use(
-  "/validate",
+  "/api/validate",
   passport.authenticate("jwt", { session: false }),
   routes.validate
 );
+
+if (process.env.NODE_ENV === "production"){
+  app.use(express.static(path.join(__dirname, 'client/build')));
+  app.get('/*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client/build", "index.html"));
+  })
+}
 
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: err.toString() });
-});
-
-app.get("/", (req, res) => {
-  res.send("Hello World");
 });
 
 app.listen(PORT, IPADDRESS, () => {

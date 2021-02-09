@@ -25,7 +25,7 @@ const LandingPage = (props) => {
           </Link>
         </div>
         <Row>
-          <a href="https://enochchau.com">
+          <a href="https://enochchau.com/#Moasic">
             <h3 className="landing-text vertical-text flip">About</h3>
           </a>
           <PixelApp

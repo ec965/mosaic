@@ -15,7 +15,6 @@ export const ACTION = {
 // reducer
 // gets the jwt info from local storage/ session storage
 function reducer(state, action) {
-  console.log('dispatch');
   switch (action.type) {
     case ACTION.GET:
       // gets the token from local storage

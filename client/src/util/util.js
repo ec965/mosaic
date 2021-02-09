@@ -44,12 +44,13 @@ export function maxPixelSize(length){
 }
 
 export function maxPixelCardWidth(){
-  if(window.innerWidth < 495) return 360;
+  if(window.innerWidth < 495) return 340;
+  if(window.innerWidth < 830) return 340;
   return 450;
 }
 
 export function maxProjectWidth(){
-  if(window.innerWidth < 495) return 360;
+  if(window.innerWidth < 495) return 340;
   if (window.innerWidth < 1200) return window.innerWidth*0.75;
   return window.innerWidth*0.5;
 }

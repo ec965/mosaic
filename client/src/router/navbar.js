@@ -1,10 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
 import { ACTION, StoreContext } from "../util/contextreducer";
 
 import { NavBar, NavGroup, NavLogo, NavItem } from "../components/navbar";
 import { Link } from "react-router-dom";
+
+import { randInt } from "../util/util";
+import { RandomPixelSquare } from "../app/generator";
+import PixelApp from "../app/app";
+import { Row } from '../components/layout';
 
 const Logout = (props) => {
   const { dispatch } = useContext(StoreContext);
@@ -30,12 +35,31 @@ const Logout = (props) => {
 
 const UserNav = () => {
   const { state } = useContext(StoreContext);
+  
+  const [pixelMap, setPixelMap] = useState([[{ r: 1, b: 1, g: 1 }]]);
+  const [grid, setGrid] = useState(false);
+
+  useEffect(() => {
+    let data = new RandomPixelSquare(3, 0, 255, 0, 255, 0, 255);
+    data.sortHue();
+    setPixelMap(data.data);
+    setGrid(randInt(0, 1));
+  }, []);
 
   return (
     <NavBar>
       <NavLogo>
         <Link to="/home">
-          <h2>User-Land</h2>
+          <Row>
+            <PixelApp
+              pixelMap={pixelMap}
+              borderRadius={randInt(0, 50)}
+              grid={grid}
+              // backgroundColor={`rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)}`}
+              pixelSize={grid ? 30 / pixelMap.length - 2 : 30 / pixelMap.length}
+            />
+            <h2 className='courier'>mosaic</h2>
+          </Row>
         </Link>
       </NavLogo>
       <NavGroup>
