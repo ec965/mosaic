@@ -9,7 +9,6 @@ const path = require('path');
 
 const routes = require("./routes/index");
 const PORT = process.env.PORT || 5000;
-const IPADDRESS = process.env.IPADDRESS || "localhost";
 
 // connect to the DB
 const db = require("./config/db")(mongoose);
@@ -49,6 +48,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.toString() });
 });
 
-app.listen(PORT, IPADDRESS, () => {
-  console.log(`Listening at http://${IPADDRESS}:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Listening at port: ${PORT}`);
 });
