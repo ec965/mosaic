@@ -21,12 +21,12 @@ const LandingPage = (props) => {
       <Column className="center">
         <div>
           <Link to="/login">
-            <h3 className="landing-text">Login</h3>
+            <h3 className="courier landing-text">Login</h3>
           </Link>
         </div>
         <Row>
           <a href="https://enochchau.com/#Moasic">
-            <h3 className="landing-text vertical-text flip">About</h3>
+            <h3 className="courier landing-text vertical-text flip">About</h3>
           </a>
           <PixelApp
             pixelMap={pixelMap}
@@ -36,12 +36,12 @@ const LandingPage = (props) => {
             pixelSize={grid ? 360 / pixelMap.length - 2 : 360 / pixelMap.length}
           />
           <a href="https://github.com/ec965/user-land">
-            <h3 className="landing-text vertical-text">GitHub</h3>
+            <h3 className="courier landing-text vertical-text">GitHub</h3>
           </a>
         </Row>
         <div>
           <Link to="/register">
-            <h3 className="landing-text">Register</h3>
+            <h3 className="courier landing-text">Register</h3>
           </Link>
         </div>
       </Column>
