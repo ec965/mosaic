@@ -8,6 +8,8 @@ import { Button } from "../components/button";
 import { randInt, redirect } from '../util/util';
 import { postAppNew } from "../config/api";
 import { StoreContext, dispatchError } from '../util/contextreducer';
+import Loader from 'react-loader-spinner';
+import { COLORS } from '../config/colors';
 
 const MAXLENGTH = 900; // this isn't exact but it's pretty close
 const MINLENGTH = 4;
@@ -311,17 +313,21 @@ const ImageGenerator = () => {
       />
       {state.imgSrc 
       ? 
-        <PixelApp
-          pixelMap={pixelMap}
-          borderRadius={state.borderRadius}
-          pixelSize={
-            state.grid 
-            ? state.pixelSize/pixelMap.length - 2 
-            : state.pixelSize/pixelMap.length
-          }
-          grid={state.grid}
-          backgroundColor={state.backgroundColor}
-        />
+        imgData 
+        ?
+          <PixelApp
+            pixelMap={pixelMap}
+            borderRadius={state.borderRadius}
+            pixelSize={
+              state.grid 
+              ? state.pixelSize/pixelMap.length - 2 
+              : state.pixelSize/pixelMap.length
+            }
+            grid={state.grid}
+            backgroundColor={state.backgroundColor}
+          />
+        : 
+          <Loader type="Oval" color={COLORS.base0D} height={80} width={80}/>
       :
         <div>
           <h5>{'Upload an image to begin.'}</h5>
