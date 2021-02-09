@@ -1,14 +1,13 @@
 {
-  "name": "user-land",
+  "name": "server",
   "version": "0.1.0",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "npm start --prefix server",
+    "start": "nodemon --inspect app.js",
     "client": "npm start --prefix client",
-    "start": "concurrently --kill-others \"npm run server\" \"npm run client\"",
-    "setup": "npm install --prefix client && npm install --prefix server"
+    "dev": "concurrently --kill-others \"npm start\" \"npm run client\"",
+    "setup": "npm install --prefix client && npm install"
   },
   "repository": {
     "type": "git",
@@ -21,9 +20,27 @@
   },
   "homepage": "https://github.com/ec965/user-land#readme",
   "dependencies": {
-    "concurrently": "^5.3.0"
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.4.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.11.14",
+    "passport": "^0.4.1",
+    "passport-cookie": "^1.0.9",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.5.0"
   },
   "devDependencies": {
+    "nodemon": "^2.0.7",
+    "concurrently": "^5.3.0",
     "prettier": "2.2.1"
   }
 }

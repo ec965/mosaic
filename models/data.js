@@ -10,12 +10,6 @@ const commentSchema = new Schema(
   { timestamps: true }
 );
 
-commentSchema.pre("save", function (next) {
-  var comment = this;
-  comment.updated = Date.now();
-  next();
-});
-
 const pixelSchema = new Schema(
   {
     r: Number,

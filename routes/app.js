@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const Data = require("../models/data");
+const User = require('../models/users');
 
 // READ
 // get all a user's data
@@ -13,8 +14,10 @@ router.get("/myprojects", (req, res, next) => {
     .select("username title project updatedAt")
     .exec(function (err, data) {
       if (err) return next(err);
-
-      res.json({ username: req.query.username, data: data });
+      User.findOne({username: req.query.username}, 'username createdAt', function(err, user){
+        if (err) return next(err);
+        res.json({ user: user, data: data });
+      })
     });
 });
 
