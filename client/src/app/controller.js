@@ -3,7 +3,7 @@ import { Button } from "../components/button";
 import Slider from "../components/slider";
 import Loader from 'react-loader-spinner';
 import { COLORS } from '../config/colors';
-import { Row, Column } from '../components/layout';
+import { Row } from '../components/layout';
 
 export const ToolLabel = (props) => (
   <h6 onClick={props.onClick} className={`${props.className} courier`}>

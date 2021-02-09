@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 
 export const NavBar = (props) => {
   return <div className={"nav-bar " + props.className}>{props.children}</div>;
