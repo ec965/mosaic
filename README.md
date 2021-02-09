@@ -10,19 +10,19 @@ Built using React.js.
 
 Built using Node.js, Express.js, and MongoDB.
 
-### API Reference
+## API Reference
 
-#### `/api/auth` (public)
+## `/api/auth` (public)
 Used for authentication and distributing JWT.
 
-##### POST `/register`
+### POST `/register`
 
 * request: username and password
 * reqponse: 
   * success: username & "reigstration successful" message
   * error: username already exists
 
-##### POST `/login`
+### POST `/login`
 
 * request: username and password
 * repsonse: 
@@ -32,61 +32,61 @@ Used for authentication and distributing JWT.
     * "Your password is invalid."
 
 
-#### `/api/app` (private: requires JWT)
+## `/api/app` (private: requires JWT)
 These routes are for the random generator, image generator, homepage, and profile pages.
 
-##### GET `/myprojects`
+### GET `/myprojects`
 Gets a users projects and information
 
 * reponse: query with id of user of whom to get projects
 * response: user and user's data information
 
-##### POST `/new`
+### POST `/new`
 Creates new project
 
 * request: data for a new data entry
 * reponse: new data id
 
-##### PATCH `/update`
+### PATCH `/update`
 Updates projects after editing.
 
 * request: data id and project information to update
 * reponse: data id
 
-##### GET `/recent`
+### GET `/recent`
 Used for home page content.
 
 * reponse: 18 most recent projects
 
 
-#### `/api/project` (private: requirest JWT)
+## `/api/project` (private: requirest JWT)
 These routes are for the page showing a single project, comments, and deleting projects.
 
-##### GET `/`
+### GET `/`
 Get the data of a specific project
 
 * request: query with project id
 * reponse: project data
 
-##### DELETE `/delete`
+### DELETE `/delete`
 Delete a project
 
 * request: query with project id
 * reponse: 200
 
-##### POST `/comment`
+### POST `/comment`
 Post a new comment for a project.
 
 * request: project id and comment text
 * reponse: new comment information
 
-##### PATCH `/comment`
+### PATCH `/comment`
 Edit a comment
 
 * request: project id, comment id, and text
 * reponse: updated comment data
 
-##### DELETE `/comment`
+### DELETE `/comment`
 Delete a comment
 
 * request: project id and comment id

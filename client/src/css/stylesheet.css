@@ -150,6 +150,9 @@ a:hover {
 .red {
   background-color: var(--base08);
 }
+.red-text{
+  color: var(--base08);
+}
 .red:hover {
   background-color: var(--base08-h);
 }

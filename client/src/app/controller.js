@@ -3,7 +3,7 @@ import { Button } from "../components/button";
 import Slider from "../components/slider";
 import Loader from 'react-loader-spinner';
 import { COLORS } from '../config/colors';
-import { Row } from '../components/layout';
+import { Row, Column } from '../components/layout';
 
 export const ToolLabel = (props) => (
   <h6 onClick={props.onClick} className={`${props.className} courier`}>
@@ -85,15 +85,17 @@ const Controller = ({
           <Loader className="controller-loader" type="Oval" color={COLORS.base0D} height={20} width={20}/>
         }
       </Row>
-      <input
-        onChange={onTitleChange}
-        value={title}
-        type="text"
-        className="form-field"
-        placeholder="Title"
-        id="title"
-      />
-      {titleError && <span>Please enter a title.</span>}
+      <div>
+        <input
+          onChange={onTitleChange}
+          value={title}
+          type="text"
+          className="form-field"
+          placeholder="Title"
+          id="title"
+        />
+        {titleError && <span className="red-text">Please enter a title.</span>}
+      </div>
       {top}
       <div>
         {sliderTools}

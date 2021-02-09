@@ -234,7 +234,12 @@ const ImageGenerator = () => {
   const handleSave = () => {
     setDisableSave(true);
     if(state.title.trim().length === 0){
-      dispatch({type: ACTION.TITLEERROR, payload: true});
+      setDisableSave(false);
+      return dispatch({type: ACTION.TITLEERROR, payload: true});
+    }
+    if(!state.imgSrc){
+      setDisableSave(false);
+      return
     }
     
     let data = {

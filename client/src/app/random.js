@@ -33,6 +33,7 @@ const ACTION = {
   RESET: "reset",
   RANDOM: "random",
   TITLE: "title",
+  TITLEERROR: "titleError",
   GETDATA: "getData",
   PARTIALRESET: 'partialReset',
   PARTIALRANDOM: 'partialRandom',
@@ -78,7 +79,17 @@ function reducer(state, action) {
     case ACTION.GRID:
       return { ...state, grid: action.payload };
     case ACTION.TITLE:
-      return { ...state, title: action.payload };
+      let titleError = false;
+      if (action.payload.trim().length === 0){
+        titleError = true;
+      }
+      return {
+        ...state, 
+        title: action.payload,
+        titleError: titleError
+      };
+    case ACTION.TITLEERROR: 
+      return {...state, titleError: action.payload};
     case ACTION.RESET:
       return initialState;
     case ACTION.RANDOM:
@@ -144,6 +155,7 @@ const initialState = {
   grid: false,
   backgroundColor: "#fff",
   title: "",
+  titleError: false,
 };
 
 const minMax = {
@@ -325,6 +337,11 @@ const RandomGenerator = (props) => {
   const handleSave = () => {
 
     setDisableSave(true);
+    if(state.title.trim().length === 0){
+      setDisableSave(false);
+      return dispatch({type: ACTION.TITLEERROR, payload: true});
+    }
+
     let data = {
       title: state.title.trim(),
       project: {
@@ -348,6 +365,7 @@ const RandomGenerator = (props) => {
         disableSave={disableSave}
         handleSave={handleSave}
         title={state.title}
+        titleError={state.titleError}
         onTitleChange={(e) =>
           dispatch({ type: ACTION.TITLE, payload: e.target.value })
         }
