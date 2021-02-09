@@ -17,7 +17,12 @@ const db = require("./config/db")(mongoose);
 require("./auth/auth");
 
 const app = express();
-app.use(helmet());
+app.use(helmet().contentSecurityPolicy({
+  directives: {
+    ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+    "img-src": ["'self'", "herokuapp.com"]
+  }
+}));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
