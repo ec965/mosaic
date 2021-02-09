@@ -4,21 +4,28 @@ const router = express.Router();
 const Data = require("../models/data");
 const User = require('../models/users');
 
+const POSTLIMIT=12;
+
 // READ
 // get all a user's data
 router.get("/myprojects", (req, res, next) => {
-  Data.find()
-    .where("username")
-    .equals(req.query.username)
-    .sort({ createdAt: -1 })
-    .select("username title project updatedAt")
-    .exec(function (err, data) {
-      if (err) return next(err);
-      User.findOne({username: req.query.username}, 'username createdAt', function(err, user){
-        if (err) return next(err);
-        res.json({ user: user, data: data });
+  if(req.query.date && req.query.username){
+    Data.find()
+      .where('updatedAt').lt(req.query.date)
+      .where('username').equals(req.query.username)
+      .limit(POSTLIMIT)
+      .sort({updatedAt: -1})
+      .select("username title project updatedAt")
+      .exec(function (err, data) {
+        if(err) return next(err);
+        User.findOne({username: req.query.username}, 'username createdAt', function(err, user){
+          if (err) return next(err);
+          res.json({ user: user, data: data, postlimit: POSTLIMIT });
+        })
       })
-    });
+  } else {
+    res.sendStatus(400);
+  }
 });
 
 // CREATE
@@ -68,15 +75,20 @@ router.patch("/update", (req, res, next) => {
 
 // get the 18 most recent projects for the home page
 router.get("/recent", (req, res, next) => {
-  Data.find()
-    .limit(18)
-    .sort({ createdAt: -1 })
-    .select("username title project createdAt")
-    .exec(function (err, data) {
-      if (err) return next(err);
+  if(req.query.date){
+    Data.find()
+      .where('createdAt').lt(req.query.date)
+      .limit(POSTLIMIT)
+      .sort({createdAt: -1})
+      .select("username title project createdAt")
+      .exec(function (err, data){
+        if (err) return next(err);
 
-      res.json(data);
-    });
+        res.json({data:data, postlimit: POSTLIMIT});
+      })
+  } else {
+    res.sendStatus(400);
+  }
 });
 
 module.exports = router;

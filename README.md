@@ -2,6 +2,10 @@
 
 Mosaic is a full stack webapp to create mosaic style components using either a reference image or randomly generated values.
 
+## Todo
+* infinite scrolling
+* animations?
+
 ## Client
 
 Built using React.js.

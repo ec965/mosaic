@@ -32,17 +32,12 @@ export const NEW = APP + "/new";
 export const UPDATE = APP + "/update";
 export const RECENT = APP + "/recent";
 
-export const getAppUserProjects = async (username) =>
-  await instance.get(USERPROJECTS, {params: {username: username}});
-
 export const postAppNew = async (data) =>
   await instance.post(NEW, data);
 
 export const patchAppUpdate = async (data) =>
   await instance.patch(UPDATE, data);
 
-export const getAppRecent = async () =>
-  await instance.get(RECENT);
 
 export const postOrPatchApp = async (data, projectId=null) => {
   if(projectId){

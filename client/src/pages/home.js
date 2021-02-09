@@ -1,6 +1,6 @@
-import React, { useState, useEffect,useContext } from "react";
-import { Link } from "react-router-dom";
-import { getAppRecent } from "../config/api";
+import React, { useState,useContext, useEffect } from "react";
+import { instance, RECENT } from '../config/api';
+import { Button } from '../components/button';
 
 import PixelCard from "../app/card";
 import { Page, Row } from "../components/layout";
@@ -10,53 +10,79 @@ import { StoreContext, dispatchError } from '../util/contextreducer';
 import { COLORS } from '../config/colors';
 
 const CardMatrix = () => {
-  const [recentProjects, setRecentProjects] = useState(null);
+  const [recentProjects, setRecentProjects] = useState([]);
+  const [ noMore, setNoMore ] = useState(false);
+  const [ disable, setDisable ] = useState(false);
   const { dispatch } = useContext(StoreContext);
 
   // fetch the most recent projects
-  useEffect(() => {
-    function getRecent() {
-      getAppRecent()
-        .then((res) => {
-          setRecentProjects(res.data);
-        })
-        .catch((err) => {
-          dispatchError(err, dispatch);
-        });
-    }
 
+  const getRecent = (lastDate=null) => {
+    setDisable(true);
+    if (!lastDate) lastDate = Date.now();
+    instance.get(RECENT, {params: {date: lastDate}})
+      .then((res) => {
+        if (res.data.data.length < res.data.postlimit) {
+          setNoMore(true);
+        }
+        let update = [...recentProjects];
+        setRecentProjects(update.concat(res.data.data));
+      })
+      .catch((err) => {
+        dispatchError(err, dispatch);
+      });
+    setDisable(false);
+  }
+
+  // get initial data
+  useEffect(() => {
     getRecent();
-  }, [dispatch]);
+  },[])
+
 
   return (
     <Page className="center-page">
-      {recentProjects 
+      {recentProjects.length > 0 
       ? 
-        <div className="matrix">
-          {recentProjects.map((p, i) => {
-            // scale to fit on home page
-            return (
-              <div key={i} className="profile-card">
-                <div className="card-wrapper">
-                  <PixelCard
-                    title={p.title}
-                    username={p.username}
-                    date={p.createdAt}
-                    project={p.project}
-                    maxWidth={maxPixelCardWidth()}
-                    bodyLink={`project/${p._id}`}
-                    link={`/project/${p._id}`}
-                  />
+        <div>
+          <div className="matrix">
+            {recentProjects.map((p, i) => {
+              // scale to fit on home page
+              return (
+                <div key={i} className="profile-card">
+                  <div className="card-wrapper">
+                    <PixelCard
+                      title={p.title}
+                      username={p.username}
+                      date={p.createdAt}
+                      project={p.project}
+                      maxWidth={maxPixelCardWidth()}
+                      bodyLink={`project/${p._id}`}
+                      link={`/project/${p._id}`}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+            {noMore 
+            ? 
+              <Row>
+                <p className="italic">No more content to load.</p>
+              </Row>
+            :  
+              <Row>
+                { disable && <Loader type="Oval" color={COLORS.base0D} height={30} width={30} style={{"padding-right": "12px"}}/>}
+                <Button disable={disable} onClick={() => getRecent(recentProjects[recentProjects.length-1].createdAt)}>Load More</Button>
+              </Row>
+            } 
         </div>
-      : 
+      :
         <Row>
           <Loader type="Oval" color={COLORS.base0D} height={80} width={80}/>
         </Row> 
       }
+
     </Page>
   );
 };

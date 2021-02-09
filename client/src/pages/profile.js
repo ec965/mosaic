@@ -9,28 +9,52 @@ import { maxPixelCardWidth } from '../util/util';
 import Loader from 'react-loader-spinner';
 import { COLORS } from '../config/colors';
 import { dateString } from '../util/util';
+import { instance, USERPROJECTS } from '../config/api';
+import { Button } from '../components/button';
 
 const UserProfile = () => {
-  const [username, setUsername] = useState("");
-  const [joinDate, setJoinDate] = useState('');
+  const [username, setUsername] = useState(null);
+  const [joinDate, setJoinDate] = useState(null);
   const [projects, setProjects] = useState(null);
+  const [ noMore, setNoMore ] = useState(false);
+  const [ disable, setDisable ] = useState(false);
   const { state, dispatch } = useContext(StoreContext);
 
   let { thisUser } = useParams();
 
-  useEffect(() => {
-    function getUserInfo() {
-      getAppUserProjects(thisUser)
-        .then((res) => {
-          setJoinDate(res.data.user.createdAt);
-          setUsername(res.data.user.username);
-          setProjects(res.data.data);
-        })
-        .catch((error) => dispatchError(error, dispatch));
-    }
+  function getUserInfo(lastDate=null) {
+    setDisable(true);
 
+    if (!lastDate) lastDate = Date.now();
+
+    instance.get(
+      USERPROJECTS,
+      {params: {username: thisUser, date: lastDate}}
+    )
+      .then((res) => {
+        console.log(res.data);
+        if(!username ) setUsername(res.data.user.username);
+        if(!joinDate) setJoinDate(res.data.user.createdAt);
+
+
+        if(!projects) setProjects(res.data.data);
+        else {
+          // on subsequent runs of this function, just update the projects arr
+          let update = [...projects];
+          setProjects(update.concat(res.data.data));
+        }
+        
+        if (res.data.data.length < res.data.postlimit) {
+          setNoMore(true);
+        }
+      })
+      .catch((error) => dispatchError(error, dispatch));
+    setDisable(false);
+  }
+
+  useEffect(() => {
     getUserInfo();
-  }, [thisUser, dispatch]);
+  }, []);
 
   const handleDelete = (event) => {
     event.preventDefault();
@@ -49,7 +73,7 @@ const UserProfile = () => {
   return (
     <Page className="center-page">
         {// waits for the project to load, if user has no projects, display the proper message
-        !projects 
+          !projects
           ? 
             <Row>
               <Loader type="Oval" color={COLORS.base0D} height={80} width={80}/>
@@ -75,43 +99,56 @@ const UserProfile = () => {
                   }
                   </Row>
                 :
-                  <div className="matrix">
-                    {projects.map((p, i) => {
-                      return (
-                        <div className="profile-card" key={i}>
-                          <div className="card-wrapper">
-                            <PixelCard
-                              title={p.title}
-                              username={p.username}
-                              date={p.updatedAt}
-                              project={p.project}
-                              maxWidth={maxPixelCardWidth()}
-                              link={`/project/${p._id}`}
-                              body={
-                                <>
-                                  {state.username === thisUser &&
-                                    <Row className={"profile-card-buttons"}>
-                                      <p>
-                                        <Link to={`/generator/${p._id}`}>
-                                          edit
-                                        </Link>
-                                      </p>
-                                      <p
-                                        id={JSON.stringify({ id: p._id, index: i })}
-                                        onClick={handleDelete}
-                                        className="project-delete"
-                                      >
-                                        delete
-                                      </p>
-                                    </Row>
-                                  }
-                                </>
-                              }
-                            />
-                            </div>
-                        </div>
-                      );
-                    })}
+                  <div>
+                    <div className="matrix">
+                      {projects.map((p, i) => {
+                        return (
+                          <div className="profile-card" key={i}>
+                            <div className="card-wrapper">
+                              <PixelCard
+                                title={p.title}
+                                username={p.username}
+                                date={p.updatedAt}
+                                project={p.project}
+                                maxWidth={maxPixelCardWidth()}
+                                link={`/project/${p._id}`}
+                                body={
+                                  <>
+                                    {state.username === thisUser &&
+                                      <Row className={"profile-card-buttons"}>
+                                        <p>
+                                          <Link to={`/generator/${p._id}`}>
+                                            edit
+                                          </Link>
+                                        </p>
+                                        <p
+                                          id={JSON.stringify({ id: p._id, index: i })}
+                                          onClick={handleDelete}
+                                          className="project-delete"
+                                        >
+                                          delete
+                                        </p>
+                                      </Row>
+                                    }
+                                  </>
+                                }
+                              />
+                              </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {noMore 
+                    ? 
+                      <Row>
+                        <p className="italic">No more content to load.</p>
+                      </Row>
+                    :  
+                      <Row>
+                        { disable && <Loader type="Oval" color={COLORS.base0D} height={30} width={30} style={{"padding-right": "12px"}}/>}
+                        <Button onClick={()=>getUserInfo(projects[projects.length-1].updatedAt)}>Load More</Button>
+                      </Row>
+                    } 
                   </div>
               }
             </div>
