@@ -26,7 +26,7 @@ const LandingPage = (props) => {
         </div>
         <Row>
           <a href="https://enochchau.com">
-            <h3 className="landing-text vertical-text">About</h3>
+            <h3 className="landing-text vertical-text flip">About</h3>
           </a>
           <PixelApp
             pixelMap={pixelMap}

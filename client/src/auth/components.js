@@ -9,7 +9,7 @@ export const FormCard = (props) => {
   );
 };
 export const FormError = (props) => {
-  return <p>{props.children}</p>;
+  return <div className="form-error">{props.children}</div>;
 };
 
 export const FormLabel = (props) => (

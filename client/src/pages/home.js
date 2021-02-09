@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { Link } from "react-router-dom";
 import { getAppRecent } from "../config/api";
 
 import PixelCard from "../app/card";
-import { Page } from "../components/layout";
-import { initialPixMapArr } from '../config/pixmap';
+import { Page, Row } from "../components/layout";
+import Loader from 'react-loader-spinner';
+import { maxPixelCardWidth } from "../util/util";
+import { StoreContext, dispatchError } from '../util/contextreducer';
+import { COLORS } from '../config/colors';
 
 const CardMatrix = () => {
-  const [recentProjects, setRecentProjects] = useState(initialPixMapArr);
+  const [recentProjects, setRecentProjects] = useState(null);
+  const { dispatch } = useContext(StoreContext);
 
   // fetch the most recent projects
   useEffect(() => {
@@ -16,30 +20,43 @@ const CardMatrix = () => {
         .then((res) => {
           setRecentProjects(res.data);
         })
-        .catch((err) => console.error(err));
+        .catch((err) => {
+          dispatchError(err, dispatch);
+        });
     }
 
     getRecent();
-  }, []);
-
-  const cards = recentProjects.map((p, i) => {
-    // scale to fit on home page
-    return (
-      <Link to={`project/${p._id}`} key={i}>
-        <PixelCard
-          title={p.title}
-          username={p.username}
-          date={p.createdAt}
-          project={p.project}
-          maxWidth={360}
-        ></PixelCard>
-      </Link>
-    );
-  });
+  }, [dispatch]);
 
   return (
     <Page className="center-page">
-      <div className="matrix">{cards}</div>
+      {recentProjects 
+      ? 
+        <div className="matrix">
+          {recentProjects.map((p, i) => {
+            // scale to fit on home page
+            return (
+              <div key={i} className="profile-card">
+                <div className="card-wrapper">
+                  <PixelCard
+                    title={p.title}
+                    username={p.username}
+                    date={p.createdAt}
+                    project={p.project}
+                    maxWidth={maxPixelCardWidth()}
+                    bodyLink={`project/${p._id}`}
+                    link={`/project/${p._id}`}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      : 
+        <Row>
+          <Loader type="Oval" color={COLORS.base0D} height={80} width={80}/>
+        </Row> 
+      }
     </Page>
   );
 };

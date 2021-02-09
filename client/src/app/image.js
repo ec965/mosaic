@@ -1,13 +1,13 @@
-import React, { useRef, useEffect, useState, useReducer } from "react";
-import Controller, { ToolLabel } from './controller';
+import React, { useRef, useEffect, useState, useReducer, useContext } from "react";
+import Controller, { ToolLabel, ToolBox } from './controller';
 import { Page } from '../components/layout';
 import { PixelApp } from "./app";
-import { SliderPicker } from 'react-color';
+import { CompactPicker } from 'react-color';
 import Toggle from "../components/toggle";
 import { Button } from "../components/button";
 import { randInt, redirect } from '../util/util';
 import { postAppNew } from "../config/api";
-import { useQuery } from 'react-query';
+import { StoreContext, dispatchError } from '../util/contextreducer';
 
 const MAXLENGTH = 900; // this isn't exact but it's pretty close
 const MINLENGTH = 4;
@@ -34,7 +34,7 @@ function pixelizeImage(data, width, height, sampleSize) {
     }
     arr.push(subarr);
   }
-  console.log('data length:', data.length/4, 'output length:', arr.length * arr[0].length);
+  // console.log('data length:', data.length/4, 'output length:', arr.length * arr[0].length);
   return arr;
 }
 
@@ -145,6 +145,8 @@ const ImageGenerator = () => {
   const [pixelMap, setPixelMap] = useState([[]]);
   const [imgData, setImgData] = useState(null);
   const [disableSave, setDisableSave] = useState(false);
+
+  const store = useContext(StoreContext);
   
   // editing goes to the RandomGenerator component
   // RandomGenerator is generic enough to provide editing tools for both images and random boxes
@@ -200,8 +202,17 @@ const ImageGenerator = () => {
 
   const sliders = [
     {
+      var: state.pixelSize,
+      name: 'zoom',
+      defaultValue: initialState.pixelSize,
+      min: minMax.pixelSize.min,
+      max: minMax.pixelSize.max,
+      onChange: (e) => dispatch({ type: ACTION.PIXELSIZE, payload: parseInt(e.target.value)}),
+      percent: true,
+    },
+    {
       var: state.borderRadius,
-      name: 'border radius',
+      name: 'pixel curvature',
       defaultValue: initialState.borderRadius,
       min: minMax.borderRadius.min,
       max: minMax.borderRadius.max,
@@ -211,19 +222,11 @@ const ImageGenerator = () => {
       percent: true,
     },{
       var: state.scale,
-      name: 'pixel scale',
+      name: 'pixelization scale',
       defaultValue: state.minScale,
       min: state.minScale,
       max: state.maxScale,
       onChange: (e) => dispatch({ type: ACTION.SCALE, payload: parseInt(e.target.value)}),
-      percent: true,
-    },{
-      var: state.pixelSize,
-      name: 'zoom',
-      defaultValue: initialState.pixelSize,
-      min: minMax.pixelSize.min,
-      max: minMax.pixelSize.max,
-      onChange: (e) => dispatch({ type: ACTION.PIXELSIZE, payload: parseInt(e.target.value)}),
       percent: true,
     }
   ]
@@ -246,7 +249,7 @@ const ImageGenerator = () => {
     
     postAppNew(data)
     .then((res) => redirect(`/project/${res.data}`)) 
-    .then((err) => console.error(err));
+    .catch((err) => dispatchError(err, store.dispatch));
 
     setDisableSave(false);
   }
@@ -274,19 +277,24 @@ const ImageGenerator = () => {
         }
         bottom={
           <>
-            <ToolLabel>grid lines</ToolLabel>
-            <Toggle
-              onChange={(e) =>
-                dispatch({ type: ACTION.GRID, payload: e.target.checked })
-              }
-              checked={state.grid}
-            />
-            <SliderPicker
-              color={state.backgroundColor}
-              onChangeComplete={(color, e) =>
-                dispatch({ type: ACTION.BGCOLOR, payload: color.hex })
-              }
-            />
+            <ToolBox>
+              <ToolLabel>grid lines</ToolLabel>
+              <Toggle
+                onChange={(e) =>
+                  dispatch({ type: ACTION.GRID, payload: e.target.checked })
+                }
+                checked={state.grid}
+              />
+            </ToolBox>
+            <ToolBox>
+              <ToolLabel>background color</ToolLabel>
+              <CompactPicker
+                color={state.backgroundColor}
+                onChangeComplete={(color, e) =>
+                  dispatch({ type: ACTION.BGCOLOR, payload: color.hex })
+                }
+              />
+            </ToolBox>
             <Button
               onClick={(e) => {dispatch({ type: ACTION.RESET })}}
               className="courier red"
@@ -296,34 +304,44 @@ const ImageGenerator = () => {
           </>
         }
       />
-      <input 
-        type="file" 
-        accept="image/*" 
-        onChange={ (e) => 
-          dispatch({type: ACTION.IMGSRC, payload: URL.createObjectURL(e.target.files[0])}) }
-      />
-      <PixelApp
-        pixelMap={pixelMap}
-        borderRadius={state.borderRadius}
-        pixelSize={
-          state.grid 
-          ? state.pixelSize/pixelMap.length - 2 
-          : state.pixelSize/pixelMap.length
-        }
-        grid={state.grid}
-        backgroundColor={state.backgroundColor}
-      />
-      <canvas
-        style={{
-          position: "absolute",
-          zIndex: -1,
-          height: 0,
-          width: 0,
-        }}
-        width={dimension.width}
-        height={dimension.height}
-        ref={canvasRef}
-      />
+      {state.imgSrc 
+      ? 
+        <PixelApp
+          pixelMap={pixelMap}
+          borderRadius={state.borderRadius}
+          pixelSize={
+            state.grid 
+            ? state.pixelSize/pixelMap.length - 2 
+            : state.pixelSize/pixelMap.length
+          }
+          grid={state.grid}
+          backgroundColor={state.backgroundColor}
+        />
+      :
+        <div>
+          <h5>{'Upload an image to begin.'}</h5>
+          <br/>
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={ (e) => 
+              dispatch({type: ACTION.IMGSRC, payload: URL.createObjectURL(e.target.files[0])}) }
+          />
+        </div>
+      }
+      <div>
+        <canvas
+          style={{
+            position: "absolute",
+            zIndex: -1,
+            height: 0,
+            width: 0,
+          }}
+          width={dimension.width}
+          height={dimension.height}
+          ref={canvasRef}
+        />
+      </div>
     </Page>
   );
 };

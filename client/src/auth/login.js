@@ -21,7 +21,7 @@ const LoginForm = () => {
   function login(username, password, rememberMe = false) {
     postLogin(username, password)
       .then((res) => {
-        if (res.data) {
+        if (res.data.jwt) {
           let token = res.data.jwt;
           if (rememberMe) {
             localStorage.setItem("token", token);
@@ -97,10 +97,12 @@ const LoginForm = () => {
               component="div"
             />
 
-            <p>Remember Me</p>
-            <Field type="checkbox" name="rememberMe" />
+            <Row className="flex-start">
+              <p>Remember Me</p>
+              <Field type="checkbox" name="rememberMe" />
+            </Row>
 
-            <Row className="matrix">
+            <Row className="form-buttons">
               <FormButton type="submit" disabled={isSubmitting}>
                 Submit
               </FormButton>
@@ -109,12 +111,13 @@ const LoginForm = () => {
           </Form>
         )}
       </Formik>
+
       {serverErr && (
-        <FormError>
+        <FormError className="form-bottom-error">
           A server error has occured, please try again later.
         </FormError>
       )}
-      {authErr && <FormError>{authErr}</FormError>}
+      {authErr && <FormError className="form-bottom-error">{authErr}</FormError>}
     </>
   );
 };

@@ -32,7 +32,6 @@ export const PixelApp = ({
 }) => {
   // const width = pixelMap[0].length;
   // const height = pixelMap.length;
-
   const render = pixelMap.map((inner, i) => {
     return (
       <Row key={i} style={{ backgroundColor: `${backgroundColor}` }}>

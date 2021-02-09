@@ -1,15 +1,18 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { SliderPicker } from "react-color";
-import { Button } from "../components/button";
-import { Page } from "../components/layout";
-import { RandomPixelSquare } from "./generator";
-import PixelApp from "./app.js";
-import Controller, { ToolLabel } from "./controller";
-import Toggle from "../components/toggle";
-import Slider from "../components/slider";
+import { CompactPicker }  from "react-color";
+
 import { getProject, postOrPatchApp } from "../config/api";
 import { randInt, redirect } from '../util/util';
+import { StoreContext, dispatchError } from '../util/contextreducer';
+
+import { Button } from "../components/button";
+import { Page } from "../components/layout";
+import Toggle from "../components/toggle";
+
+import { RandomPixelSquare } from "./generator";
+import PixelApp from "./app.js";
+import Controller, { ToolLabel, ToolBox, ToolSlider } from "./controller";
 
 const ACTION = {
   DIMENSION: "dimension",
@@ -42,7 +45,14 @@ function reducer(state, action) {
     case ACTION.BGCOLOR:
       return { ...state, backgroundColor: action.payload };
     case ACTION.DIMENSION:
-      return { ...state, dimension: action.payload };
+      let outState = {...state, dimension: action.payload};
+      if (action.payload < state.sortHueColLen){
+        outState = {...outState, sortHueColLen: action.payload};
+      }
+      if (action.payload < state.sortHueRowLen){
+        outState = { ...outState, sortHueRowLen: action.payload};
+      }
+      return outState;
     case ACTION.PIXELSIZE:
       return { ...state, pixelSize: action.payload };
     case ACTION.RMAX:
@@ -129,8 +139,8 @@ const initialState = {
   bmax: 255,
   sortHueRow: false,
   sortHueCol: false,
-  sortHueRowLen: -1,
-  sortHueColLen: -1,
+  sortHueRowLen: 30,
+  sortHueColLen: 30,
   grid: false,
   backgroundColor: "#fff",
   title: "",
@@ -163,6 +173,7 @@ const RandomGenerator = (props) => {
   const [editInitialState, setEditIntialState] = useState(initialState);
   // reducer to handle options of generator
   const [state, dispatch] = useReducer(reducer, initialState);
+  const store = useContext(StoreContext);
 
   // many things rely on the projectId,
   // if the projectId is truthy, then the user is editing a project
@@ -180,13 +191,13 @@ const RandomGenerator = (props) => {
           setEditIntialState(res.data.project);
           dispatch({ type: ACTION.GETDATA, payload: res.data });
         })
-        .catch((error) => console.error(error));
+        .catch((err) => dispatchError(err, store.dispatch));
     }
 
     if (projectId) {
       getInitialData();
     }
-  }, [projectId]);
+  }, [projectId, store.dispatch]);
 
   // array to contruct sliders
   let sliders = [
@@ -203,7 +214,7 @@ const RandomGenerator = (props) => {
     {
       min: minMax.borderRadius.min,
       max: minMax.borderRadius.max,
-      name: "border radius",
+      name: "pixel curvature",
       defaultValue: initialState.borderRadius,
       var: state.borderRadius,
       onChange: (e) =>
@@ -223,7 +234,7 @@ const RandomGenerator = (props) => {
     },
     {
       var: state.rmin,
-      name: "R min",
+      name: "red min",
       defaultValue: initialState.rmin,
       min: minMax.rgb.min,
       max: state.rmax,
@@ -231,7 +242,7 @@ const RandomGenerator = (props) => {
     },
     {
       var: state.rmax,
-      name: "R max",
+      name: "red max",
       defaultValue: initialState.rmax,
       min: state.rmin,
       max: minMax.rgb.max,
@@ -239,7 +250,7 @@ const RandomGenerator = (props) => {
     },
     {
       var: state.gmin,
-      name: "G min",
+      name: "green min",
       defaultValue: initialState.gmin,
       min: minMax.rgb.min,
       max: state.gmax,
@@ -247,7 +258,7 @@ const RandomGenerator = (props) => {
     },
     {
       var: state.gmax,
-      name: "G max",
+      name: "green max",
       defaultValue: initialState.gmax,
       min: state.gmin,
       max: minMax.rgb.max,
@@ -255,7 +266,7 @@ const RandomGenerator = (props) => {
     },
     {
       var: state.bmin,
-      name: "B min",
+      name: "blue min",
       defaultValue: initialState.bmin,
       min: minMax.rgb.min,
       max: state.bmax,
@@ -263,7 +274,7 @@ const RandomGenerator = (props) => {
     },
     {
       var: state.bmax,
-      name: "B max",
+      name: "blue max",
       defaultValue: initialState.bmax,
       min: state.bmin,
       max: minMax.rgb.max,
@@ -326,7 +337,7 @@ const RandomGenerator = (props) => {
 
     postOrPatchApp(data, projectId)
       .then((res) => redirect(`/project/${res.data}`)) 
-      .catch((err) => console.error(err));
+      .catch((err) => dispatchError(err, store.dispatch));
 
     setDisableSave(false);
   };
@@ -342,7 +353,7 @@ const RandomGenerator = (props) => {
         }
         sliders={sliders}
         top={
-          <>
+          <div>
             <Button
               onClick={(e) => {
                 projectId
@@ -353,68 +364,81 @@ const RandomGenerator = (props) => {
             >
               Random
             </Button>
-          </>
+          </div>
         }
         bottom={
-          <>
-            <ToolLabel>grid lines</ToolLabel>
-            <Toggle
-              onChange={(e) =>
-                dispatch({ type: ACTION.GRID, payload: e.target.checked })
-              }
-              checked={state.grid}
-            />
-            <ToolLabel>background color</ToolLabel>
-            <SliderPicker
-              color={state.backgroundColor}
-              onChangeComplete={(color, e) =>
-                dispatch({ type: ACTION.BGCOLOR, payload: color.hex })
-              }
-            />
+          <div>
+            <ToolBox>
+              <ToolLabel>grid lines</ToolLabel>
+              <Toggle
+                onChange={(e) =>
+                  dispatch({ type: ACTION.GRID, payload: e.target.checked })
+                }
+                checked={state.grid}
+              />
+            </ToolBox>
+            <ToolBox>
+              <ToolLabel>
+                background color 
+              </ToolLabel>
+              <CompactPicker
+                color={state.backgroundColor}
+                onChangeComplete={(color, e) =>
+                  dispatch({ type: ACTION.BGCOLOR, payload: color.hex })
+                }
+              />
+            </ToolBox>
+
             {!projectId && 
               <>
-              <ToolLabel>sort hue by rows</ToolLabel>
-              <Toggle
-                onChange={(e) =>
-                  dispatch({ type: ACTION.SORTHUEROW, payload: e.target.checked })
-                }
-                id="sortHueRow"
-                checked={state.sortHueRow}
-              />
-              <ToolLabel>sort length:{state.sortHueRowLen}</ToolLabel>
-              <Slider
-                min={0}
-                max={state.dimension}
-                onChange={(e) =>
-                  dispatch({
-                    type: ACTION.SORTHUEROWLEN,
-                    payload: e.target.value,
-                  })
-                }
-                id="sortHueRowLen"
-                defaultValue={state.dimension}
-              />
-              <ToolLabel>sort hue by columns</ToolLabel>
-              <Toggle
-                onChange={(e) =>
-                  dispatch({ type: ACTION.SORTHUECOL, payload: e.target.checked })
-                }
-                id="sortHueCol"
-                checked={state.sortHueCol}
-              />
-              <ToolLabel>sort length:{state.sortHueColLen}</ToolLabel>
-              <Slider
-                min={0}
-                max={state.dimension}
-                onChange={(e) =>
-                  dispatch({
-                    type: ACTION.SORTHUECOLLEN,
-                    payload: e.target.value,
-                  })
-                }
-                id="sortHueColLen"
-                defaultValue={state.dimension}
-              />
+              <ToolBox>
+                <ToolLabel>sort colors horizontally</ToolLabel>
+                <Toggle
+                  onChange={(e) =>
+                    dispatch({ type: ACTION.SORTHUEROW, payload: e.target.checked })
+                  }
+                  id="sortHueRow"
+                  checked={state.sortHueRow}
+                />
+                <ToolSlider
+                  name='sort amount'
+                  value={state.sortHueRowLen}
+                  min={0}
+                  max={state.dimension}
+                  onChange={(e) =>
+                    dispatch({
+                      type: ACTION.SORTHUEROWLEN,
+                      payload: e.target.value,
+                    })
+                  }
+                  id="sortHueRowLen"
+                  percent
+                />
+              </ToolBox>
+              <ToolBox>
+                <ToolLabel>sort colors vertically</ToolLabel>
+                <Toggle
+                  onChange={(e) =>
+                    dispatch({ type: ACTION.SORTHUECOL, payload: e.target.checked })
+                  }
+                  id="sortHueCol"
+                  checked={state.sortHueCol}
+                />
+                <ToolSlider
+                  name={'sort amount'}
+                  value={state.sortHueColLen}
+                  min={0}
+                  max={state.dimension}
+                  onChange={(e) =>
+                    dispatch({
+                      type: ACTION.SORTHUECOLLEN,
+                      payload: e.target.value,
+                    })
+                  }
+                  id="sortHueColLen"
+                  percent
+                />
+              </ToolBox>
               </>
             }
             <Button
@@ -426,7 +450,7 @@ const RandomGenerator = (props) => {
             >
               Reset
             </Button>
-          </>
+          </div>
         }
       />
       <PixelApp
@@ -439,6 +463,7 @@ const RandomGenerator = (props) => {
         grid={state.grid}
         backgroundColor={state.backgroundColor}
       />
+      <div/>
     </Page>
   );
 };

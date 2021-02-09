@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect, useContext } from "react";
+import React, { createContext, useReducer, useEffect } from "react";
 import { getToken } from "./util.js";
 import jwt_decode from "jwt-decode";
 import Banner from '../components/banner';
@@ -61,3 +61,10 @@ export const StoreContextProvider = ({ children }) => {
     </StoreContext.Provider>
   );
 };
+
+// use to dispatch the error action when an error occurs during a fetch request
+export function dispatchError(err, dispatch){
+  console.error(err);
+  if (err.status <= 499) dispatch({type: ACTION.BADREQUEST, payload: err})
+  else dispatch({type:ACTION.SERVERERROR, payload: err})
+}

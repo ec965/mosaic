@@ -1,7 +1,7 @@
 export const initialPixMap = {
   title: "Loading...",
   username: "",
-  createdAt: 1,
+  createdAt: Date.now(),
   project: {
     pixelMap: [[{ r: 125, g: 125, b: 125 }]],
     borderRadius: 0,

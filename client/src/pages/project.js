@@ -4,8 +4,8 @@ import { Link, useParams } from "react-router-dom";
 import { StoreContext } from "../util/contextreducer";
 
 import PixelApp from "../app/app";
-import { Column } from "../components/layout";
-import { dateString } from "../util/util";
+import { Column, Page, Row } from "../components/layout";
+import { dateString, maxProjectWidth} from "../util/util";
 import TextBoxForm from "../components/textbox";
 import {
   getProject,
@@ -20,16 +20,9 @@ const TEXTBOX = { maxLength: 160, rows: 4, cols: 40 };
 
 const ProjectPage = () => {
   const [project, setProject] = useState(initialPixMap.project);
-  const [username, setUserName] = useState("");
-  const [date, setDate] = useState("");
-  const [comments, setComments] = useState([
-    {
-      username: "",
-      test: "",
-      edited: false,
-      updatedAt: 1,
-    },
-  ]);
+  const [username, setUserName] = useState("Loading...");
+  const [date, setDate] = useState(Date.now());
+  const [comments, setComments] = useState([]);
   const [title, setTitle] = useState("");
   const [newComment, setNewComment] = useState("");
 
@@ -43,7 +36,7 @@ const ProjectPage = () => {
       getProject(projectId)
         .then((res) => {
           setUserName(res.data.username);
-          setDate(dateString(res.data.updatedAt));
+          setDate(res.data.createdAt);
           setTitle(res.data.title);
           setProject(res.data.project);
           setComments(res.data.comments);
@@ -111,29 +104,41 @@ const ProjectPage = () => {
   });
 
   return (
-    <div>
-      <h5>{title}</h5>
-      <Link to={`/profile/${username}`}>
-        <h5>{username}</h5>
-      </Link>
-      <h5>{date}</h5>
+    <Page>
       <PixelApp
         pixelMap={project.pixelMap}
-        pixelSize={360 / project.pixelMap.length}
+        pixelSize={
+          project.grid
+          ? maxProjectWidth() / Math.max(project.pixelMap[0].length, project.pixelMap.length) - 2
+          : maxProjectWidth() / Math.max(project.pixelMap[0].length, project.pixelMap.length) 
+        }
         borderRadius={project.borderRadius}
         grid={project.grid}
         backgroundColor={project.backgroundColor}
       />
-      <TextBoxForm
-        onSubmit={submitNewComment}
-        maxLength={TEXTBOX.maxLength}
-        value={newComment}
-        onChange={handleNewComment}
-        rows={TEXTBOX.rows}
-        cols={TEXTBOX.cols}
-      />
-      {commentList}
-    </div>
+      <Column className="project-body">
+        <h3>{title}</h3>
+          <Link to={`/profile/${username}`}>
+            <h5>{username}</h5>
+          </Link>
+          <p className="small grey">
+            {dateString(date)}
+          </p>
+          <br/>
+        <TextBoxForm
+          onSubmit={submitNewComment}
+          maxLength={TEXTBOX.maxLength}
+          value={newComment}
+          onChange={handleNewComment}
+          rows={TEXTBOX.rows}
+          cols={TEXTBOX.cols}
+          placeholder="What are your thoughts?"
+        />
+        <div className="project-comment-list">
+          {commentList}
+        </div>
+      </Column>
+    </Page>
   );
 };
 
@@ -167,28 +172,31 @@ const Comment = (props) => {
       })
       .catch((error) => console.error(error));
   };
-
   return (
-    <Column>
-      <Link to={`/profile/${username}`}>
-        <p>{username}</p>
-      </Link>
+    <div className='project-comment'>
+      <h5>
+        <Link to={`/profile/${username}`}>
+          {username}
+        </Link>
+      </h5>
+      <p className='small grey-text'>{dateString(props.createdAt)}</p>
       <p>{text}</p>
-      <p>{props.createdAt}</p>
-      {edited && <p>edited on {updatedAt}</p>}
+      {edited && <p className='italic small grey-text'>edited: {dateString(updatedAt)}</p>}
       {props.canEdit && (
-        <>
+        <span className="italic row space-between">
           <p className="link" onClick={handleShowEdit}>
-            edit
+            {showEditBox ? 'cancel' : 'edit'}
           </p>
-          <p
-            id={JSON.stringify({ id: props.id, index: props.index })}
-            onClick={props.onDelete}
-            className="red"
-          >
-            X
-          </p>
-        </>
+          <Row>
+            <p 
+              className='project-delete'
+              onClick={props.onDelete}
+              id={JSON.stringify({ id: props.id, index: props.index })}
+            >
+              delete 
+            </p>
+          </Row>
+        </span>
       )}
       {showEditBox && (
         <TextBoxForm
@@ -200,7 +208,7 @@ const Comment = (props) => {
           cols={TEXTBOX.cols}
         />
       )}
-    </Column>
+    </div>
   );
 };
 

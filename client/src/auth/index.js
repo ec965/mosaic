@@ -2,27 +2,45 @@ import React from "react";
 import RegisterForm from "./register";
 import LoginForm from "./login";
 import { FormCard } from "./components";
-import { Page, Row } from "../components/layout";
+import { Page, Column } from "../components/layout";
+import { Link } from 'react-router-dom';
 
 export const Login = () => {
   return (
-    <Page>
-      <Row>
-        <FormCard title="Login">
-          <LoginForm />
-        </FormCard>
-      </Row>
-    </Page>
+    <AuthPage
+      title="Login"
+      altLink="/register"
+      altText="Don't have an account?"
+    >
+      <LoginForm />
+    </AuthPage>
   );
 };
 export const Register = () => {
   return (
-    <Page>
-      <Row>
-        <FormCard title="Register">
-          <RegisterForm />
-        </FormCard>
-      </Row>
-    </Page>
+    <AuthPage
+      title="Register"
+      altLink="/login"
+      altText="Already have an account?"
+    >
+      <RegisterForm />
+    </AuthPage>
   );
 };
+
+const AuthPage = ({children, altLink, altText, title}) => {
+  return(
+    <Page>
+      <Column>
+        <FormCard title={title}>
+          {children}
+        </FormCard>
+        <div className="auth-bottom">
+          <Link to={altLink}>
+            <p className="italic small">{altText}</p>
+          </Link>
+        </div>
+      </Column>
+    </Page>
+  );
+}
