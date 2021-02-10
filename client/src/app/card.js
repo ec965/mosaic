@@ -34,21 +34,25 @@ const PixelCard = ({
 }) => {
   const longer = Math.max(pixelMap[0].length, pixelMap.length);
   return (
-    <Card title={title} username={username} date={dateString(date)} body={body} link={link} >
-      <Link to={link}>
-        <PixelApp
-          pixelMap={pixelMap}
-          pixelSize={
-            grid 
-            ? maxWidth / longer - 2 
-            : maxWidth / longer
-          }
-          borderRadius={borderRadius}
-          grid={grid}
-          backgroundColor={backgroundColor}
-        />
-      </Link>
-    </Card>
+    <div className="profile-card">
+      <div className="card-wrapper">
+        <Card title={title} username={username} date={dateString(date)} body={body} link={link} >
+          <Link to={link}>
+            <PixelApp
+              pixelMap={pixelMap}
+              pixelSize={
+                grid 
+                ? maxWidth / longer - 2 
+                : maxWidth / longer
+              }
+              borderRadius={borderRadius}
+              grid={grid}
+              backgroundColor={backgroundColor}
+            />
+          </Link>
+        </Card>
+      </div>
+    </div>
   );
 };
 

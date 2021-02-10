@@ -120,7 +120,12 @@ Delete a comment
 * reponse: 200
 
 ## Todo
+
+* change password
 * css animations
 * quick sort over insertion sort
 * sorting HSL
 * custom sliders and other inputs
+
+
+1. moved delete project route to app/delete

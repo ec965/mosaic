@@ -1,15 +1,17 @@
 import React, { useState,useContext, useEffect } from "react";
-import { instance, RECENT } from '../config/api';
-import { Button } from '../components/button';
+import { instance, PROJECTS } from '../config/api';
+import { StoreContext, dispatchError } from '../util/contextreducer';
 
 import PixelCard from "../app/card";
 import { Page, Row } from "../components/layout";
-import Loader from 'react-loader-spinner';
-import { maxPixelCardWidth } from "../util/util";
-import { StoreContext, dispatchError } from '../util/contextreducer';
-import { COLORS } from '../config/colors';
 
-const CardMatrix = () => {
+import { maxPixelCardWidth } from "../util/util";
+
+import CardMatrix from '../components/matrix';
+import { NoMore, LoadMore } from '../components/loadmore';
+import MyLoader from '../components/loader';
+
+const HomePage = () => {
   const [recentProjects, setRecentProjects] = useState([]);
   const [ noMore, setNoMore ] = useState(false);
   const [ disable, setDisable ] = useState(false);
@@ -20,8 +22,17 @@ const CardMatrix = () => {
   const getRecent = (lastDate=null) => {
     setDisable(true);
     if (!lastDate) lastDate = Date.now();
-    instance.get(RECENT, {params: {date: lastDate}})
+    instance.get(
+      PROJECTS,
+      {
+        params: {
+          date: lastDate, 
+          postlimit: 6
+        }
+      }
+    )
       .then((res) => {
+        // if we get back less items then we requested then we're at the bottom of the barrel
         if (res.data.data.length < res.data.postlimit) {
           setNoMore(true);
         }
@@ -45,41 +56,36 @@ const CardMatrix = () => {
       {recentProjects.length > 0 
       ? 
         <div>
-          <div className="matrix">
+          <CardMatrix>
             {recentProjects.map((p, i) => {
               // scale to fit on home page
               return (
-                <div key={i} className="profile-card">
-                  <div className="card-wrapper">
-                    <PixelCard
-                      title={p.title}
-                      username={p.username}
-                      date={p.createdAt}
-                      project={p.project}
-                      maxWidth={maxPixelCardWidth()}
-                      bodyLink={`project/${p._id}`}
-                      link={`/project/${p._id}`}
-                    />
-                  </div>
-                </div>
+                <PixelCard
+                  key={i}
+                  title={p.title}
+                  username={p.username}
+                  date={p.updatedAt}
+                  project={p.project}
+                  maxWidth={maxPixelCardWidth()}
+                  bodyLink={`project/${p._id}`}
+                  link={`/project/${p._id}`}
+                />
               );
             })}
-          </div>
+          </CardMatrix>
             {noMore 
             ? 
-              <Row>
-                <p className="italic">No more content to load.</p>
-              </Row>
+              <NoMore/>
             :  
-              <Row>
-                { disable && <Loader type="Oval" color={COLORS.base0D} height={30} width={30} style={{"padding-right": "12px"}}/>}
-                <Button disable={disable} onClick={() => getRecent(recentProjects[recentProjects.length-1].createdAt)}>Load More</Button>
-              </Row>
+              <LoadMore
+                disable={disable}
+                onClick={() => getRecent(recentProjects[recentProjects.length-1].updatedAt)}
+              />
             } 
         </div>
       :
         <Row>
-          <Loader type="Oval" color={COLORS.base0D} height={80} width={80}/>
+          <MyLoader/>
         </Row> 
       }
 
@@ -87,4 +93,4 @@ const CardMatrix = () => {
   );
 };
 
-export default CardMatrix;
+export default HomePage;

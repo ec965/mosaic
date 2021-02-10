@@ -4,13 +4,12 @@ import { dispatchError, StoreContext } from '../util/contextreducer';
 
 import { Page, Row, Column } from "../components/layout";
 import PixelCard from "../app/card";
-import { deleteProject } from "../config/api";
-import { maxPixelCardWidth } from '../util/util';
-import Loader from 'react-loader-spinner';
-import { COLORS } from '../config/colors';
-import { dateString } from '../util/util';
-import { instance, USERPROJECTS } from '../config/api';
-import { Button } from '../components/button';
+import { maxPixelCardWidth, dateString } from '../util/util';
+import { instance, PROJECTS, DELETE } from '../config/api';
+
+import MyLoader from '../components/loader';
+import CardMatrix from '../components/matrix';
+import { NoMore, LoadMore } from '../components/loadmore';
 
 const UserProfile = () => {
   const [username, setUsername] = useState(null);
@@ -28,11 +27,18 @@ const UserProfile = () => {
     if (!lastDate) lastDate = Date.now();
 
     instance.get(
-      USERPROJECTS,
-      {params: {username: thisUser, date: lastDate}}
+      PROJECTS,
+      {
+        params: {
+          username: thisUser, 
+          date: lastDate, 
+          postlimit: 6
+        }
+      }
     )
       .then((res) => {
         console.log(res.data);
+        // assign res.data to state vars
         if(!username ) setUsername(res.data.user.username);
         if(!joinDate) setJoinDate(res.data.user.createdAt);
 
@@ -44,6 +50,7 @@ const UserProfile = () => {
           setProjects(update.concat(res.data.data));
         }
         
+        // show the 'no more content message' if we don't get back the amount we requested
         if (res.data.data.length < res.data.postlimit) {
           setNoMore(true);
         }
@@ -61,7 +68,8 @@ const UserProfile = () => {
     let info = JSON.parse(event.target.id);
     let index = info.index;
     let id = info.id;
-    deleteProject(id)
+
+    instance.delete(DELETE, {params: {id: id}})
       .then((res) => {
         let update = [...projects];
         update.splice(index, 1);
@@ -76,7 +84,7 @@ const UserProfile = () => {
           !projects
           ? 
             <Row>
-              <Loader type="Oval" color={COLORS.base0D} height={80} width={80}/>
+              <MyLoader/>
             </Row> 
           :
             <div>
@@ -84,6 +92,7 @@ const UserProfile = () => {
                 <h3>{username}</h3>
                 <p>Joined on: {dateString(joinDate)}</p>
               </Column>
+
               {projects.length===0
                 ? 
                   <Row>
@@ -100,54 +109,36 @@ const UserProfile = () => {
                   </Row>
                 :
                   <div>
-                    <div className="matrix">
+                    <CardMatrix>
                       {projects.map((p, i) => {
                         return (
-                          <div className="profile-card" key={i}>
-                            <div className="card-wrapper">
-                              <PixelCard
-                                title={p.title}
-                                username={p.username}
-                                date={p.updatedAt}
-                                project={p.project}
-                                maxWidth={maxPixelCardWidth()}
-                                link={`/project/${p._id}`}
-                                body={
-                                  <>
-                                    {state.username === thisUser &&
-                                      <Row className={"profile-card-buttons"}>
-                                        <p>
-                                          <Link to={`/generator/${p._id}`}>
-                                            edit
-                                          </Link>
-                                        </p>
-                                        <p
-                                          id={JSON.stringify({ id: p._id, index: i })}
-                                          onClick={handleDelete}
-                                          className="project-delete"
-                                        >
-                                          delete
-                                        </p>
-                                      </Row>
-                                    }
-                                  </>
-                                }
-                              />
-                              </div>
-                          </div>
+                          <PixelCard
+                            title={p.title}
+                            username={p.username}
+                            date={p.updatedAt}
+                            project={p.project}
+                            maxWidth={maxPixelCardWidth()}
+                            link={`/project/${p._id}`}
+                            body={
+                              state.username === thisUser &&
+                                <CardBottomLinks
+                                  onClickDelete={handleDelete}
+                                  id={p._id}
+                                  index={i}
+                                />
+                            }
+                          />
                         );
                       })}
-                    </div>
+                    </CardMatrix>
                     {noMore 
                     ? 
-                      <Row>
-                        <p className="italic">No more content to load.</p>
-                      </Row>
+                      <NoMore/>
                     :  
-                      <Row>
-                        { disable && <Loader type="Oval" color={COLORS.base0D} height={30} width={30} style={{"padding-right": "12px"}}/>}
-                        <Button onClick={()=>getUserInfo(projects[projects.length-1].updatedAt)}>Load More</Button>
-                      </Row>
+                      <LoadMore
+                        disable={disable}
+                        onClick={()=>getUserInfo(projects[projects.length-1].updatedAt)}
+                      />
                     } 
                   </div>
               }
@@ -157,4 +148,22 @@ const UserProfile = () => {
   );
 };
 
+const CardBottomLinks = ({id, index, onClickDelete}) => {
+  return(
+    <Row className={"profile-card-buttons"}>
+      <p>
+        <Link to={`/generator/${id}`}>
+          edit
+        </Link>
+      </p>
+      <p
+        id={JSON.stringify({ id: id, index: index })}
+        onClick={onClickDelete}
+        className="project-delete"
+      >
+        delete
+      </p>
+    </Row>
+  );
+}
 export default UserProfile;

@@ -14,10 +14,10 @@ router.get("/projects", (req, res, next) => {
   // get query params
   if (req.query.date) date = req.query.date;
   if (req.query.username) username = req.query.username;
-  if(req.query.postlimit) postlimit = req.query.postlimit;
+  if(req.query.postlimit) postlimit = parseInt(req.query.postlimit);
 
   // query the database
-  if (username !== null){
+  if (username){
     Data.find()
       .where('updatedAt').lt(date)
       .where('username').equals(username)
@@ -38,7 +38,7 @@ router.get("/projects", (req, res, next) => {
       })
   } else {
     Data.find()
-      .where('createdAt').lt(date)
+      .where('updatedAt').lt(date)
       .limit(postlimit)
       .sort({updatedAt: -1})
       .select("username title project updatedAt")

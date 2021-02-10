@@ -26,11 +26,12 @@ export const postRegister = async (username, password) =>
     password: password,
   });
 
+// general crud operations
 export const APP = "/app";
-export const USERPROJECTS = APP + "/myprojects";
+export const PROJECTS = APP + "/projects";
 export const NEW = APP + "/new";
 export const UPDATE = APP + "/update";
-export const RECENT = APP + "/recent";
+export const DELETE = APP + "/delete";
 
 export const postAppNew = async (data) =>
   await instance.post(NEW, data);
@@ -47,15 +48,12 @@ export const postOrPatchApp = async (data, projectId=null) => {
   return await postAppNew(data);
 }
 
+// comment crud operations
 export const PROJECT = "/project";
 export const COMMENT = PROJECT + "/comment";
-export const DELETE = PROJECT + "/delete";
 
 export const getProject = async (id) =>
   await instance.get(PROJECT, {params: {id: id}});
-
-export const deleteProject = async (id) =>
-  await instance.delete(DELETE, {params: {id: id}});
 
 export const postProjectComment = async (projectId, text) =>
   await instance.post(

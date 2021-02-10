@@ -28,14 +28,14 @@ const RegisterForm = () => {
           if (!values.username) {
             errors.username = "Required";
           }
-          if (values.username.length < 5){
-            errors.username = "Please create a username of at least 5 characters.";
+          if (values.username.length < 6){
+            errors.username = "Please create a username of at least 6 characters.";
           }
           if (!values.password) {
             errors.password = "Required";
           }
-          if (values.password.length < 5){
-            errors.password = "Please create a password of at least 5 characters.";
+          if (values.password.length < 6){
+            errors.password = "Please create a password of at least 6 characters.";
           }
           if (values.password === values.username){
             errors.password = "Please do not use your username as your password.";
@@ -72,6 +72,7 @@ const RegisterForm = () => {
               type="username"
               name="username"
               placeholder="Username"
+              maxlength={24}
             />
             <ErrorMessage
               className="form-error"
@@ -84,6 +85,7 @@ const RegisterForm = () => {
               type="password"
               name="password"
               placeholder="Password"
+              maxlength={64}
             />
             <ErrorMessage
               className="form-error"
@@ -96,6 +98,7 @@ const RegisterForm = () => {
               type="password"
               name="repassword"
               placeholder="Confirm Password"
+              maxlength={64}
             />
             <ErrorMessage
               className="form-error"
