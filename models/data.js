@@ -3,31 +3,63 @@ const mongoose = require("mongoose");
 
 const commentSchema = new Schema(
   {
-    username: String,
-    text: String,
-    edited: { type: Boolean, default: false },
+    username: { 
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    edited: { 
+      type: Boolean, 
+      default: false 
+    },
   },
   { timestamps: true }
 );
 
 const pixelSchema = new Schema(
   {
-    r: Number,
-    g: Number,
-    b: Number,
+    r: {
+      type: Number,
+      min: 0,
+      max: 255,
+    },
+    g: {
+      type: Number,
+      min: 0,
+      max: 255,
+    },
+    b: {
+      type: Number,
+      min: 0,
+      max: 255,
+    },
   },
   { _id: false }
 );
 
 const dataSchema = new Schema(
   {
-    username: { type: String, require: true },
-    title: { type: String },
+    username: { type: String, required: true },
+    title: { type: String, required: true },
     project: {
       pixelMap: [[pixelSchema]],
-      borderRadius: { type: Number, default: 25 },
-      grid: { type: Boolean, default: false },
-      backgroundColor: { type: String, default: "#fff" },
+      borderRadius: { 
+        type: Number, 
+        default: 25,
+        min: 0,
+        max: 50,
+      },
+      grid: { 
+        type: Boolean, 
+        default: false 
+      },
+      backgroundColor: { 
+        type: String, 
+        default: "#fff" 
+      },
     },
     comments: [commentSchema],
   },

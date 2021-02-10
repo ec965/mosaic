@@ -10,8 +10,15 @@ const userSchema = new Schema(
       required: true,
       trim: true,
       index: { unique: true },
+      minLength: [6, 'Username must be at least 6 characters.'],
+      maxLength: [24, 'Username cannot exceed 24 characters.'],
     },
-    password: { type: String, required: true },
+    password: { 
+      type: String, 
+      required: true, 
+      minLength: [6, 'Password must be at least 6 characters.'],
+      maxLength: [64, 'Password cannot exceed 64 characters.'],
+    },
   },
   { timestamps: true }
 );
@@ -24,6 +31,7 @@ userSchema.methods.checkPassword = function (password, cb) {
 
 userSchema.pre("save", function (next) {
   var user = this;
+
   // only hash  password if it's new or been modified
   if (!user.isModified("password")) return next();
 
