@@ -4,29 +4,52 @@ const router = express.Router();
 const Data = require("../models/data");
 const User = require('../models/users');
 
-const POSTLIMIT=12;
-
 // READ
 // get all a user's data
-router.get("/myprojects", (req, res, next) => {
-  if(req.query.date && req.query.username){
+// or get recent content from any user
+router.get("/projects", (req, res, next) => {
+  let date = Date.now();
+  let username = null;
+  let postlimit = 4;
+  // get query params
+  if (req.query.date) date = req.query.date;
+  if (req.query.username) username = req.query.username;
+  if(req.query.postlimit) postlimit = req.query.postlimit;
+
+  // query the database
+  if (username !== null){
     Data.find()
-      .where('updatedAt').lt(req.query.date)
-      .where('username').equals(req.query.username)
-      .limit(POSTLIMIT)
+      .where('updatedAt').lt(date)
+      .where('username').equals(username)
+      .limit(postlimit)
       .sort({updatedAt: -1})
       .select("username title project updatedAt")
       .exec(function (err, data) {
         if(err) return next(err);
+
         User.findOne({username: req.query.username}, 'username createdAt', function(err, user){
           if (err) return next(err);
-          res.json({ user: user, data: data, postlimit: POSTLIMIT });
+
+          if (!user ) return res.sendStatus(404);
+
+          res.json({ user: user, data: data, postlimit: postlimit});
         })
+
       })
   } else {
-    res.sendStatus(400);
+    Data.find()
+      .where('createdAt').lt(date)
+      .limit(postlimit)
+      .sort({updatedAt: -1})
+      .select("username title project updatedAt")
+      .exec(function (err, data) {
+        if(err) return next(err);
+
+        res.json({ data: data, postlimit: postlimit});
+      })
   }
 });
+
 
 // CREATE
 // insert a new data model into the db
@@ -73,19 +96,21 @@ router.patch("/update", (req, res, next) => {
   );
 });
 
-// get the 18 most recent projects for the home page
-router.get("/recent", (req, res, next) => {
-  if(req.query.date){
-    Data.find()
-      .where('createdAt').lt(req.query.date)
-      .limit(POSTLIMIT)
-      .sort({createdAt: -1})
-      .select("username title project createdAt")
-      .exec(function (err, data){
+
+// DELETE
+// delete data of id
+router.delete("/delete", (req, res, next) => {
+  if (req.query.id) {
+    Data.deleteOne(
+      { _id: req.query.id, username: req.user.username },
+      function (err, result) {
         if (err) return next(err);
 
-        res.json({data:data, postlimit: POSTLIMIT});
-      })
+        if (res) {
+          res.sendStatus(200);
+        }
+      }
+    );
   } else {
     res.sendStatus(400);
   }

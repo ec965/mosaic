@@ -139,24 +139,6 @@ router.patch("/comment", (req, res, next) => {
   }
 });
 
-// DELETE
-// delete data of id
-router.delete("/delete", (req, res, next) => {
-  if (req.query.id) {
-    Data.deleteOne(
-      { _id: req.query.id, username: req.user.username },
-      function (err, result) {
-        if (err) return next(err);
-
-        if (res) {
-          res.sendStatus(200);
-        }
-      }
-    );
-  } else {
-    res.sendStatus(400);
-  }
-});
 
 // delete a comment
 router.delete("/comment", (req, res, next) => {
