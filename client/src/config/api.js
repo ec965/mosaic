@@ -10,7 +10,7 @@ if(process.env.NODE_ENV !== "production"){
 export const instance = axios.create({
   baseURL: APIURL,
   headers: {Authorization: `Bearer ${getToken()}`},
-  timeout: 5000,
+  timeout: 9000,
 })
 
 
