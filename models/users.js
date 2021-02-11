@@ -12,6 +12,7 @@ const userSchema = new Schema(
       index: { unique: true },
       minLength: [6, 'Username must be at least 6 characters.'],
       maxLength: [24, 'Username cannot exceed 24 characters.'],
+      validate: [/^[a-zA-Z0-9_]*$/, "Username can only have alphanumeric characters"],
     },
     password: { 
       type: String, 

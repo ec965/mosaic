@@ -25,21 +25,28 @@ const RegisterForm = () => {
         initialValues={{ username: "", password: "", repassword: "" }}
         validate={(values) => {
           const errors = {};
+          
+          const userReg = new RegExp("^[a-zA-Z0-9_]*$");
           if (!values.username) {
             errors.username = "Required";
           }
-          if (values.username.length < 6){
+          else if (values.username.length < 6){
             errors.username = "Please create a username of at least 6 characters.";
           }
+          else if ( !userReg.test(values.username)){
+            errors.username = "Please only use alphanumeric characters or underscores in your username."
+          }
+
           if (!values.password) {
             errors.password = "Required";
           }
-          if (values.password.length < 6){
+          else if (values.password.length < 6){
             errors.password = "Please create a password of at least 6 characters.";
           }
-          if (values.password === values.username){
+          else if (values.password === values.username){
             errors.password = "Please do not use your username as your password.";
           }
+
           if (values.password !== values.repassword) {
             errors.repassword = "Passwords do not match.";
           }
