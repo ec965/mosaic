@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./privateroute";
 
-import { Login, Register } from "../auth/index";
+import { Login, Register, UpdatePassword } from "../auth/index";
 
 import LandingPage from "../pages/landing";
 import UserProfile from "../pages/profile";
@@ -49,6 +49,10 @@ const App = () => {
         <PrivateRoute path={`/profile/:thisUser`}>
           <UserNav />
           <UserProfile />
+        </PrivateRoute>
+
+        <PrivateRoute path={'/updatepassword'}>
+          <UpdatePassword />
         </PrivateRoute>
 
         <Route path="/login">

@@ -36,6 +36,11 @@ app.use(
   routes.project
 );
 app.use(
+  "/api/password",
+  passport.authenticate("jwt", { session: false }),
+  routes.password
+);
+app.use(
   "/api/validate",
   passport.authenticate("jwt", { session: false }),
   routes.validate

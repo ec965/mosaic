@@ -80,7 +80,7 @@ const UserNav = () => {
         </NavItem>
         <NavItem>
           <div>
-            <Logout><i class="fas fa-sign-out-alt"></i></Logout>
+            <Logout><i className="fas fa-sign-out-alt"></i></Logout>
           </div>
         </NavItem>
       </NavGroup>

@@ -1,5 +1,4 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
 const Data = require("../models/data");
 const User = require('../models/users');
@@ -84,7 +83,7 @@ router.patch("/update", (req, res, next) => {
     },
     function (err, data) {
       if (err) return next(err);
-      if (!data) return res.sendStatus(400);
+      if (!data) return res.sendStatus(404);
 
       data.project = req.body.project;
       data.title = req.body.title;

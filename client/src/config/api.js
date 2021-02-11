@@ -12,19 +12,27 @@ export const instance = axios.create({
   headers: {Authorization: `Bearer ${getToken()}`},
   timeout: 9000,
 })
+// axios instance without a bearer token
+// used for logging in and registration
+export const noauth = axios.create({
+  baseURL: APIURL,
+  timeout: 9000,
+})
 
 
 export const LOGIN = "/auth/login";
 export const REGISTER = "/auth/register";
 
 export const postLogin = async (username, password) =>
-  await instance.post(LOGIN, { username: username, password: password });
+  await noauth.post(LOGIN, { username: username, password: password });
 
 export const postRegister = async (username, password) =>
-  await instance.post(REGISTER, {
+  await noauth.post(REGISTER, {
     username: username,
     password: password,
   });
+
+export const PASSWORD = '/password';
 
 // general crud operations
 export const APP = "/app";

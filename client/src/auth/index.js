@@ -1,6 +1,7 @@
 import React from "react";
 import RegisterForm from "./register";
 import LoginForm from "./login";
+import UpdatePasswordForm from './updatepassword';
 import { FormCard } from "./components";
 import { Page, Column } from "../components/layout";
 import { Link } from 'react-router-dom';
@@ -27,6 +28,18 @@ export const Register = () => {
     </AuthPage>
   );
 };
+
+export const UpdatePassword = () => {
+  return(
+    <AuthPage
+      title="Update Password"
+      altLink="/home"
+      altText="Click here to return to home without updating your password."
+    >
+      <UpdatePasswordForm/>
+    </AuthPage>
+  )
+}
 
 const AuthPage = ({children, altLink, altText, title}) => {
   return(

@@ -92,8 +92,11 @@ const UserProfile = () => {
           :
             <div>
               <Column>
-                <h3>{username}</h3>
+                <h3><i className="fas fa-user-circle"/> {username}</h3>
                 <p>Joined on: {dateString(joinDate)}</p>
+                {state.username === thisUser && 
+                  <a href="/updatepassword"><p>change your password</p></a>
+                }
               </Column>
 
               {projects.length===0
