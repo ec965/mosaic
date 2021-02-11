@@ -44,9 +44,9 @@ export const DELETE = APP + "/delete";
 export const postOrPatchApp = async (data, projectId=null) => {
   if(projectId){
     data.project_id = projectId; // updating requires the project ia
-    return await instance.post(NEW, data);
+    return await instance.patch(UPDATE, data);
   }
-  return await instance.patch(UPDATE, data);
+  return await instance.post(NEW, data);
 }
 
 // comment crud operations

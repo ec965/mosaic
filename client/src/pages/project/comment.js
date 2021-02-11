@@ -30,13 +30,15 @@ const Comment = (props) => {
 
     setShowEditBox(false);
 
-    instance.patch(COMMENT, {
+    let data = {
       project_id: props.project_id, 
       comment: { 
         id: props.id, 
         text: text 
       } 
-    })
+    }
+
+    instance.patch(COMMENT, data)
       .then((res) => {
         setupdatedAt(res.data.updatedAt);
         setUsername(res.data.username);

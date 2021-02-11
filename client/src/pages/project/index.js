@@ -53,7 +53,7 @@ const ProjectPage = () => {
     event.preventDefault();
     if (newComment.length <= 0) return;
     // reset comment box
-    instance.prototype(COMMENT, { project_id: projectId, text: newComment})
+    instance.post(COMMENT, { project_id: projectId, text: newComment})
       .then((res) => {
         // add the new comment to ui
         let updateComments = [...comments];

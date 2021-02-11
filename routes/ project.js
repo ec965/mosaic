@@ -111,7 +111,6 @@ router.patch("/comment", (req, res, next) => {
     // find the piece of data
     Data.findOne(
       {
-        username: req.user.username,
         _id: req.body.project_id,
       },
       function (err, data) {
