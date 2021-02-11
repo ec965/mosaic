@@ -4,7 +4,6 @@ const User = require('../models/users');
 
 // update password
 router.patch("/", (req,res,next) => {
-  console.log(req.body);
   if (req.body.password && req.body.newPassword){
     if(req.body.password === req.body.newPassword) return res.sendStatus(400);
 
