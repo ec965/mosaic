@@ -138,7 +138,6 @@ router.patch("/comment", (req, res, next) => {
   }
 });
 
-
 // delete a comment
 router.delete("/comment", (req, res, next) => {
   // console.log(req.headers);

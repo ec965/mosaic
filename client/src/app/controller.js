@@ -1,9 +1,9 @@
 import React from "react";
 import { Button } from "../components/button";
 import Slider from "../components/slider";
-import Loader from 'react-loader-spinner';
-import { COLORS } from '../config/colors';
-import { Row } from '../components/layout';
+import Loader from "react-loader-spinner";
+import { COLORS } from "../config/colors";
+import { Row } from "../components/layout";
 
 export const ToolLabel = (props) => (
   <h6 onClick={props.onClick} className={`${props.className} courier`}>
@@ -12,21 +12,23 @@ export const ToolLabel = (props) => (
 );
 
 export const ToolBox = (props) => {
-  return(
-    <div className="tool-box">
-      {props.children}
-    </div>
-  );
-}
+  return <div className="tool-box">{props.children}</div>;
+};
 
-export const ToolSlider = ({name, id, percent, value, min, max, onChange}) => {
-  return(
+export const ToolSlider = ({
+  name,
+  id,
+  percent,
+  value,
+  min,
+  max,
+  onChange,
+}) => {
+  return (
     <>
       <ToolLabel>
         {name}:
-        {percent
-          ? Math.floor(((value - min) / (max - min)) * 100)
-          : value}
+        {percent ? Math.floor(((value - min) / (max - min)) * 100) : value}
         {percent && "%"}
       </ToolLabel>
       <Slider
@@ -38,7 +40,7 @@ export const ToolSlider = ({name, id, percent, value, min, max, onChange}) => {
       />
     </>
   );
-}
+};
 
 /* 
 slider = {
@@ -81,9 +83,15 @@ const Controller = ({
         <Button disabled={disableSave} onClick={handleSave} className="courier">
           Save <i className="fas fa-save"></i>
         </Button>
-        {disableSave && 
-          <Loader className="controller-loader" type="Oval" color={COLORS.base0D} height={20} width={20}/>
-        }
+        {disableSave && (
+          <Loader
+            className="controller-loader"
+            type="Oval"
+            color={COLORS.base0D}
+            height={20}
+            width={20}
+          />
+        )}
       </Row>
       <div>
         <input
@@ -97,9 +105,7 @@ const Controller = ({
         {titleError && <span className="red-text">Please enter a title.</span>}
       </div>
       {top}
-      <div>
-        {sliderTools}
-      </div>
+      <div>{sliderTools}</div>
       {bottom}
     </div>
   );

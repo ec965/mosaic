@@ -5,16 +5,12 @@ import { StoreContext } from "../../util/contextreducer";
 
 import PixelApp from "../../app/app";
 import { Column, Page } from "../../components/layout";
-import { dateString, maxProjectWidth} from "../../util/util";
+import { dateString, maxProjectWidth } from "../../util/util";
 import TextBoxForm from "../../components/textbox";
-import {
-  instance, 
-  PROJECT,
-  COMMENT,
-} from "../../config/api";
-import { TEXTBOX } from './config';
-import Comment from './comment';
-import MyLoader from '../../components/loader';
+import { instance, PROJECT, COMMENT } from "../../config/api";
+import { TEXTBOX } from "./config";
+import Comment from "./comment";
+import MyLoader from "../../components/loader";
 
 const ProjectPage = () => {
   const [project, setProject] = useState(null);
@@ -31,7 +27,8 @@ const ProjectPage = () => {
 
   useEffect(() => {
     function getInitialData() {
-      instance.get(PROJECT, {params: {id: projectId}})
+      instance
+        .get(PROJECT, { params: { id: projectId } })
         .then((res) => {
           setUserName(res.data.username);
           setDate(res.data.createdAt);
@@ -53,7 +50,8 @@ const ProjectPage = () => {
     event.preventDefault();
     if (newComment.length <= 0) return;
     // reset comment box
-    instance.post(COMMENT, { project_id: projectId, text: newComment})
+    instance
+      .post(COMMENT, { project_id: projectId, text: newComment })
       .then((res) => {
         // add the new comment to ui
         let updateComments = [...comments];
@@ -72,7 +70,10 @@ const ProjectPage = () => {
     let commentId = metaData.id;
     let commentIndex = metaData.index;
 
-    instance.delete(COMMENT, {params: {project_id: projectId, comment_id: commentId}})
+    instance
+      .delete(COMMENT, {
+        params: { project_id: projectId, comment_id: commentId },
+      })
       .then((res) => {
         // remove comment from comments array
         let updateComments = comments.slice(0);
@@ -103,46 +104,47 @@ const ProjectPage = () => {
 
   return (
     <Page>
-      {!project 
-      ?
+      {!project ? (
         <Column>
-          <MyLoader/>
+          <MyLoader />
         </Column>
-      :
+      ) : (
         <PixelApp
           pixelMap={project.pixelMap}
           pixelSize={
             project.grid
-            ? maxProjectWidth() / Math.max(project.pixelMap[0].length, project.pixelMap.length) - 2
-            : maxProjectWidth() / Math.max(project.pixelMap[0].length, project.pixelMap.length) 
+              ? maxProjectWidth() /
+                  Math.max(
+                    project.pixelMap[0].length,
+                    project.pixelMap.length
+                  ) -
+                2
+              : maxProjectWidth() /
+                Math.max(project.pixelMap[0].length, project.pixelMap.length)
           }
           borderRadius={project.borderRadius}
           grid={project.grid}
           backgroundColor={project.backgroundColor}
         />
-      }
-        <Column className="project-body">
-          <h3>{title}</h3>
-            <Link to={`/profile/${username}`}>
-              <h5>{username}</h5>
-            </Link>
-            <p className="small grey">
-              {dateString(date)}
-            </p>
-            <br/>
-          <TextBoxForm
-            onSubmit={submitNewComment}
-            maxLength={TEXTBOX.maxLength}
-            value={newComment}
-            onChange={handleNewComment}
-            rows={TEXTBOX.rows}
-            cols={TEXTBOX.cols}
-            placeholder="What are your thoughts?"
-          />
-          <div className="project-comment-list">
-            {commentList}
-          </div>
-        </Column>
+      )}
+      <Column className="project-body">
+        <h3>{title}</h3>
+        <Link to={`/profile/${username}`}>
+          <h5>{username}</h5>
+        </Link>
+        <p className="small grey">{dateString(date)}</p>
+        <br />
+        <TextBoxForm
+          onSubmit={submitNewComment}
+          maxLength={TEXTBOX.maxLength}
+          value={newComment}
+          onChange={handleNewComment}
+          rows={TEXTBOX.rows}
+          cols={TEXTBOX.cols}
+          placeholder="What are your thoughts?"
+        />
+        <div className="project-comment-list">{commentList}</div>
+      </Column>
     </Page>
   );
 };

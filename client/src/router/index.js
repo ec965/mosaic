@@ -51,7 +51,7 @@ const App = () => {
           <UserProfile />
         </PrivateRoute>
 
-        <PrivateRoute path={'/updatepassword'}>
+        <PrivateRoute path={"/updatepassword"}>
           <UpdatePassword />
         </PrivateRoute>
 

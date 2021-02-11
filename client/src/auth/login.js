@@ -5,16 +5,16 @@ import { FormError, FormButton } from "./components";
 import { Row } from "../components/layout";
 import { getToken, redirect } from "../util/util.js";
 import { postLogin } from "../config/api";
-import { ACTION, StoreContext } from '../util/contextreducer';
+import { ACTION, StoreContext } from "../util/contextreducer";
 
 const LoginForm = () => {
   const [serverErr, setServerErr] = useState(false);
   const [authErr, setAuthErr] = useState("");
-  const { dispatch } = useContext(StoreContext)
+  const { dispatch } = useContext(StoreContext);
 
   useEffect(() => {
     if (getToken()) {
-      redirect('/home')
+      redirect("/home");
     }
   }, []);
 
@@ -28,7 +28,7 @@ const LoginForm = () => {
           } else {
             sessionStorage.setItem("token", token);
           }
-          dispatch({type: ACTION.GET})
+          dispatch({ type: ACTION.GET });
         }
         return res.data;
       })
@@ -37,7 +37,7 @@ const LoginForm = () => {
           setAuthErr(data.message);
         } else {
           //redirect when login is confirmed
-          redirect('/home')
+          redirect("/home");
         }
       })
       .catch((error) => {
@@ -117,7 +117,9 @@ const LoginForm = () => {
           A server error has occured, please try again later.
         </FormError>
       )}
-      {authErr && <FormError className="form-bottom-error">{authErr}</FormError>}
+      {authErr && (
+        <FormError className="form-bottom-error">{authErr}</FormError>
+      )}
     </>
   );
 };

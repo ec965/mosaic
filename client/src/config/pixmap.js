@@ -8,5 +8,5 @@ export const initialPixMap = {
     grid: false,
     backgroundColor: "#fff",
   },
-}
-export const initialPixMapArr = new Array(18).fill(initialPixMap)
+};
+export const initialPixMapArr = new Array(18).fill(initialPixMap);

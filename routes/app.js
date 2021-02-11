@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Data = require("../models/data");
-const User = require('../models/users');
+const User = require("../models/users");
 
 // READ
 // get all a user's data
@@ -13,42 +13,47 @@ router.get("/projects", (req, res, next) => {
   // get query params
   if (req.query.date) date = req.query.date;
   if (req.query.username) username = req.query.username;
-  if(req.query.postlimit) postlimit = parseInt(req.query.postlimit);
+  if (req.query.postlimit) postlimit = parseInt(req.query.postlimit);
 
   // query the database
-  if (username){
+  if (username) {
     Data.find()
-      .where('updatedAt').lt(date)
-      .where('username').equals(username)
+      .where("updatedAt")
+      .lt(date)
+      .where("username")
+      .equals(username)
       .limit(postlimit)
-      .sort({updatedAt: -1})
+      .sort({ updatedAt: -1 })
       .select("username title project updatedAt")
       .exec(function (err, data) {
-        if(err) return next(err);
+        if (err) return next(err);
 
-        User.findOne({username: req.query.username}, 'username createdAt', function(err, user){
-          if (err) return next(err);
+        User.findOne(
+          { username: req.query.username },
+          "username createdAt",
+          function (err, user) {
+            if (err) return next(err);
 
-          if (!user ) return res.sendStatus(404);
+            if (!user) return res.sendStatus(404);
 
-          res.json({ user: user, data: data, postlimit: postlimit});
-        })
-
-      })
+            res.json({ user: user, data: data, postlimit: postlimit });
+          }
+        );
+      });
   } else {
     Data.find()
-      .where('updatedAt').lt(date)
+      .where("updatedAt")
+      .lt(date)
       .limit(postlimit)
-      .sort({updatedAt: -1})
+      .sort({ updatedAt: -1 })
       .select("username title project updatedAt")
       .exec(function (err, data) {
-        if(err) return next(err);
+        if (err) return next(err);
 
-        res.json({ data: data, postlimit: postlimit});
-      })
+        res.json({ data: data, postlimit: postlimit });
+      });
   }
 });
-
 
 // CREATE
 // insert a new data model into the db
@@ -94,7 +99,6 @@ router.patch("/update", (req, res, next) => {
     }
   );
 });
-
 
 // DELETE
 // delete data of id

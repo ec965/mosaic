@@ -107,8 +107,17 @@ export class Pixel {
 // }
 
 export class RandomPixelSquare {
-  constructor(dimension=null, rmin=0, rmax=255, gmin=0, gmax=255, bmin=0, bmax=255, data=null) {
-    if (!data){
+  constructor(
+    dimension = null,
+    rmin = 0,
+    rmax = 255,
+    gmin = 0,
+    gmax = 255,
+    bmin = 0,
+    bmax = 255,
+    data = null
+  ) {
+    if (!data) {
       function randInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
@@ -132,7 +141,7 @@ export class RandomPixelSquare {
     }
   }
 
-  sortHue(length=null) {
+  sortHue(length = null) {
     // horizontal
     if (!length || length < 0) length = this.data[0].length;
     if (length > this.data[0].length) length = this.data[0].length;
@@ -151,7 +160,7 @@ export class RandomPixelSquare {
     return this.data;
   }
 
-  sortHueVertical(length=null) {
+  sortHueVertical(length = null) {
     if (!length || length < 0) length = this.data.length;
     if (length > this.data.length) length = this.data.length;
 

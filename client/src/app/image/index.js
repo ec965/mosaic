@@ -1,19 +1,25 @@
-import React, { useRef, useEffect, useState, useReducer, useContext } from "react";
-import { CompactPicker } from 'react-color';
-import { randInt, redirect } from '../../util/util';
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useReducer,
+  useContext,
+} from "react";
+import { CompactPicker } from "react-color";
+import { randInt, redirect } from "../../util/util";
 import { instance, NEW } from "../../config/api";
-import { StoreContext, dispatchError } from '../../util/contextreducer';
+import { StoreContext, dispatchError } from "../../util/contextreducer";
 
-import { Page } from '../../components/layout';
+import { Page } from "../../components/layout";
 import Toggle from "../../components/toggle";
-import MyLoader from '../../components/loader';
-import { RandomButton, ResetButton } from '../../components/controllerbuttons';
+import MyLoader from "../../components/loader";
+import { RandomButton, ResetButton } from "../../components/controllerbuttons";
 
-import Controller, { ToolLabel, ToolBox } from '../controller';
+import Controller, { ToolLabel, ToolBox } from "../controller";
 import { PixelApp } from "../app";
 
-import InvisibleCanvas from './canvas.js';
-import UploadImage from './upload.js'
+import InvisibleCanvas from "./canvas.js";
+import UploadImage from "./upload.js";
 
 const MAXLENGTH = 900; // this isn't exact but it's pretty close
 const MINLENGTH = 4;
@@ -35,7 +41,7 @@ function pixelizeImage(data, width, height, sampleSize) {
         g: data[index + 1],
         b: data[index + 2],
       };
-    
+
       subarr.push(pixel);
     }
     arr.push(subarr);
@@ -45,38 +51,38 @@ function pixelizeImage(data, width, height, sampleSize) {
 }
 
 const ACTION = {
-  IMGSRC: 'imgSrc',
-  BORDERRADIUS: 'borderRadius',
-  PIXELSIZE: 'pixelSize',
-  SCALE: 'scale',
-  GRID: 'grid'  ,
-  BGCOLOR:'backgroundColor',
-  TITLE: 'title',
-  TITLEERROR: 'titleError',
-  RANDOM: 'random',
-  NEWSCALE: 'newScale',
-  RESET: 'reset',
-}
+  IMGSRC: "imgSrc",
+  BORDERRADIUS: "borderRadius",
+  PIXELSIZE: "pixelSize",
+  SCALE: "scale",
+  GRID: "grid",
+  BGCOLOR: "backgroundColor",
+  TITLE: "title",
+  TITLEERROR: "titleError",
+  RANDOM: "random",
+  NEWSCALE: "newScale",
+  RESET: "reset",
+};
 
-function reducer(state, action){
-  switch(action.type){
+function reducer(state, action) {
+  switch (action.type) {
     case ACTION.IMGSRC:
-      return {...state, imgSrc: action.payload};
-    case ACTION.BORDERRADIUS: 
-      return {...state, borderRadius: action.payload};
+      return { ...state, imgSrc: action.payload };
+    case ACTION.BORDERRADIUS:
+      return { ...state, borderRadius: action.payload };
     case ACTION.SCALE:
-      return {...state, scale: action.payload};
+      return { ...state, scale: action.payload };
     case ACTION.NEWSCALE:
       return {
-        ...state, 
+        ...state,
         scale: action.payload.minScale,
         minScale: action.payload.minScale,
-        maxScale: action.payload.maxScale
+        maxScale: action.payload.maxScale,
       };
     case ACTION.PIXELSIZE:
-      return {...state, pixelSize: action.payload};
+      return { ...state, pixelSize: action.payload };
     case ACTION.BGCOLOR:
-      return {...state, backgroundColor: action.payload};
+      return { ...state, backgroundColor: action.payload };
     case ACTION.GRID:
       return { ...state, grid: action.payload };
     case ACTION.RANDOM:
@@ -84,21 +90,24 @@ function reducer(state, action){
         ...state,
         borderRadius: randInt(minMax.borderRadius.min, minMax.borderRadius.max),
         grid: randInt(0, 1),
-        backgroundColor: `rgb(${randInt(0, 255)}, ${randInt(0, 255)}, ${randInt(0, 255)})`,
-        scale: randInt(state.minScale, state.maxScale)
-      }
+        backgroundColor: `rgb(${randInt(0, 255)}, ${randInt(0, 255)}, ${randInt(
+          0,
+          255
+        )})`,
+        scale: randInt(state.minScale, state.maxScale),
+      };
     case ACTION.TITLE:
       let titleError = false;
-      if (action.payload.trim().length === 0){
+      if (action.payload.trim().length === 0) {
         titleError = true;
       }
       return {
-        ...state, 
+        ...state,
         title: action.payload,
-        titleError: titleError
+        titleError: titleError,
       };
-    case ACTION.TITLEERROR: 
-      return {...state, titleError: action.payload};
+    case ACTION.TITLEERROR:
+      return { ...state, titleError: action.payload };
     case ACTION.RESET:
       // reset everything except for scale and imgSrc
       return {
@@ -106,8 +115,8 @@ function reducer(state, action){
         scale: state.minScale,
         minScale: state.minScale,
         maxScale: state.maxScale,
-        imgSrc: state.imgSrc
-      }
+        imgSrc: state.imgSrc,
+      };
     default:
       return state;
   }
@@ -120,13 +129,13 @@ const minMax = {
   },
   scale: {
     min: 30,
-    max:100,
+    max: 100,
   },
   pixelSize: {
-    min:280,
-    max: 720
-  }
-}
+    min: 280,
+    max: 720,
+  },
+};
 
 const initialState = {
   imgSrc: null,
@@ -134,8 +143,8 @@ const initialState = {
   pixelSize: 360,
   scale: 100,
   grid: false,
-  backgroundColor: '#fff',
-  title: '',
+  backgroundColor: "#fff",
+  title: "",
   titleError: false,
   minScale: 0,
   maxScale: 100,
@@ -153,15 +162,15 @@ const ImageGenerator = () => {
   const [disableSave, setDisableSave] = useState(false);
 
   const store = useContext(StoreContext);
-  
+
   // editing goes to the RandomGenerator component
   // RandomGenerator is generic enough to provide editing tools for both images and random boxes
 
   // load the image data
   useEffect(() => {
-    function loadImage(){
+    function loadImage() {
       let img = new Image();
-      img.src = state.imgSrc
+      img.src = state.imgSrc;
 
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
@@ -177,13 +186,20 @@ const ImageGenerator = () => {
         // used for setting min scale
         // divide for 4 for number of pixels
         // every 4 values representas a pixel (r,g,b,a)
-        let minScale = Math.floor(Math.sqrt((ctxImgData.data.length/4) / MAXLENGTH));
-        let maxScale = Math.floor(Math.sqrt(ctxImgData.data.length/4)/ MINLENGTH);
+        let minScale = Math.floor(
+          Math.sqrt(ctxImgData.data.length / 4 / MAXLENGTH)
+        );
+        let maxScale = Math.floor(
+          Math.sqrt(ctxImgData.data.length / 4) / MINLENGTH
+        );
         // when loading a new picture, set scale to min
-        dispatch({type: ACTION.NEWSCALE, payload: {minScale:minScale, maxScale:maxScale }});
+        dispatch({
+          type: ACTION.NEWSCALE,
+          payload: { minScale: minScale, maxScale: maxScale },
+        });
 
         setImgData(ctxImgData);
-      }
+      };
     }
 
     loadImage();
@@ -191,7 +207,7 @@ const ImageGenerator = () => {
 
   // edit the image
   useEffect(() => {
-    function editPixMap(){
+    function editPixMap() {
       if (!imgData) return;
 
       let imgarr = pixelizeImage(
@@ -204,50 +220,56 @@ const ImageGenerator = () => {
     }
 
     editPixMap();
-  }, [state.scale, imgData ]);
+  }, [state.scale, imgData]);
 
   const sliders = [
     {
       var: state.pixelSize,
-      name: 'zoom',
+      name: "zoom",
       defaultValue: initialState.pixelSize,
       min: minMax.pixelSize.min,
       max: minMax.pixelSize.max,
-      onChange: (e) => dispatch({ type: ACTION.PIXELSIZE, payload: parseInt(e.target.value)}),
+      onChange: (e) =>
+        dispatch({ type: ACTION.PIXELSIZE, payload: parseInt(e.target.value) }),
       percent: true,
     },
     {
       var: state.borderRadius,
-      name: 'pixel curvature',
+      name: "pixel curvature",
       defaultValue: initialState.borderRadius,
       min: minMax.borderRadius.min,
       max: minMax.borderRadius.max,
       onChange: (e) => {
-        dispatch({ type: ACTION.BORDERRADIUS, payload: parseInt(e.target.value)})
+        dispatch({
+          type: ACTION.BORDERRADIUS,
+          payload: parseInt(e.target.value),
+        });
       },
       percent: true,
-    },{
+    },
+    {
       var: state.scale,
-      name: 'pixelization scale',
+      name: "pixelization scale",
       defaultValue: state.minScale,
       min: state.minScale,
       max: state.maxScale,
-      onChange: (e) => dispatch({ type: ACTION.SCALE, payload: parseInt(e.target.value)}),
+      onChange: (e) =>
+        dispatch({ type: ACTION.SCALE, payload: parseInt(e.target.value) }),
       percent: true,
-    }
-  ]
+    },
+  ];
 
   const handleSave = () => {
     setDisableSave(true);
-    if(state.title.trim().length === 0){
+    if (state.title.trim().length === 0) {
       setDisableSave(false);
-      return dispatch({type: ACTION.TITLEERROR, payload: true});
+      return dispatch({ type: ACTION.TITLEERROR, payload: true });
     }
-    if(!state.imgSrc){
+    if (!state.imgSrc) {
       setDisableSave(false);
-      return
+      return;
     }
-    
+
     let data = {
       title: state.title.trim(),
       project: {
@@ -257,13 +279,14 @@ const ImageGenerator = () => {
         backgroundColor: state.backgroundColor,
       },
     };
-    
-    instance.post(NEW, data)
-    .then((res) => redirect(`/project/${res.data}`)) 
-    .catch((err) => dispatchError(err, store.dispatch));
+
+    instance
+      .post(NEW, data)
+      .then((res) => redirect(`/project/${res.data}`))
+      .catch((err) => dispatchError(err, store.dispatch));
 
     setDisableSave(false);
-  }
+  };
 
   // I want the canvas to be invisible
   return (
@@ -273,12 +296,14 @@ const ImageGenerator = () => {
         handleSave={handleSave}
         title={state.title}
         titleError={state.titleError}
-        onTitleChange={(e) => dispatch({type: ACTION.TITLE, payload: e.target.value})}
+        onTitleChange={(e) =>
+          dispatch({ type: ACTION.TITLE, payload: e.target.value })
+        }
         sliders={sliders}
         top={
-          <RandomButton 
+          <RandomButton
             onClick={(e) => {
-              dispatch({type: ACTION.RANDOM})
+              dispatch({ type: ACTION.RANDOM });
             }}
           />
         }
@@ -303,34 +328,39 @@ const ImageGenerator = () => {
               />
             </ToolBox>
             <ResetButton
-              onClick={(e) => {dispatch({ type: ACTION.RESET })}}
+              onClick={(e) => {
+                dispatch({ type: ACTION.RESET });
+              }}
             />
           </>
         }
       />
-      {state.imgSrc 
-      ? 
-        imgData 
-        ?
+      {state.imgSrc ? (
+        imgData ? (
           <PixelApp
             pixelMap={pixelMap}
             borderRadius={state.borderRadius}
             pixelSize={
-              state.grid 
-              ? state.pixelSize/pixelMap.length - 2 
-              : state.pixelSize/pixelMap.length
+              state.grid
+                ? state.pixelSize / pixelMap.length - 2
+                : state.pixelSize / pixelMap.length
             }
             grid={state.grid}
             backgroundColor={state.backgroundColor}
           />
-        : 
-          <MyLoader/>
-      :
+        ) : (
+          <MyLoader />
+        )
+      ) : (
         <UploadImage
-          onChange={ (e) => 
-            dispatch({type: ACTION.IMGSRC, payload: URL.createObjectURL(e.target.files[0])}) }
+          onChange={(e) =>
+            dispatch({
+              type: ACTION.IMGSRC,
+              payload: URL.createObjectURL(e.target.files[0]),
+            })
+          }
         />
-      }
+      )}
       <InvisibleCanvas
         contentHeight={dimension.height}
         contentWidth={dimension.width}

@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useReducer, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { CompactPicker }  from "react-color";
+import { CompactPicker } from "react-color";
 
 import { instance, PROJECT, postOrPatchApp } from "../config/api";
-import { randInt, redirect } from '../util/util';
-import { StoreContext, dispatchError } from '../util/contextreducer';
+import { randInt, redirect } from "../util/util";
+import { StoreContext, dispatchError } from "../util/contextreducer";
 
 import { Button } from "../components/button";
 import { Page } from "../components/layout";
@@ -14,7 +14,7 @@ import { RandomPixelSquare } from "./generator";
 import PixelApp from "./app.js";
 import Controller, { ToolLabel, ToolBox, ToolSlider } from "./controller";
 
-import { ResetButton, RandomButton } from '../components/controllerbuttons';
+import { ResetButton, RandomButton } from "../components/controllerbuttons";
 
 const ACTION = {
   DIMENSION: "dimension",
@@ -37,8 +37,8 @@ const ACTION = {
   TITLE: "title",
   TITLEERROR: "titleError",
   GETDATA: "getData",
-  PARTIALRESET: 'partialReset',
-  PARTIALRANDOM: 'partialRandom',
+  PARTIALRESET: "partialReset",
+  PARTIALRANDOM: "partialRandom",
 };
 
 function reducer(state, action) {
@@ -48,12 +48,12 @@ function reducer(state, action) {
     case ACTION.BGCOLOR:
       return { ...state, backgroundColor: action.payload };
     case ACTION.DIMENSION:
-      let outState = {...state, dimension: action.payload};
-      if (action.payload < state.sortHueColLen){
-        outState = {...outState, sortHueColLen: action.payload};
+      let outState = { ...state, dimension: action.payload };
+      if (action.payload < state.sortHueColLen) {
+        outState = { ...outState, sortHueColLen: action.payload };
       }
-      if (action.payload < state.sortHueRowLen){
-        outState = { ...outState, sortHueRowLen: action.payload};
+      if (action.payload < state.sortHueRowLen) {
+        outState = { ...outState, sortHueRowLen: action.payload };
       }
       return outState;
     case ACTION.PIXELSIZE:
@@ -82,16 +82,16 @@ function reducer(state, action) {
       return { ...state, grid: action.payload };
     case ACTION.TITLE:
       let titleError = false;
-      if (action.payload.trim().length === 0){
+      if (action.payload.trim().length === 0) {
         titleError = true;
       }
       return {
-        ...state, 
+        ...state,
         title: action.payload,
-        titleError: titleError
+        titleError: titleError,
       };
-    case ACTION.TITLEERROR: 
-      return {...state, titleError: action.payload};
+    case ACTION.TITLEERROR:
+      return { ...state, titleError: action.payload };
     case ACTION.RESET:
       return initialState;
     case ACTION.RANDOM:
@@ -110,22 +110,28 @@ function reducer(state, action) {
         sortHueRowLen: -1,
         sortHueColLen: -1,
         grid: randInt(0, 1),
-        backgroundColor: `rgb(${randInt(0, 255)}, ${randInt(0, 255)}, ${randInt(0, 255)})`,
+        backgroundColor: `rgb(${randInt(0, 255)}, ${randInt(0, 255)}, ${randInt(
+          0,
+          255
+        )})`,
       };
     case ACTION.PARTIALRESET:
       return {
-        ...state, 
+        ...state,
         borderRadius: action.payload.borderRadius,
         grid: action.payload.grid,
-        backgroundColor: action.payload.backgroundColor
-      }
+        backgroundColor: action.payload.backgroundColor,
+      };
     case ACTION.PARTIALRANDOM:
       return {
         ...state,
         borderRadius: randInt(minMax.borderRadius.min, minMax.borderRadius.max),
         grid: randInt(0, 1),
-        backgroundColor: `rgb(${randInt(0, 255)}, ${randInt(0, 255)}, ${randInt(0, 255)})`,
-      }
+        backgroundColor: `rgb(${randInt(0, 255)}, ${randInt(0, 255)}, ${randInt(
+          0,
+          255
+        )})`,
+      };
     case ACTION.GETDATA:
       return {
         ...state,
@@ -134,7 +140,7 @@ function reducer(state, action) {
         backgroundColor: action.payload.project.backgroundColor,
         grid: action.payload.project.grid,
         title: action.payload.title,
-      }
+      };
     default:
       return state;
   }
@@ -198,7 +204,8 @@ const RandomGenerator = (props) => {
   // get intial data if the user is attempting to edit a project
   useEffect(() => {
     function getInitialData() {
-      instance.get(PROJECT, {params: {id: projectId}})
+      instance
+        .get(PROJECT, { params: { id: projectId } })
         .then((res) => {
           console.log(res.data);
           setPixelMap(res.data.project.pixelMap);
@@ -297,7 +304,7 @@ const RandomGenerator = (props) => {
   ];
 
   // if the user is editing, only load tools that they can use
-  if (projectId){
+  if (projectId) {
     sliders = [sliders[0], sliders[1]];
   }
 
@@ -337,11 +344,10 @@ const RandomGenerator = (props) => {
 
   // handle Saving
   const handleSave = () => {
-
     setDisableSave(true);
-    if(state.title.trim().length === 0){
+    if (state.title.trim().length === 0) {
       setDisableSave(false);
-      return dispatch({type: ACTION.TITLEERROR, payload: true});
+      return dispatch({ type: ACTION.TITLEERROR, payload: true });
     }
 
     let data = {
@@ -355,7 +361,7 @@ const RandomGenerator = (props) => {
     };
 
     postOrPatchApp(data, projectId)
-      .then((res) => redirect(`/project/${res.data}`)) 
+      .then((res) => redirect(`/project/${res.data}`))
       .catch((err) => dispatchError(err, store.dispatch));
 
     setDisableSave(false);
@@ -376,8 +382,8 @@ const RandomGenerator = (props) => {
           <RandomButton
             onClick={(e) => {
               projectId
-              ? dispatch({ type: ACTION.PARTIALRANDOM })
-              : dispatch({ type: ACTION.RANDOM })
+                ? dispatch({ type: ACTION.PARTIALRANDOM })
+                : dispatch({ type: ACTION.RANDOM });
             }}
           />
         }
@@ -393,9 +399,7 @@ const RandomGenerator = (props) => {
               />
             </ToolBox>
             <ToolBox>
-              <ToolLabel>
-                background color 
-              </ToolLabel>
+              <ToolLabel>background color</ToolLabel>
               <CompactPicker
                 color={state.backgroundColor}
                 onChangeComplete={(color, e) =>
@@ -404,62 +408,76 @@ const RandomGenerator = (props) => {
               />
             </ToolBox>
 
-            {!projectId && 
+            {!projectId && (
               <>
-              <ToolBox>
-                <ToolLabel>sort colors horizontally</ToolLabel>
-                <Toggle
-                  onChange={(e) =>
-                    dispatch({ type: ACTION.SORTHUEROW, payload: e.target.checked })
-                  }
-                  id="sortHueRow"
-                  checked={state.sortHueRow}
-                />
-                <ToolSlider
-                  name='sort amount'
-                  value={state.sortHueRowLen}
-                  min={0}
-                  max={state.dimension}
-                  onChange={(e) =>
-                    dispatch({
-                      type: ACTION.SORTHUEROWLEN,
-                      payload: e.target.value,
-                    })
-                  }
-                  id="sortHueRowLen"
-                  percent
-                />
-              </ToolBox>
-              <ToolBox>
-                <ToolLabel>sort colors vertically</ToolLabel>
-                <Toggle
-                  onChange={(e) =>
-                    dispatch({ type: ACTION.SORTHUECOL, payload: e.target.checked })
-                  }
-                  id="sortHueCol"
-                  checked={state.sortHueCol}
-                />
-                <ToolSlider
-                  name={'sort amount'}
-                  value={state.sortHueColLen}
-                  min={0}
-                  max={state.dimension}
-                  onChange={(e) =>
-                    dispatch({
-                      type: ACTION.SORTHUECOLLEN,
-                      payload: e.target.value,
-                    })
-                  }
-                  id="sortHueColLen"
-                  percent
-                />
-              </ToolBox>
+                <ToolBox>
+                  <ToolLabel>sort colors horizontally</ToolLabel>
+                  <Toggle
+                    onChange={(e) =>
+                      dispatch({
+                        type: ACTION.SORTHUEROW,
+                        payload: e.target.checked,
+                      })
+                    }
+                    id="sortHueRow"
+                    checked={state.sortHueRow}
+                  />
+                  <ToolSlider
+                    name="sort amount"
+                    value={state.sortHueRowLen}
+                    min={0}
+                    max={state.dimension}
+                    onChange={(e) =>
+                      dispatch({
+                        type: ACTION.SORTHUEROWLEN,
+                        payload: e.target.value,
+                      })
+                    }
+                    id="sortHueRowLen"
+                    percent
+                  />
+                </ToolBox>
+                <ToolBox>
+                  <ToolLabel>sort colors vertically</ToolLabel>
+                  <Toggle
+                    onChange={(e) =>
+                      dispatch({
+                        type: ACTION.SORTHUECOL,
+                        payload: e.target.checked,
+                      })
+                    }
+                    id="sortHueCol"
+                    checked={state.sortHueCol}
+                  />
+                  <ToolSlider
+                    name={"sort amount"}
+                    value={state.sortHueColLen}
+                    min={0}
+                    max={state.dimension}
+                    onChange={(e) =>
+                      dispatch({
+                        type: ACTION.SORTHUECOLLEN,
+                        payload: e.target.value,
+                      })
+                    }
+                    id="sortHueColLen"
+                    percent
+                  />
+                </ToolBox>
               </>
-            }
+            )}
             <ResetButton
-              onClick={projectId 
-                ? (e) => {dispatch({ type: ACTION.PARTIALRESET, payload: editInitialState})}
-                : (e) => {dispatch({ type: ACTION.RESET })}
+              onClick={
+                projectId
+                  ? (e) => {
+                      dispatch({
+                        type: ACTION.PARTIALRESET,
+                        payload: editInitialState,
+                      });
+                    }
+                  : (e) => {
+                      dispatch({ type: ACTION.RESET });
+                    }
               }
             />
           </div>
@@ -469,13 +487,15 @@ const RandomGenerator = (props) => {
         pixelMap={pixelMap}
         // pixelSize={state.pixelSize/pixelMap.length}
         pixelSize={
-          state.grid ? state.pixelSize/pixelMap.length - 2 : state.pixelSize/pixelMap.length
+          state.grid
+            ? state.pixelSize / pixelMap.length - 2
+            : state.pixelSize / pixelMap.length
         }
         borderRadius={state.borderRadius}
         grid={state.grid}
         backgroundColor={state.backgroundColor}
       />
-      <div/>
+      <div />
     </Page>
   );
 };

@@ -5,11 +5,7 @@ export const NavBar = (props) => {
 };
 
 export const NavGroup = (props) => {
-  return (
-    <div className={"nav-group " + props.className}>
-      {props.children}
-    </div>
-  );
+  return <div className={"nav-group " + props.className}>{props.children}</div>;
 };
 
 export const NavLogo = (props) => {

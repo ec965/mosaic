@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
-import { TEXTBOX } from './config';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { TEXTBOX } from "./config";
+import { Link } from "react-router-dom";
 import { dateString } from "../../util/util";
 import TextBoxForm from "../../components/textbox";
-import { Row } from '../../components/layout';
-import {
-  instance, 
-  COMMENT,
-} from "../../config/api";
+import { Row } from "../../components/layout";
+import { instance, COMMENT } from "../../config/api";
 
 const Comment = (props) => {
   const [showEditBox, setShowEditBox] = useState(false);
@@ -31,14 +28,15 @@ const Comment = (props) => {
     setShowEditBox(false);
 
     let data = {
-      project_id: props.project_id, 
-      comment: { 
-        id: props.id, 
-        text: text 
-      } 
-    }
+      project_id: props.project_id,
+      comment: {
+        id: props.id,
+        text: text,
+      },
+    };
 
-    instance.patch(COMMENT, data)
+    instance
+      .patch(COMMENT, data)
       .then((res) => {
         setupdatedAt(res.data.updatedAt);
         setUsername(res.data.username);
@@ -48,27 +46,29 @@ const Comment = (props) => {
       .catch((error) => console.error(error));
   };
   return (
-    <div className='project-comment'>
+    <div className="project-comment">
       <h5>
-        <Link to={`/profile/${username}`}>
-          {username}
-        </Link>
+        <Link to={`/profile/${username}`}>{username}</Link>
       </h5>
-      <p className='small grey-text'>{dateString(props.createdAt)}</p>
+      <p className="small grey-text">{dateString(props.createdAt)}</p>
       <p>{text}</p>
-      {edited && <p className='italic small grey-text'>edited: {dateString(updatedAt)}</p>}
+      {edited && (
+        <p className="italic small grey-text">
+          edited: {dateString(updatedAt)}
+        </p>
+      )}
       {props.canEdit && (
         <span className="italic row space-between">
           <p className="link" onClick={handleShowEdit}>
-            {showEditBox ? 'cancel' : 'edit'}
+            {showEditBox ? "cancel" : "edit"}
           </p>
           <Row>
-            <p 
-              className='project-delete'
+            <p
+              className="project-delete"
               onClick={props.onDelete}
               id={JSON.stringify({ id: props.id, index: props.index })}
             >
-              delete 
+              delete
             </p>
           </Row>
         </span>

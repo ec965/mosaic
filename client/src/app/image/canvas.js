@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-const InvisibleCanvas = ({canvasRef, contentWidth, contentHeight}) => {
-  return(
+const InvisibleCanvas = ({ canvasRef, contentWidth, contentHeight }) => {
+  return (
     <div>
       <canvas
         style={{
@@ -16,5 +16,5 @@ const InvisibleCanvas = ({canvasRef, contentWidth, contentHeight}) => {
       />
     </div>
   );
-}
+};
 export default InvisibleCanvas;

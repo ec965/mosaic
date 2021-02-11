@@ -15,7 +15,7 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (getToken()) {
-      window.location.replace(window.location.origin + '/login')
+      window.location.replace(window.location.origin + "/login");
     }
   }, []);
 
@@ -25,26 +25,26 @@ const RegisterForm = () => {
         initialValues={{ username: "", password: "", repassword: "" }}
         validate={(values) => {
           const errors = {};
-          
+
           const userReg = new RegExp("^[a-zA-Z0-9_]*$");
           if (!values.username) {
             errors.username = "Required";
-          }
-          else if (values.username.length < 6){
-            errors.username = "Please create a username of at least 6 characters.";
-          }
-          else if ( !userReg.test(values.username)){
-            errors.username = "Please only use alphanumeric characters or underscores in your username."
+          } else if (values.username.length < 6) {
+            errors.username =
+              "Please create a username of at least 6 characters.";
+          } else if (!userReg.test(values.username)) {
+            errors.username =
+              "Please only use alphanumeric characters or underscores in your username.";
           }
 
           if (!values.password) {
             errors.password = "Required";
-          }
-          else if (values.password.length < 6){
-            errors.password = "Please create a password of at least 6 characters.";
-          }
-          else if (values.password === values.username){
-            errors.password = "Please do not use your username as your password.";
+          } else if (values.password.length < 6) {
+            errors.password =
+              "Please create a password of at least 6 characters.";
+          } else if (values.password === values.username) {
+            errors.password =
+              "Please do not use your username as your password.";
           }
 
           if (values.password !== values.repassword) {
@@ -57,7 +57,7 @@ const RegisterForm = () => {
             .then((data) => {
               setSubmitting(false);
               // redirect to login page after registration
-              window.location.replace(window.location.origin + '/login')
+              window.location.replace(window.location.origin + "/login");
             })
             .catch((error) => {
               if (error.response.status === 401) {

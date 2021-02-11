@@ -1,10 +1,10 @@
 import React from "react";
 import RegisterForm from "./register";
 import LoginForm from "./login";
-import UpdatePasswordForm from './updatepassword';
+import UpdatePasswordForm from "./updatepassword";
 import { FormCard } from "./components";
 import { Page, Column } from "../components/layout";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export const Login = () => {
   return (
@@ -30,24 +30,22 @@ export const Register = () => {
 };
 
 export const UpdatePassword = () => {
-  return(
+  return (
     <AuthPage
       title="Update Password"
       altLink="/home"
       altText="Click here to return to home without updating your password."
     >
-      <UpdatePasswordForm/>
+      <UpdatePasswordForm />
     </AuthPage>
-  )
-}
+  );
+};
 
-const AuthPage = ({children, altLink, altText, title}) => {
-  return(
+const AuthPage = ({ children, altLink, altText, title }) => {
+  return (
     <Page>
       <Column>
-        <FormCard title={title}>
-          {children}
-        </FormCard>
+        <FormCard title={title}>{children}</FormCard>
         <div className="auth-bottom">
           <Link to={altLink}>
             <p className="italic small">{altText}</p>
@@ -56,4 +54,4 @@ const AuthPage = ({children, altLink, altText, title}) => {
       </Column>
     </Page>
   );
-}
+};
