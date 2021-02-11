@@ -1,15 +1,19 @@
 import React, { useRef, useEffect, useState, useReducer, useContext } from "react";
-import Controller, { ToolLabel, ToolBox } from './controller';
-import { Page } from '../components/layout';
-import { PixelApp } from "./app";
 import { CompactPicker } from 'react-color';
-import Toggle from "../components/toggle";
-import { Button } from "../components/button";
-import { randInt, redirect } from '../util/util';
-import { postAppNew } from "../config/api";
-import { StoreContext, dispatchError } from '../util/contextreducer';
-import Loader from 'react-loader-spinner';
-import { COLORS } from '../config/colors';
+import { randInt, redirect } from '../../util/util';
+import { instance, NEW } from "../../config/api";
+import { StoreContext, dispatchError } from '../../util/contextreducer';
+
+import { Page } from '../../components/layout';
+import Toggle from "../../components/toggle";
+import MyLoader from '../../components/loader';
+import { RandomButton, ResetButton } from '../../components/controllerbuttons';
+
+import Controller, { ToolLabel, ToolBox } from '../controller';
+import { PixelApp } from "../app";
+
+import InvisibleCanvas from './canvas.js';
+import UploadImage from './upload.js'
 
 const MAXLENGTH = 900; // this isn't exact but it's pretty close
 const MINLENGTH = 4;
@@ -254,7 +258,7 @@ const ImageGenerator = () => {
       },
     };
     
-    postAppNew(data)
+    instance.post(NEW, data)
     .then((res) => redirect(`/project/${res.data}`)) 
     .catch((err) => dispatchError(err, store.dispatch));
 
@@ -272,15 +276,11 @@ const ImageGenerator = () => {
         onTitleChange={(e) => dispatch({type: ACTION.TITLE, payload: e.target.value})}
         sliders={sliders}
         top={
-          <>
-            <Button
-              onClick={(e) => {
-                dispatch({type: ACTION.RANDOM})
-              }}
-            >
-              Random
-            </Button>
-          </>
+          <RandomButton 
+            onClick={(e) => {
+              dispatch({type: ACTION.RANDOM})
+            }}
+          />
         }
         bottom={
           <>
@@ -302,12 +302,9 @@ const ImageGenerator = () => {
                 }
               />
             </ToolBox>
-            <Button
+            <ResetButton
               onClick={(e) => {dispatch({ type: ACTION.RESET })}}
-              className="courier red"
-            >
-              Reset
-            </Button>
+            />
           </>
         }
       />
@@ -327,32 +324,18 @@ const ImageGenerator = () => {
             backgroundColor={state.backgroundColor}
           />
         : 
-          <Loader type="Oval" color={COLORS.base0D} height={80} width={80}/>
+          <MyLoader/>
       :
-        <div>
-          <h5>{'Upload an image to begin.'}</h5>
-          <br/>
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={ (e) => 
-              dispatch({type: ACTION.IMGSRC, payload: URL.createObjectURL(e.target.files[0])}) }
-          />
-        </div>
-      }
-      <div>
-        <canvas
-          style={{
-            position: "absolute",
-            zIndex: -1,
-            height: 0,
-            width: 0,
-          }}
-          width={dimension.width}
-          height={dimension.height}
-          ref={canvasRef}
+        <UploadImage
+          onChange={ (e) => 
+            dispatch({type: ACTION.IMGSRC, payload: URL.createObjectURL(e.target.files[0])}) }
         />
-      </div>
+      }
+      <InvisibleCanvas
+        contentHeight={dimension.height}
+        contentWidth={dimension.width}
+        canvasRef={canvasRef}
+      />
     </Page>
   );
 };

@@ -19,12 +19,16 @@ const UserProfile = () => {
   const [ disable, setDisable ] = useState(false);
   const { state, dispatch } = useContext(StoreContext);
 
+  // calculates the max pixel card width depending on the window size
+  const cardWidth = maxPixelCardWidth();
+
   let { thisUser } = useParams();
 
   function getUserInfo(lastDate=null) {
     setDisable(true);
 
     if (!lastDate) lastDate = Date.now();
+    let postlimit = window.innerWidth/cardWidth * 2;
 
     instance.get(
       PROJECTS,
@@ -32,12 +36,11 @@ const UserProfile = () => {
         params: {
           username: thisUser, 
           date: lastDate, 
-          postlimit: 6
+          postlimit: postlimit
         }
       }
     )
       .then((res) => {
-        console.log(res.data);
         // assign res.data to state vars
         if(!username ) setUsername(res.data.user.username);
         if(!joinDate) setJoinDate(res.data.user.createdAt);
@@ -113,11 +116,12 @@ const UserProfile = () => {
                       {projects.map((p, i) => {
                         return (
                           <PixelCard
+                            key={i}
                             title={p.title}
                             username={p.username}
                             date={p.updatedAt}
                             project={p.project}
-                            maxWidth={maxPixelCardWidth()}
+                            maxWidth={cardWidth}
                             link={`/project/${p._id}`}
                             body={
                               state.username === thisUser &&

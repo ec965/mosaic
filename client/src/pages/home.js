@@ -16,6 +16,9 @@ const HomePage = () => {
   const [ noMore, setNoMore ] = useState(false);
   const [ disable, setDisable ] = useState(false);
   const { dispatch } = useContext(StoreContext);
+  
+  // calculates the max pixel card width depending on the window size
+  const cardWidth = maxPixelCardWidth();
 
   // fetch the most recent projects
 
@@ -27,7 +30,7 @@ const HomePage = () => {
       {
         params: {
           date: lastDate, 
-          postlimit: 6
+          postlimit: window.innerWidth/cardWidth * 2
         }
       }
     )
@@ -66,7 +69,7 @@ const HomePage = () => {
                   username={p.username}
                   date={p.updatedAt}
                   project={p.project}
-                  maxWidth={maxPixelCardWidth()}
+                  maxWidth={cardWidth}
                   bodyLink={`project/${p._id}`}
                   link={`/project/${p._id}`}
                 />

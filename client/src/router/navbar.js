@@ -65,22 +65,22 @@ const UserNav = () => {
       <NavGroup>
         <NavItem>
           <Link to={`/image`}>
-            <h4>Image</h4>
+            <h4>Image <i className="fas fa-plus-square"></i></h4>
           </Link>
         </NavItem>
         <NavItem>
           <Link to={`/generator`}>
-            <h4>Generator</h4>
+            <h4>Random <i className="fas fa-plus-square"></i></h4>
           </Link>
         </NavItem>
         <NavItem>
           <Link to={`/profile/${state.username}`}>
-            <h4>Profile</h4>
+            <h4><i className="fas fa-user-circle"></i></h4>
           </Link>
         </NavItem>
         <NavItem>
           <div>
-            <Logout>Logout</Logout>
+            <Logout><i class="fas fa-sign-out-alt"></i></Logout>
           </div>
         </NavItem>
       </NavGroup>

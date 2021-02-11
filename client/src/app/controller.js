@@ -79,7 +79,7 @@ const Controller = ({
     <div className="panel">
       <Row className="flex-start">
         <Button disabled={disableSave} onClick={handleSave} className="courier">
-          Save
+          Save <i className="fas fa-save"></i>
         </Button>
         {disableSave && 
           <Loader className="controller-loader" type="Oval" color={COLORS.base0D} height={20} width={20}/>

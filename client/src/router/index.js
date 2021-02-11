@@ -6,11 +6,11 @@ import { Login, Register } from "../auth/index";
 
 import LandingPage from "../pages/landing";
 import UserProfile from "../pages/profile";
-import CardMatrix from "../pages/home";
 import UserNav from "../router/navbar";
-import ProjectPage from "../pages/project";
+import ProjectPage from "../pages/project/index.js";
 import RandomGenerator from "../app/random";
-import ImageGenerator from "../app/image";
+import ImageGenerator from "../app/image/index";
+import HomePage from "../pages/home";
 
 const App = () => {
   return (
@@ -23,7 +23,7 @@ const App = () => {
 
         <PrivateRoute path="/home">
           <UserNav />
-          <CardMatrix />
+          <HomePage />
         </PrivateRoute>
 
         <PrivateRoute path="/image/:projectId">

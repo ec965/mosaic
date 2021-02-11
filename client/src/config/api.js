@@ -33,38 +33,16 @@ export const NEW = APP + "/new";
 export const UPDATE = APP + "/update";
 export const DELETE = APP + "/delete";
 
-export const postAppNew = async (data) =>
-  await instance.post(NEW, data);
-
-export const patchAppUpdate = async (data) =>
-  await instance.patch(UPDATE, data);
-
-
 export const postOrPatchApp = async (data, projectId=null) => {
   if(projectId){
     data.project_id = projectId; // updating requires the project ia
-    return await patchAppUpdate(data);
+    return await instance.post(NEW, data);
   }
-  return await postAppNew(data);
+  return await instance.patch(UPDATE, data);
 }
 
 // comment crud operations
 export const PROJECT = "/project";
 export const COMMENT = PROJECT + "/comment";
-
-export const getProject = async (id) =>
-  await instance.get(PROJECT, {params: {id: id}});
-
-export const postProjectComment = async (projectId, text) =>
-  await instance.post(
-    COMMENT,
-    { project_id: projectId, text: text },
-  );
-
-export const deleteProjectComment = async (projectId, commentId) =>
-  await instance.delete(COMMENT, {params: {project_id: projectId, comment_id: commentId}});
-
-export const patchProjectComment = async (projectId, commentId, text) =>
-  await instance.patch(COMMENT, { project_id: projectId, comment: { id: commentId, text: text } });
 
 export const VALIDATE = "/validate";

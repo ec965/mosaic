@@ -2,7 +2,7 @@ import React, { useEffect, useState, useReducer, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { CompactPicker }  from "react-color";
 
-import { getProject, postOrPatchApp } from "../config/api";
+import { instance, PROJECT, postOrPatchApp } from "../config/api";
 import { randInt, redirect } from '../util/util';
 import { StoreContext, dispatchError } from '../util/contextreducer';
 
@@ -13,6 +13,8 @@ import Toggle from "../components/toggle";
 import { RandomPixelSquare } from "./generator";
 import PixelApp from "./app.js";
 import Controller, { ToolLabel, ToolBox, ToolSlider } from "./controller";
+
+import { ResetButton, RandomButton } from '../components/controllerbuttons';
 
 const ACTION = {
   DIMENSION: "dimension",
@@ -196,7 +198,7 @@ const RandomGenerator = (props) => {
   // get intial data if the user is attempting to edit a project
   useEffect(() => {
     function getInitialData() {
-      getProject(projectId)
+      instance.get(PROJECT, {params: {id: projectId}})
         .then((res) => {
           console.log(res.data);
           setPixelMap(res.data.project.pixelMap);
@@ -371,18 +373,13 @@ const RandomGenerator = (props) => {
         }
         sliders={sliders}
         top={
-          <div>
-            <Button
-              onClick={(e) => {
-                projectId
-                ? dispatch({ type: ACTION.PARTIALRANDOM })
-                : dispatch({ type: ACTION.RANDOM })
-              }}
-              className="courier"
-            >
-              Random
-            </Button>
-          </div>
+          <RandomButton
+            onClick={(e) => {
+              projectId
+              ? dispatch({ type: ACTION.PARTIALRANDOM })
+              : dispatch({ type: ACTION.RANDOM })
+            }}
+          />
         }
         bottom={
           <div>
@@ -459,15 +456,12 @@ const RandomGenerator = (props) => {
               </ToolBox>
               </>
             }
-            <Button
+            <ResetButton
               onClick={projectId 
                 ? (e) => {dispatch({ type: ACTION.PARTIALRESET, payload: editInitialState})}
                 : (e) => {dispatch({ type: ACTION.RESET })}
               }
-              className="courier red"
-            >
-              Reset
-            </Button>
+            />
           </div>
         }
       />
